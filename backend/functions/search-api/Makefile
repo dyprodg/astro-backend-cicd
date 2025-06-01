@@ -3,26 +3,31 @@
 # Default target
 help:
 	@echo "🚗 Search API - Available targets:"
-	@echo "  build       - Build Lambda binary for ARM64"
-	@echo "  build-local - Build for local testing (x86_64)"
-	@echo "  test        - Run all tests"
-	@echo "  test-cover  - Run tests with coverage"
-	@echo "  deps        - Install/update dependencies"
-	@echo "  fmt         - Format Go code"
-	@echo "  lint        - Run linter"
-	@echo "  clean       - Clean build artifacts"
-	@echo "  zip         - Create deployment ZIP"
-	@echo "  deploy      - Deploy with Terraform"
-	@echo "  plan        - Show Terraform plan"
+	@echo "  build         - Build Lambda binary for ARM64"
+	@echo "  build-local   - Build for local testing (x86_64)"
+	@echo "  test          - Run all tests"
+	@echo "  test-cover    - Run tests with coverage"
+	@echo "  deps          - Install/update dependencies"
+	@echo "  fmt           - Format Go code"
+	@echo "  lint          - Run linter"
+	@echo "  clean         - Clean build artifacts"
+	@echo "  zip           - Create deployment ZIP"
+	@echo "  update-lambda - Update Lambda function code"
+	@echo "  logs          - Show Lambda logs"
+	@echo "  test-api      - Test deployed API endpoints"
+	@echo ""
+	@echo "🏗️ Local infrastructure (optional):"
+	@echo "  deploy        - Deploy with Terraform (local)"
+	@echo "  plan          - Show Terraform plan (local)"
 
-# Build the Lambda binary for ARM64
+# Build the Lambda binary for ARM64 Linux
 build:
-	@echo "Building search API for ARM64..."
+	@echo "Building search API for Lambda (Linux ARM64)..."
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o bootstrap main.go
 
-# Build for local testing (x86_64)
+# Build for local testing (native macOS)
 build-local:
-	@echo "Building search API for local testing..."
+	@echo "Building search API for local testing (native macOS)..."
 	go build -o main main.go
 
 # Run tests
@@ -67,36 +72,9 @@ zip: build
 	@echo "Creating deployment ZIP..."
 	zip -r search-api.zip bootstrap
 
-# Quick development workflow
-dev: deps fmt lint test
-	@echo "Development checks complete!"
-
-# Complete CI/CD workflow
-ci: deps fmt lint test-cover build
-	@echo "CI/CD pipeline complete!"
-
-# Initialize Terraform (from function directory)
-tf-init:
-	@echo "Initializing Terraform..."
-	cd ../../../infra && terraform init
-
-# Show Terraform plan
-plan: build tf-init
-	@echo "Creating Terraform plan..."
-	cd ../../../infra && terraform plan
-
-# Deploy with Terraform
-deploy: build tf-init
-	@echo "Deploying with Terraform..."
-	cd ../../../infra && terraform apply -auto-approve
-	@echo "Deployment complete!"
-	@echo "Getting API endpoints..."
-	cd ../../../infra && terraform output
-
-# Update Lambda function code only (faster than full deploy)
-update-lambda: build
+# Update Lambda function code (main deployment method)
+update-lambda: zip
 	@echo "Updating Lambda function..."
-	zip -r search-api.zip bootstrap
 	aws lambda update-function-code \
 		--function-name search-api \
 		--zip-file fileb://search-api.zip
@@ -107,15 +85,42 @@ logs:
 	@echo "Showing recent Lambda logs..."
 	aws logs tail /aws/lambda/search-api --follow
 
-# Test API endpoints (requires jq and deployed infrastructure)
+# Test deployed API endpoints
 test-api:
-	@echo "Testing API endpoints..."
+	@echo "Testing deployed API endpoints..."
 	@echo "1. Getting search options..."
-	@curl -s $$(cd ../../../infra && terraform output -raw search_options_endpoint) | jq .
+	@curl -s "https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search/options" | jq .
 	@echo "\n2. Testing search with BMW query..."
-	@curl -s -X POST $$(cd ../../../infra && terraform output -raw search_endpoint) \
+	@curl -s -X POST "https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search" \
 		-H "Content-Type: application/json" \
 		-d '{"query": "BMW", "limit": 2}' | jq .
+
+# Quick development workflow
+dev: deps fmt lint test
+	@echo "Development checks complete!"
+
+# Complete CI/CD workflow
+ci: deps fmt lint test-cover build
+	@echo "CI/CD pipeline complete!"
+
+# === LOCAL INFRASTRUCTURE COMMANDS (Optional) ===
+
+# Initialize Terraform (local only)
+tf-init:
+	@echo "Initializing Terraform (local)..."
+	cd ../../../infra && terraform init
+
+# Show Terraform plan (local only)
+plan: tf-init
+	@echo "Creating Terraform plan (local)..."
+	cd ../../../infra && terraform plan
+
+# Deploy with Terraform (local only)
+deploy: tf-init
+	@echo "Deploying with Terraform (local)..."
+	cd ../../../infra && terraform apply
+	@echo "Getting API endpoints..."
+	cd ../../../infra && terraform output
 
 # Install development tools
 install-tools:
@@ -134,4 +139,4 @@ load-test:
 	hey -n 100 -c 10 -m POST \
 		-H "Content-Type: application/json" \
 		-d '{"query": "BMW"}' \
-		$$(cd ../../../infra && terraform output -raw search_endpoint) 
+		"https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search" 

@@ -1,25 +1,25 @@
-.PHONY: help search-api contact-form deploy-all test-all clean-all tf-init plan deploy destroy
+.PHONY: help search-api contact-form test-all clean-all
 
 # Default target
 help:
 	@echo "🚀 Astro Backend CI/CD - Available targets:"
 	@echo ""
-	@echo "📦 Function-specific operations:"
+	@echo "📦 Function operations:"
 	@echo "  search-api       - Build and test search API"
-	@echo "  contact-form     - Build and test contact form"
+	@echo "  contact-form     - Build and test contact form (planned)"
 	@echo ""
 	@echo "🌍 Global operations:"
 	@echo "  test-all         - Test all functions"
-	@echo "  deploy-all       - Deploy all infrastructure"
 	@echo "  clean-all        - Clean all build artifacts"
+	@echo "  dev-setup        - Setup development environment"
+	@echo "  ci-all           - Run complete CI pipeline"
 	@echo ""
-	@echo "🏗️ Infrastructure operations:"
+	@echo "🏗️ Local infrastructure (optional):"
 	@echo "  tf-init          - Initialize Terraform"
 	@echo "  plan             - Show Terraform plan"
 	@echo "  deploy           - Deploy infrastructure"
 	@echo "  destroy          - Destroy infrastructure"
 	@echo "  validate         - Validate Terraform configuration"
-	@echo "  tf-fmt           - Format Terraform files"
 	@echo ""
 	@echo "💡 Function-specific commands:"
 	@echo "  cd backend/functions/search-api && make help"
@@ -41,55 +41,11 @@ test-all:
 	cd backend/functions/search-api && make test
 	# cd backend/functions/contact-form && make test
 
-# Deploy all infrastructure
-deploy-all: tf-init
-	@echo "🚀 Deploying all infrastructure..."
-	cd infra && terraform apply -auto-approve
-	@echo "Deployment complete!"
-	cd infra && terraform output
-
 # Clean all build artifacts
 clean-all:
 	@echo "🧹 Cleaning all build artifacts..."
 	cd backend/functions/search-api && make clean
 	# cd backend/functions/contact-form && make clean
-
-# Initialize Terraform
-tf-init:
-	@echo "🏗️ Initializing Terraform..."
-	cd infra && terraform init
-
-# Show Terraform plan
-plan: tf-init
-	@echo "📋 Creating Terraform plan..."
-	cd infra && terraform plan
-
-# Deploy infrastructure
-deploy: tf-init
-	@echo "🚀 Deploying infrastructure..."
-	cd infra && terraform apply -auto-approve
-	@echo "Deployment complete!"
-	cd infra && terraform output
-
-# Destroy infrastructure
-destroy:
-	@echo "💥 Destroying infrastructure..."
-	cd infra && terraform destroy -auto-approve
-
-# Validate Terraform configuration
-validate:
-	@echo "✅ Validating Terraform configuration..."
-	cd infra && terraform validate
-
-# Format Terraform files
-tf-fmt:
-	@echo "📝 Formatting Terraform files..."
-	cd infra && terraform fmt
-
-# Show infrastructure outputs
-outputs:
-	@echo "📊 Infrastructure outputs:"
-	cd infra && terraform output
 
 # Quick development setup
 dev-setup:
@@ -108,12 +64,41 @@ test-local:
 	@echo "🧪 Running local tests..."
 	$(MAKE) test-all
 
-# Deploy specific function (requires FUNCTION parameter)
-deploy-function:
-	@if [ -z "$(FUNCTION)" ]; then \
-		echo "❌ Error: FUNCTION parameter is required"; \
-		echo "Usage: make deploy-function FUNCTION=search-api"; \
-		exit 1; \
-	fi
-	@echo "🚀 Deploying $(FUNCTION)..."
-	cd backend/functions/$(FUNCTION) && make deploy 
+# === LOCAL INFRASTRUCTURE COMMANDS (Optional) ===
+
+# Initialize Terraform (local only)
+tf-init:
+	@echo "🏗️ Initializing Terraform (local)..."
+	cd infra && terraform init
+
+# Show Terraform plan (local only)
+plan: tf-init
+	@echo "📋 Creating Terraform plan (local)..."
+	cd infra && terraform plan
+
+# Deploy infrastructure (local only)
+deploy: tf-init
+	@echo "🚀 Deploying infrastructure (local)..."
+	cd infra && terraform apply
+	@echo "Deployment complete!"
+	cd infra && terraform output
+
+# Destroy infrastructure (local only)
+destroy:
+	@echo "💥 Destroying infrastructure (local)..."
+	cd infra && terraform destroy
+
+# Validate Terraform configuration (local only)
+validate:
+	@echo "✅ Validating Terraform configuration (local)..."
+	cd infra && terraform validate
+
+# Format Terraform files (local only)
+tf-fmt:
+	@echo "📝 Formatting Terraform files (local)..."
+	cd infra && terraform fmt
+
+# Show infrastructure outputs (local only)
+outputs:
+	@echo "📊 Infrastructure outputs (local):"
+	cd infra && terraform output 
