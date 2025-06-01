@@ -1,0 +1,42 @@
+# Node.js / Frontend
+node_modules/
+.env
+.next/
+dist/
+build/
+.cache/
+.astro/
+
+# Backend (generisch, z.B. Node, Go)
+backend/node_modules/
+backend/.env
+backend/dist/
+backend/build/
+# Für alle Funktionsordner im Backend
+backend/*/node_modules/
+backend/*/.env
+backend/*/dist/
+backend/*/build/
+
+# Go
+bin/
+*.exe
+*.exe~
+*.out
+*.test
+coverage.out
+
+# Terraform
+infra/.terraform/
+infra/terraform.tfstate
+infra/terraform.tfstate.backup
+infra/crash.log
+infra/.terraform.lock.hcl
+
+# System/Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.log
