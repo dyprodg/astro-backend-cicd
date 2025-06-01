@@ -36,10 +36,9 @@ resource "aws_iam_role" "astro_backend_cicd" {
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
-          StringEquals = {
-            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            # Erlaubt alle Branches deines Repos
-            "token.actions.githubusercontent.com:sub" = "repo:dyprodg/astro-backend-cicd:*"
+          StringLike = {
+            "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com",
+            "token.actions.githubusercontent.com:sub" : "repo:dyprodg/astro-backend-cicd:*"
           }
         }
       }
