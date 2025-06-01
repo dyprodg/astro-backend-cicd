@@ -39,13 +39,6 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/astro-backend-cicd-role
           aws-region: eu-central-1
 
-      - name: Backup current S3 files
-        run: |
-          export DATE=$(date +%Y-%m-%d-%H%M%S)
-          aws s3 cp s3://astro-frontend-bucket/ s3://astro-frontend-bucket/backup/$DATE/ --recursive
-        env:
-          AWS_REGION: eu-central-1
-
       - name: Upload new build to S3
         run: |
           aws s3 sync frontend/dist s3://astro-frontend-bucket/ --delete
