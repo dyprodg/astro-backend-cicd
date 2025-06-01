@@ -15,6 +15,7 @@ help:
 	@echo "  update-lambda - Update Lambda function code"
 	@echo "  logs          - Show Lambda logs"
 	@echo "  test-api      - Test deployed API endpoints"
+	@echo "  upload-coverage - Upload coverage to S3"
 	@echo ""
 	@echo "🏗️ Local infrastructure (optional):"
 	@echo "  deploy        - Deploy with Terraform (local)"
@@ -139,4 +140,10 @@ load-test:
 	hey -n 100 -c 10 -m POST \
 		-H "Content-Type: application/json" \
 		-d '{"query": "BMW"}' \
-		"https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search" 
+		"https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search"
+
+# Upload coverage to S3
+upload-coverage:
+	@echo "Uploading coverage to S3..."
+	aws s3 cp coverage.html s3://your-bucket-name/coverage.html
+	@echo "Coverage uploaded to S3!" 

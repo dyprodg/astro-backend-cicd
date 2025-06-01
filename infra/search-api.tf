@@ -15,6 +15,49 @@ data "archive_file" "search_api_zip" {
   ]
 }
 
+# S3 Bucket for coverage reports and artifacts
+resource "aws_s3_bucket" "coverage_reports" {
+  bucket = "astro-search-api-coverage-${random_id.bucket_suffix.hex}"
+}
+
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
+}
+
+resource "aws_s3_bucket_versioning" "coverage_reports" {
+  bucket = aws_s3_bucket.coverage_reports.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "coverage_reports" {
+  bucket = aws_s3_bucket.coverage_reports.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "coverage_reports" {
+  bucket = aws_s3_bucket.coverage_reports.id
+
+  rule {
+    id     = "delete_old_reports"
+    status = "Enabled"
+
+    expiration {
+      days = 30 # Coverage reports älter als 30 Tage löschen
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 7
+    }
+  }
+}
+
 # IAM role for Search API Lambda
 resource "aws_iam_role" "search_api_lambda_role" {
   name = "search-api-lambda-role"
@@ -28,6 +71,31 @@ resource "aws_iam_role" "search_api_lambda_role" {
         Principal = {
           Service = "lambda.amazonaws.com"
         }
+      }
+    ]
+  })
+}
+
+# S3 permissions for coverage reports
+resource "aws_iam_role_policy" "search_api_s3_coverage" {
+  name = "search-api-s3-coverage-policy"
+  role = aws_iam_role.search_api_lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:PutObjectAcl",
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          aws_s3_bucket.coverage_reports.arn,
+          "${aws_s3_bucket.coverage_reports.arn}/*"
+        ]
       }
     ]
   })
@@ -310,6 +378,16 @@ output "search_options_endpoint" {
 output "search_endpoint" {
   description = "Search Endpoint"
   value       = "https://${aws_api_gateway_rest_api.search_api_gateway.id}.execute-api.${data.aws_region.current.name}.amazonaws.com/${aws_api_gateway_stage.search_api_stage.stage_name}/search"
+}
+
+output "coverage_bucket_name" {
+  description = "S3 Bucket for Coverage Reports"
+  value       = aws_s3_bucket.coverage_reports.id
+}
+
+output "coverage_bucket_url" {
+  description = "S3 Bucket URL for Coverage Reports"
+  value       = "https://${aws_s3_bucket.coverage_reports.bucket}.s3.${data.aws_region.current.name}.amazonaws.com"
 }
 
 # Data source for current region

@@ -14,6 +14,7 @@ env:
   GO_VERSION: '1.21'
   AWS_REGION: 'eu-central-1'
   FUNCTION_NAME: 'search-api'
+  COVERAGE_BUCKET: 'astro-search-api-coverage'
 
 jobs:
   # Test the Go code
@@ -44,9 +45,9 @@ jobs:
       working-directory: backend/functions/search-api
       run: make deps
 
-    - name: Run tests
+    - name: Run tests with coverage
       working-directory: backend/functions/search-api
-      run: make test
+      run: make test-cover
 
     - name: Run linter
       working-directory: backend/functions/search-api
@@ -56,12 +57,41 @@ jobs:
       working-directory: backend/functions/search-api
       run: make fmt
 
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
+    - name: Configure AWS credentials for coverage upload
+      if: github.event_name == 'push'
+      uses: aws-actions/configure-aws-credentials@v4
       with:
-        file: backend/functions/search-api/coverage.out
-        flags: search-api
-        name: search-api-coverage
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Upload coverage reports to S3
+      if: github.event_name == 'push'
+      working-directory: backend/functions/search-api
+      run: |
+        # Erstelle eindeutigen Pfad mit Timestamp und Commit SHA
+        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+        COMMIT_SHORT=${GITHUB_SHA:0:7}
+        COVERAGE_PATH="coverage/${GITHUB_REF_NAME}/${TIMESTAMP}-${COMMIT_SHORT}"
+        
+        # Upload coverage.out und coverage.html
+        aws s3 cp coverage.out s3://${COVERAGE_BUCKET}/${COVERAGE_PATH}/coverage.out
+        aws s3 cp coverage.html s3://${COVERAGE_BUCKET}/${COVERAGE_PATH}/coverage.html
+        
+        # Erstelle Index-Datei mit Metadaten
+        echo "{
+          \"timestamp\": \"${TIMESTAMP}\",
+          \"commit\": \"${GITHUB_SHA}\",
+          \"branch\": \"${GITHUB_REF_NAME}\",
+          \"actor\": \"${GITHUB_ACTOR}\",
+          \"workflow_run\": \"${GITHUB_RUN_ID}\"
+        }" > coverage-metadata.json
+        
+        aws s3 cp coverage-metadata.json s3://${COVERAGE_BUCKET}/${COVERAGE_PATH}/metadata.json
+        
+        # Link für den Report ausgeben
+        echo "📊 Coverage Report: https://${COVERAGE_BUCKET}.s3.${AWS_REGION}.amazonaws.com/${COVERAGE_PATH}/coverage.html"
+        echo "COVERAGE_URL=https://${COVERAGE_BUCKET}.s3.${AWS_REGION}.amazonaws.com/${COVERAGE_PATH}/coverage.html" >> $GITHUB_ENV
 
   # Build and deploy (only on main branch)
   deploy:
@@ -124,4 +154,9 @@ jobs:
         echo "### Deployment:" >> $GITHUB_STEP_SUMMARY
         echo "- **Function:** ${{ env.FUNCTION_NAME }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Runtime:** provided.al2023 (ARM64)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY 
+        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        if [ ! -z "${{ env.COVERAGE_URL }}" ]; then
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Coverage Report:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Report:** [${{ env.COVERAGE_URL }}](${{ env.COVERAGE_URL }})" >> $GITHUB_STEP_SUMMARY
+        fi 
