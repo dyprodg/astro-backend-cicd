@@ -17,11 +17,7 @@ data "archive_file" "search_api_zip" {
 
 # S3 Bucket for coverage reports and artifacts
 resource "aws_s3_bucket" "coverage_reports" {
-  bucket = "astro-search-api-coverage-${random_id.bucket_suffix.hex}"
-}
-
-resource "random_id" "bucket_suffix" {
-  byte_length = 4
+  bucket = "astro-backend-search-api-coverage"
 }
 
 resource "aws_s3_bucket_versioning" "coverage_reports" {

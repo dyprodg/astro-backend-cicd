@@ -16,7 +16,7 @@ env:
   GO_VERSION: '1.21'
   AWS_REGION: 'eu-central-1'
   FUNCTION_NAME: 'search-api'
-  COVERAGE_BUCKET: 'astro-search-api-coverage'
+  COVERAGE_BUCKET: 'astro-backend-search-api-coverage'
 
 jobs:
   # Test the Go code
@@ -75,29 +75,16 @@ jobs:
       if: github.event_name == 'push'
       working-directory: backend/functions/search-api
       run: |
-        # Erstelle eindeutigen Pfad mit Timestamp und Commit SHA
+        # Erstelle Dateinamen mit Timestamp
         TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-        COMMIT_SHORT=${GITHUB_SHA:0:7}
-        COVERAGE_PATH="coverage/${GITHUB_REF_NAME}/${TIMESTAMP}-${COMMIT_SHORT}"
         
-        # Upload coverage.out und coverage.html
-        aws s3 cp coverage.out s3://${COVERAGE_BUCKET}/${COVERAGE_PATH}/coverage.out
-        aws s3 cp coverage.html s3://${COVERAGE_BUCKET}/${COVERAGE_PATH}/coverage.html
-        
-        # Erstelle Index-Datei mit Metadaten
-        echo "{
-          \"timestamp\": \"${TIMESTAMP}\",
-          \"commit\": \"${GITHUB_SHA}\",
-          \"branch\": \"${GITHUB_REF_NAME}\",
-          \"actor\": \"${GITHUB_ACTOR}\",
-          \"workflow_run\": \"${GITHUB_RUN_ID}\"
-        }" > coverage-metadata.json
-        
-        aws s3 cp coverage-metadata.json s3://${COVERAGE_BUCKET}/${COVERAGE_PATH}/metadata.json
+        # Upload coverage files mit Datum als Namen
+        aws s3 cp coverage.out s3://${COVERAGE_BUCKET}/coverage-${TIMESTAMP}.out
+        aws s3 cp coverage.html s3://${COVERAGE_BUCKET}/coverage-${TIMESTAMP}.html
         
         # Link für den Report ausgeben
-        echo "📊 Coverage Report: https://${COVERAGE_BUCKET}.s3.${AWS_REGION}.amazonaws.com/${COVERAGE_PATH}/coverage.html"
-        echo "COVERAGE_URL=https://${COVERAGE_BUCKET}.s3.${AWS_REGION}.amazonaws.com/${COVERAGE_PATH}/coverage.html" >> $GITHUB_ENV
+        echo "📊 Coverage Report: https://${COVERAGE_BUCKET}.s3.${AWS_REGION}.amazonaws.com/coverage-${TIMESTAMP}.html"
+        echo "COVERAGE_URL=https://${COVERAGE_BUCKET}.s3.${AWS_REGION}.amazonaws.com/coverage-${TIMESTAMP}.html" >> $GITHUB_ENV
 
   # Build and deploy (only on main branch)
   deploy:

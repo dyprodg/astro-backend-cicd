@@ -85,8 +85,8 @@ resource "aws_iam_role_policy" "astro_backend_cicd_policy" {
           "s3:ListBucket"
         ]
         Resource = [
-          "arn:aws:s3:::astro-search-api-coverage-*",
-          "arn:aws:s3:::astro-search-api-coverage-*/*"
+          "arn:aws:s3:::astro-backend-search-api-coverage",
+          "arn:aws:s3:::astro-backend-search-api-coverage/*"
         ]
       }
     ]
