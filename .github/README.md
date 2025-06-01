@@ -11,118 +11,112 @@ Die Pipeline wird bei folgenden Events ausgelöst:
 - **Pull Request** auf `main` Branch
 - Nur wenn Dateien in folgenden Pfaden geändert werden:
   - `backend/functions/search-api/**`
-  - `infra/search-api.tf`
-  - `infra/main.tf`
+  - `.github/workflows/search-api-deploy.yml`
 
 ## 📋 Pipeline Stages
 
 ### 1. Test (`test`)
-- Go-Code formatierung prüfen
-- Unit Tests ausführen
+- Go-Code Formatierung prüfen
+- Unit Tests mit Coverage ausführen
 - Linting mit `go vet`
-- Test Coverage generieren
-- Coverage Report an Codecov senden
+- Coverage Reports zu S3 hochladen
 
-### 2. Build (`build`)
-- Lambda Binary für ARM64 kompilieren
-- Deployment ZIP erstellen
-- Build Artifact hochladen
-
-### 3. Terraform Plan (`terraform-plan`)
-- **Nur für Pull Requests**
-- Terraform Plan erstellen
-- Plan als PR Comment hinzufügen
-
-### 4. Deploy (`deploy`)
+### 2. Deploy (`deploy`)
 - **Nur für Push auf `main` Branch**
-- Terraform Apply ausführen
+- Lambda Binary für ARM64 kompilieren
+- ZIP erstellen und Lambda Function aktualisieren
 - API Endpoints testen
 - Deployment Summary erstellen
 
-### 5. Cleanup (`cleanup`)
-- Build Artifacts aufräumen
+## 🔐 OIDC Authentifizierung (Empfohlen)
 
-## 🔑 Benötigte GitHub Secrets
+Die Pipeline verwendet **OpenID Connect (OIDC)** für sichere AWS-Authentifizierung ohne Keys.
 
-Füge folgende Secrets in den Repository Settings hinzu:
-
-### AWS Credentials
+### Benötigte GitHub Secrets
 ```
-AWS_ACCESS_KEY_ID        # AWS Access Key ID
-AWS_SECRET_ACCESS_KEY    # AWS Secret Access Key
-AWS_ROLE_ARN            # Optional: IAM Role ARN für AssumeRole
+AWS_ACCOUNT_ID    # Deine AWS Account ID
 ```
 
-### Konfiguration der AWS Credentials
-
-#### Option 1: IAM User (Direkt)
-```bash
-# AWS_ACCESS_KEY_ID und AWS_SECRET_ACCESS_KEY vom IAM User
+### Verwendete IAM Role
+```
+arn:aws:iam::{AWS_ACCOUNT_ID}:role/astro-backend-cicd-role
 ```
 
-#### Option 2: IAM Role (Empfohlen)
-```bash
-# AWS_ROLE_ARN: arn:aws:iam::ACCOUNT-ID:role/GitHubActions-Role
-# AWS_ACCESS_KEY_ID und AWS_SECRET_ACCESS_KEY von einem User mit AssumeRole-Berechtigung
-```
+## 🛠️ IAM Role Setup
 
-## 🛠️ Setup IAM Permissions
+Die Pipeline nutzt die **gleiche IAM Role** wie das Frontend:
 
-### Minimal IAM Policy für Deployment
+### IAM Role Permissions
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "lambda:*",
-                "apigateway:*",
-                "iam:CreateRole",
-                "iam:DeleteRole",
-                "iam:GetRole",
-                "iam:PassRole",
-                "iam:AttachRolePolicy",
-                "iam:DetachRolePolicy",
-                "iam:PutRolePolicy",
-                "iam:DeleteRolePolicy",
-                "logs:CreateLogGroup",
-                "logs:DeleteLogGroup",
-                "logs:DescribeLogGroups",
-                "logs:PutRetentionPolicy",
-                "s3:GetObject",
-                "s3:PutObject",
-                "s3:ListBucket"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetBucketVersioning",
-                "s3:GetBucketLocation",
-                "s3:ListBucket",
-                "s3:GetObject",
-                "s3:PutObject",
-                "s3:DeleteObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::astro-preset-terraform-state",
-                "arn:aws:s3:::astro-preset-terraform-state/*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "dynamodb:GetItem",
-                "dynamodb:PutItem",
-                "dynamodb:DeleteItem"
-            ],
-            "Resource": "arn:aws:dynamodb:*:*:table/terraform-locks"
-        }
-    ]
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:DeleteObject", 
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::astro-frontend-bucket",
+        "arn:aws:s3:::astro-frontend-bucket/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "lambda:UpdateFunctionCode",
+        "lambda:GetFunction",
+        "lambda:ListFunctions"
+      ],
+      "Resource": [
+        "arn:aws:lambda:eu-central-1:*:function:search-api"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::astro-backend-search-api-coverage",
+        "arn:aws:s3:::astro-backend-search-api-coverage/*"
+      ]
+    }
+  ]
 }
 ```
+
+## 📊 Coverage Reports
+
+### S3 Bucket für Coverage
+- **Bucket**: `astro-backend-search-api-coverage`
+- **Format**: `coverage-YYYYMMDD-HHMMSS.html`
+- **Lifecycle**: Dateien werden nach 30 Tagen automatisch gelöscht
+
+### Coverage Zugriff
+Coverage Reports sind nach jedem Deployment verfügbar:
+- **URL**: `https://astro-backend-search-api-coverage.s3.eu-central-1.amazonaws.com/coverage-{timestamp}.html`
+- **Link**: Wird im Pipeline Summary angezeigt
+
+## 🏗️ Infrastructure vs. Code Deployment
+
+### Code Deployment (Pipeline)
+✅ **Was die Pipeline macht:**
+- Go Tests ausführen
+- Lambda Code aktualisieren
+- Coverage Reports hochladen
+- API Endpunkte testen
+
+### Infrastructure (Lokal)
+🏠 **Was lokal gemacht wird:**
+- Terraform Setup (`make deploy`)
+- S3 Bucket erstellen
+- Lambda Funktion initial erstellen
+- API Gateway Setup
 
 ## 📊 Monitoring und Debugging
 
@@ -132,21 +126,25 @@ AWS_ROLE_ARN            # Optional: IAM Role ARN für AssumeRole
 - Sieh dir die Logs jeder Stage an
 
 ### Debug Steps
-1. **Tests fehlschlagen**: Prüfe Go-Code Formatierung und Unit Tests
-2. **Build fehlschlägt**: Überprüfe Go Dependencies
-3. **Terraform Plan/Apply fehlschlägt**: Prüfe AWS Credentials und Permissions
-4. **Deployment Tests fehlschlagen**: Prüfe API Gateway und Lambda Configuration
+1. **Tests fehlschlagen**: Prüfe Go-Code und lokale Tests mit `make test`
+2. **OIDC Fehler**: Prüfe AWS_ACCOUNT_ID Secret und IAM Role
+3. **Lambda Update fehlschlägt**: Prüfe IAM Permissions für Lambda
+4. **S3 Upload fehlschlägt**: Prüfe S3 Bucket Permissions
 
 ### Lokales Debugging
 ```bash
+# In das Funktions-Verzeichnis wechseln
+cd backend/functions/search-api
+
 # Lokale Tests ausführen
 make test
+make test-cover
 
-# Lokalen Build testen
+# Lokalen Build testen  
 make build-local
 
-# Terraform Plan lokal ausführen
-make plan
+# Lambda Update testen (wenn AWS CLI konfiguriert)
+make update-lambda
 ```
 
 ## 🔄 Entwicklungsworkflow
@@ -154,52 +152,102 @@ make plan
 ### Für Feature Development
 1. Erstelle einen Feature Branch
 2. Entwickle in `backend/functions/search-api/`
-3. Erstelle einen Pull Request
-4. Pipeline läuft automatisch (Test + Plan)
-5. Review und Merge
+3. Lokale Tests: `cd backend/functions/search-api && make test`
+4. Erstelle einen Pull Request
+5. Pipeline läuft automatisch (nur Tests)
+6. Review und Merge
+7. Deployment erfolgt automatisch bei Merge auf `main`
 
 ### Für Hotfixes
 1. Erstelle einen Hotfix Branch von `main`
 2. Implementiere den Fix
-3. Erstelle einen Pull Request
-4. Nach Review: Merge in `main`
-5. Deployment erfolgt automatisch
+3. Lokale Tests ausführen
+4. Pull Request erstellen
+5. Nach Review: Merge in `main`
+6. Automatisches Deployment
 
 ## 📈 Performance Optimierungen
 
-### ARM64 Benefits
-- **Preis**: ~20% günstiger als x86_64
-- **Performance**: Bessere Performance bei vielen Workloads
-- **Energie**: Geringerer Energieverbrauch
-
-### Pipeline Optimierungen
+### Pipeline Benefits
+- **OIDC**: Keine AWS Keys nötig - sicherer
 - **Caching**: Go Modules werden gecacht
-- **Parallel Jobs**: Tests und Build laufen parallel
-- **Conditional Deployment**: Nur bei Änderungen in relevanten Dateien
-- **Artifact Cleanup**: Automatische Bereinigung alter Artifacts
+- **Selective Deployment**: Nur bei Code-Änderungen
+- **Schnelle Updates**: Nur Lambda Code, keine Infrastructure
+
+### ARM64 Benefits  
+- **Kosten**: ~20% günstiger als x86_64
+- **Performance**: Bessere Performance bei vielen Workloads
+- **Cold Start**: Schnellere Invoke-Zeiten
 
 ## 🚨 Troubleshooting
 
 ### Häufige Probleme
 
-#### "No such file or directory: bootstrap"
+#### OIDC "Access Denied"
 ```bash
-# Stelle sicher, dass der Build-Step erfolgreich war
-# Überprüfe die Build-Konfiguration im Makefile
-```
-
-#### "Access Denied" beim Terraform Apply
-```bash
-# Überprüfe AWS Credentials und IAM Permissions
-# Stelle sicher, dass der S3 Bucket für Terraform State existiert
+# Prüfe IAM Role und Trust Policy
+# Stelle sicher, dass AWS_ACCOUNT_ID korrekt ist
 ```
 
 #### "Lambda function does not exist"
 ```bash
-# Führe erst `terraform apply` aus, bevor du die Lambda-Funktion aktualisierst
+# Führe erst lokales Infrastructure Setup aus:
+cd infra
+terraform init
+terraform apply
 ```
 
-### Support
-- Erstelle ein Issue im Repository
-- Überprüfe die Workflow-Logs in GitHub Actions
-- Teste lokal mit `make dev` 
+#### S3 "NoSuchBucket"
+```bash
+# S3 Bucket muss via Terraform erstellt werden:
+cd infra
+terraform apply
+```
+
+#### Coverage Upload fehlschlägt
+```bash
+# Prüfe S3 Permissions in IAM Role
+# Stelle sicher, dass Bucket existiert
+```
+
+### Lokale Entwicklung
+
+#### Vollständiger lokaler Test-Workflow
+```bash
+# 1. Setup
+cd backend/functions/search-api
+make deps
+
+# 2. Entwicklung
+make fmt
+make lint  
+make test-cover
+
+# 3. Build und Deploy
+make build
+make update-lambda
+make test-api
+
+# 4. Logs prüfen
+make logs
+```
+
+## 🎯 Best Practices
+
+### Code Quality
+- Immer lokale Tests vor Push: `make test`
+- Code formatieren: `make fmt`
+- Linting prüfen: `make lint`
+- Coverage beachten: `make test-cover`
+
+### Deployment
+- Kleine, inkrementelle Änderungen
+- Feature Branches für neue Features
+- Pull Requests für Code Review
+- Merge nur nach erfolgreichen Tests
+
+### Security
+- Keine AWS Keys in Code oder Secrets
+- OIDC für sichere Authentifizierung
+- Minimale IAM Permissions
+- Regelmäßige Dependency Updates 

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250" viewBox="0 0 400 250" fill="none">
+  <rect width="400" height="250" fill="#f3f4f6"/>
+  
+  <!-- Car silhouette -->
+  <g transform="translate(50, 80)">
+    <!-- Car body -->
+    <path d="M30 60 L70 30 L230 30 L270 60 L300 60 L300 90 L280 90 Q280 105 265 105 Q250 105 250 90 L150 90 Q150 105 135 105 Q120 105 120 90 L30 90 Z" 
+          fill="#d1d5db"/>
+    
+    <!-- Windows -->
+    <path d="M80 30 L220 30 L250 55 L110 55 Z" fill="#e5e7eb"/>
+    
+    <!-- Wheels -->
+    <circle cx="130" cy="90" r="15" fill="#6b7280"/>
+    <circle cx="260" cy="90" r="15" fill="#6b7280"/>
+    <circle cx="130" cy="90" r="8" fill="#374151"/>
+    <circle cx="260" cy="90" r="8" fill="#374151"/>
+    
+    <!-- Headlights -->
+    <ellipse cx="295" cy="65" rx="5" ry="8" fill="#fbbf24"/>
+    
+    <!-- Grille -->
+    <rect x="275" y="55" width="20" height="20" fill="#9ca3af"/>
+  </g>
+  
+  <!-- Icon -->
+  <g transform="translate(165, 40)">
+    <circle cx="35" cy="35" r="30" fill="#e5e7eb" stroke="#d1d5db" stroke-width="2"/>
+    <path d="M20 35 L35 20 L50 35 M35 20 L35 50" stroke="#9ca3af" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="200" y="200" text-anchor="middle" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="14" font-weight="500">
+    Kein Bild verfügbar
+  </text>
+</svg> 
