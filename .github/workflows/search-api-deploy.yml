@@ -5,10 +5,12 @@ on:
     branches: [main, develop]
     paths:
       - 'backend/functions/search-api/**'
+      - '.github/workflows/search-api-deploy.yml'
   pull_request:
     branches: [main]
     paths:
       - 'backend/functions/search-api/**'
+      - '.github/workflows/search-api-deploy.yml'
 
 env:
   GO_VERSION: '1.21'
