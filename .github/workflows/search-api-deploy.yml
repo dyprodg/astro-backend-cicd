@@ -1,0 +1,269 @@
+name: Deploy Search API
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'backend/functions/search-api/**'
+      - 'infra/search-api.tf'
+      - 'infra/main.tf'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/functions/search-api/**'
+      - 'infra/search-api.tf'
+      - 'infra/main.tf'
+
+env:
+  GO_VERSION: '1.21'
+  TERRAFORM_VERSION: '1.6.0'
+  AWS_REGION: 'eu-central-1'
+
+jobs:
+  # Test and lint the Go code
+  test:
+    name: Test Go Code
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('backend/functions/search-api/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Install dependencies
+      working-directory: backend/functions/search-api
+      run: go mod download
+
+    - name: Run tests
+      working-directory: backend/functions/search-api
+      run: go test -v -race -coverprofile=coverage.out
+
+    - name: Run linter
+      working-directory: backend/functions/search-api
+      run: go vet ./...
+
+    - name: Format check
+      working-directory: backend/functions/search-api
+      run: |
+        if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+          echo "Go code is not formatted properly:"
+          gofmt -s -l .
+          exit 1
+        fi
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: backend/functions/search-api/coverage.out
+        flags: search-api
+        name: search-api-coverage
+
+  # Build the Lambda binary
+  build:
+    name: Build Lambda Binary
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('backend/functions/search-api/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Install dependencies
+      working-directory: backend/functions/search-api
+      run: go mod download
+
+    - name: Build Lambda binary
+      working-directory: backend/functions/search-api
+      run: |
+        GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o bootstrap main.go
+
+    - name: Create deployment ZIP
+      working-directory: backend/functions/search-api
+      run: make zip
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: search-api-zip
+        path: backend/functions/search-api/search-api.zip
+        retention-days: 5
+
+  # Terraform plan for pull requests
+  terraform-plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: search-api-zip
+        path: backend/functions/search-api/
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-session-name: GitHubActions-SearchAPI
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+    - name: Terraform Init
+      working-directory: infra
+      run: terraform init
+
+    - name: Terraform Validate
+      working-directory: infra
+      run: terraform validate
+
+    - name: Terraform Plan
+      working-directory: infra
+      run: terraform plan -no-color
+      continue-on-error: false
+
+    - name: Comment Terraform Plan
+      uses: actions/github-script@v7
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          
+          <details><summary>Show Plan</summary>
+          
+          \`\`\`terraform
+          ${{ steps.plan.outputs.stdout }}
+          \`\`\`
+          
+          </details>
+          
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
+
+  # Deploy to AWS (only on main branch)
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: search-api-zip
+        path: backend/functions/search-api/
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-session-name: GitHubActions-SearchAPI-Deploy
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+    - name: Terraform Init
+      working-directory: infra
+      run: terraform init
+
+    - name: Terraform Apply
+      working-directory: infra
+      run: terraform apply -auto-approve
+
+    - name: Get API Endpoints
+      working-directory: infra
+      run: |
+        echo "SEARCH_API_URL=$(terraform output -raw search_api_url)" >> $GITHUB_ENV
+        echo "SEARCH_OPTIONS_ENDPOINT=$(terraform output -raw search_options_endpoint)" >> $GITHUB_ENV
+        echo "SEARCH_ENDPOINT=$(terraform output -raw search_endpoint)" >> $GITHUB_ENV
+
+    - name: Test API Endpoints
+      run: |
+        echo "Testing Search Options endpoint..."
+        curl -f "${{ env.SEARCH_OPTIONS_ENDPOINT }}" | jq .
+        
+        echo "Testing Search endpoint..."
+        curl -f -X POST "${{ env.SEARCH_ENDPOINT }}" \
+          -H "Content-Type: application/json" \
+          -d '{"query": "BMW", "limit": 1}' | jq .
+
+    - name: Post deployment summary
+      run: |
+        echo "## 🚀 Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### API Endpoints:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Search Options:** ${{ env.SEARCH_OPTIONS_ENDPOINT }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Search:** ${{ env.SEARCH_ENDPOINT }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Runtime Information:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Runtime:** provided.al2023 (ARM64)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Memory:** 256MB" >> $GITHUB_STEP_SUMMARY
+        echo "- **Timeout:** 30 seconds" >> $GITHUB_STEP_SUMMARY
+
+  # Cleanup old artifacts
+  cleanup:
+    name: Cleanup Artifacts
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: always()
+    
+    steps:
+    - name: Delete artifacts
+      uses: geekyeggo/delete-artifact@v2
+      with:
+        name: search-api-zip 
