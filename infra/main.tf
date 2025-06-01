@@ -65,6 +65,29 @@ resource "aws_iam_role_policy" "astro_backend_cicd_policy" {
           "arn:aws:s3:::astro-frontend-bucket",
           "arn:aws:s3:::astro-frontend-bucket/*"
         ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "lambda:UpdateFunctionCode",
+          "lambda:GetFunction",
+          "lambda:ListFunctions"
+        ]
+        Resource = [
+          "arn:aws:lambda:eu-central-1:*:function:search-api"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::astro-search-api-coverage-*",
+          "arn:aws:s3:::astro-search-api-coverage-*/*"
+        ]
       }
     ]
   })
