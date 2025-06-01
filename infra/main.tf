@@ -20,7 +20,7 @@ data "aws_caller_identity" "current" {}
 
 # OIDC Provider (falls noch nicht vorhanden)
 data "aws_iam_openid_connect_provider" "github" {
-  url = "https://token.actions.githubusercontent.com"
+  arn = "arn:aws:iam::283919506801:oidc-provider/token.actions.githubusercontent.com"
 }
 
 resource "aws_iam_role" "astro_backend_cicd" {
