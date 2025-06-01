@@ -6,8 +6,10 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"html"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -18,10 +20,31 @@ import (
 //go:embed autos.csv
 var csvContent string
 
+// Constants for validation
+const (
+	MaxQueryLength  = 100
+	MaxStringLength = 1000
+	MaxLimit        = 100
+	MaxOffset       = 10000
+	MinPrice        = 0
+	MaxPrice        = 10000000 // 10M CHF should be enough
+	MinMileage      = 0
+	MaxMileage      = 2000000 // 2M km should be enough
+	MinPower        = 0
+	MaxPower        = 2000 // 2000 HP should be enough
+)
+
+// Regular expressions for validation
+var (
+	alphanumericRegex = regexp.MustCompile(`^[a-zA-Z0-9\s\-\.äöüÄÖÜß]*$`)
+	safeStringRegex   = regexp.MustCompile(`^[a-zA-Z0-9\s\-\.\,\;\(\)äöüÄÖÜß]*$`)
+)
+
 // Car represents a single car entry
 type Car struct {
 	ID           int      `json:"id"`
 	Title        string   `json:"title"`
+	Brand        string   `json:"brand"`
 	PriceCHF     int      `json:"price_chf"`
 	LeasingText  string   `json:"leasing_text"`
 	FirstReg     string   `json:"first_registration"`
@@ -42,6 +65,7 @@ type Car struct {
 
 // SearchOptions represents available search filter options
 type SearchOptions struct {
+	Brands        []string `json:"brands"`
 	CarTypes      []string `json:"car_types"`
 	Transmissions []string `json:"transmissions"`
 	Fuels         []string `json:"fuels"`
@@ -57,6 +81,7 @@ type SearchOptions struct {
 // SearchRequest represents search parameters
 type SearchRequest struct {
 	Query        string `json:"query,omitempty"`
+	Brand        string `json:"brand,omitempty"`
 	CarType      string `json:"car_type,omitempty"`
 	Transmission string `json:"transmission,omitempty"`
 	Fuel         string `json:"fuel,omitempty"`
@@ -79,7 +104,224 @@ type SearchResponse struct {
 	Offset int   `json:"offset"`
 }
 
+// ValidationError represents a validation error
+type ValidationError struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
+}
+
+type ErrorResponse struct {
+	Error       string            `json:"error"`
+	Validations []ValidationError `json:"validations,omitempty"`
+}
+
 var cars []Car
+
+// sanitizeString removes potentially dangerous characters and HTML-escapes the result
+func sanitizeString(s string) string {
+	// Trim whitespace
+	s = strings.TrimSpace(s)
+
+	// Limit length
+	if len(s) > MaxStringLength {
+		s = s[:MaxStringLength]
+	}
+
+	// HTML escape to prevent XSS
+	s = html.EscapeString(s)
+
+	return s
+}
+
+// validateString checks if a string contains only safe characters
+func validateString(s string, regex *regexp.Regexp) bool {
+	return regex.MatchString(s)
+}
+
+// validateIntRange checks if an integer is within a valid range
+func validateIntRange(value, min, max int) bool {
+	return value >= min && value <= max
+}
+
+// validateSearchRequest validates and sanitizes the search request
+func validateSearchRequest(req *SearchRequest) []ValidationError {
+	var errors []ValidationError
+
+	// Validate and sanitize query
+	if req.Query != "" {
+		if len(req.Query) > MaxQueryLength {
+			errors = append(errors, ValidationError{
+				Field:   "query",
+				Message: fmt.Sprintf("Query too long, maximum %d characters", MaxQueryLength),
+			})
+		}
+		if !validateString(req.Query, alphanumericRegex) {
+			errors = append(errors, ValidationError{
+				Field:   "query",
+				Message: "Query contains invalid characters",
+			})
+		}
+		req.Query = sanitizeString(req.Query)
+	}
+
+	// Validate and sanitize brand
+	if req.Brand != "" {
+		if !validateString(req.Brand, alphanumericRegex) {
+			errors = append(errors, ValidationError{
+				Field:   "brand",
+				Message: "Brand contains invalid characters",
+			})
+		}
+		req.Brand = sanitizeString(req.Brand)
+	}
+
+	// Validate car type (must be from predefined list)
+	if req.CarType != "" {
+		req.CarType = sanitizeString(req.CarType)
+	}
+
+	// Validate transmission (must be from predefined list)
+	if req.Transmission != "" {
+		req.Transmission = sanitizeString(req.Transmission)
+	}
+
+	// Validate fuel (must be from predefined list)
+	if req.Fuel != "" {
+		req.Fuel = sanitizeString(req.Fuel)
+	}
+
+	// Validate drive (must be from predefined list)
+	if req.Drive != "" {
+		req.Drive = sanitizeString(req.Drive)
+	}
+
+	// Validate price ranges
+	if req.MinPrice != nil {
+		if !validateIntRange(*req.MinPrice, MinPrice, MaxPrice) {
+			errors = append(errors, ValidationError{
+				Field:   "min_price",
+				Message: fmt.Sprintf("Min price must be between %d and %d", MinPrice, MaxPrice),
+			})
+		}
+	}
+	if req.MaxPrice != nil {
+		if !validateIntRange(*req.MaxPrice, MinPrice, MaxPrice) {
+			errors = append(errors, ValidationError{
+				Field:   "max_price",
+				Message: fmt.Sprintf("Max price must be between %d and %d", MinPrice, MaxPrice),
+			})
+		}
+	}
+
+	// Validate mileage ranges
+	if req.MinMileage != nil {
+		if !validateIntRange(*req.MinMileage, MinMileage, MaxMileage) {
+			errors = append(errors, ValidationError{
+				Field:   "min_mileage",
+				Message: fmt.Sprintf("Min mileage must be between %d and %d", MinMileage, MaxMileage),
+			})
+		}
+	}
+	if req.MaxMileage != nil {
+		if !validateIntRange(*req.MaxMileage, MinMileage, MaxMileage) {
+			errors = append(errors, ValidationError{
+				Field:   "max_mileage",
+				Message: fmt.Sprintf("Max mileage must be between %d and %d", MinMileage, MaxMileage),
+			})
+		}
+	}
+
+	// Validate power ranges
+	if req.MinPower != nil {
+		if !validateIntRange(*req.MinPower, MinPower, MaxPower) {
+			errors = append(errors, ValidationError{
+				Field:   "min_power",
+				Message: fmt.Sprintf("Min power must be between %d and %d", MinPower, MaxPower),
+			})
+		}
+	}
+	if req.MaxPower != nil {
+		if !validateIntRange(*req.MaxPower, MinPower, MaxPower) {
+			errors = append(errors, ValidationError{
+				Field:   "max_power",
+				Message: fmt.Sprintf("Max power must be between %d and %d", MinPower, MaxPower),
+			})
+		}
+	}
+
+	// Validate limit and offset
+	if req.Limit < 0 || req.Limit > MaxLimit {
+		req.Limit = 10 // Set to default
+	}
+	if req.Offset < 0 || req.Offset > MaxOffset {
+		req.Offset = 0 // Set to default
+	}
+
+	return errors
+}
+
+// extractBrandFromTitle extracts the brand from a car title
+func extractBrandFromTitle(title string) string {
+	// Remove common prefixes and clean the title
+	title = strings.TrimSpace(title)
+
+	// Split by space and take the first word as brand
+	parts := strings.Fields(title)
+	if len(parts) == 0 {
+		return ""
+	}
+
+	brand := parts[0]
+
+	// Handle special cases like "Mercedes-Benz"
+	if strings.ToLower(brand) == "mercedes-benz" || strings.ToLower(brand) == "mercedes" {
+		return "Mercedes-Benz"
+	}
+
+	return brand
+}
+
+// normalizeString removes diacritics and converts to lowercase for comparison
+func normalizeString(s string) string {
+	// Convert to lowercase
+	s = strings.ToLower(s)
+
+	// Replace common diacritics
+	replacements := map[rune]rune{
+		'ä': 'a', 'ö': 'o', 'ü': 'u', 'ß': 's',
+		'à': 'a', 'á': 'a', 'â': 'a', 'ã': 'a', 'å': 'a',
+		'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e',
+		'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i',
+		'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o',
+		'ù': 'u', 'ú': 'u', 'û': 'u',
+		'ý': 'y', 'ÿ': 'y',
+		'ñ': 'n', 'ç': 'c',
+		'š': 's', 'č': 'c', 'ž': 'z',
+	}
+
+	var result strings.Builder
+	for _, r := range s {
+		if replacement, exists := replacements[r]; exists {
+			result.WriteRune(replacement)
+		} else {
+			result.WriteRune(r)
+		}
+	}
+
+	return result.String()
+}
+
+// brandMatches checks if a brand matches the search term (case-insensitive, partial)
+func brandMatches(brand, searchTerm string) bool {
+	if searchTerm == "" {
+		return true
+	}
+
+	normalizedBrand := normalizeString(brand)
+	normalizedSearch := normalizeString(searchTerm)
+
+	return strings.Contains(normalizedBrand, normalizedSearch)
+}
 
 // loadCarsFromCSV loads car data from the embedded autos.csv file
 func loadCarsFromCSV() error {
@@ -145,37 +387,56 @@ func parseCarRecord(record []string) (Car, error) {
 
 	equipment := []string{}
 	if record[15] != "" {
-		equipment = strings.Split(record[15], ";")
+		equipmentParts := strings.Split(record[15], ";")
+		for _, part := range equipmentParts {
+			// Sanitize each equipment part
+			sanitized := sanitizeString(part)
+			if sanitized != "" {
+				equipment = append(equipment, sanitized)
+			}
+		}
 	}
 
 	imageURLs := []string{}
 	if record[17] != "" {
-		imageURLs = strings.Split(record[17], ";")
+		imageParts := strings.Split(record[17], ";")
+		for _, part := range imageParts {
+			// Basic URL validation - ensure it's a valid HTTP(S) URL
+			part = strings.TrimSpace(part)
+			if strings.HasPrefix(part, "http://") || strings.HasPrefix(part, "https://") {
+				imageURLs = append(imageURLs, part)
+			}
+		}
 	}
+
+	title := sanitizeString(record[1])
+	brand := extractBrandFromTitle(title)
 
 	return Car{
 		ID:           id,
-		Title:        record[1],
+		Title:        title,
+		Brand:        brand,
 		PriceCHF:     priceCHF,
-		LeasingText:  record[3],
-		FirstReg:     record[4],
-		CarType:      record[5],
+		LeasingText:  sanitizeString(record[3]),
+		FirstReg:     sanitizeString(record[4]),
+		CarType:      sanitizeString(record[5]),
 		MileageKM:    mileageKM,
-		Transmission: record[7],
-		Fuel:         record[8],
-		Drive:        record[9],
+		Transmission: sanitizeString(record[7]),
+		Fuel:         sanitizeString(record[8]),
+		Drive:        sanitizeString(record[9]),
 		PowerHP:      powerHP,
 		PowerKW:      powerKW,
 		MFK:          mfk,
 		Warranty:     warranty,
-		WarrantyText: record[14],
+		WarrantyText: sanitizeString(record[14]),
 		Equipment:    equipment,
-		Description:  record[16],
+		Description:  sanitizeString(record[16]),
 		ImageURLs:    imageURLs,
 	}, nil
 }
 
 func getSearchOptions() SearchOptions {
+	brands := make(map[string]bool)
 	carTypes := make(map[string]bool)
 	transmissions := make(map[string]bool)
 	fuels := make(map[string]bool)
@@ -186,6 +447,9 @@ func getSearchOptions() SearchOptions {
 	minPower, maxPower := 999, 0
 
 	for _, car := range cars {
+		if car.Brand != "" {
+			brands[car.Brand] = true
+		}
 		carTypes[car.CarType] = true
 		transmissions[car.Transmission] = true
 		fuels[car.Fuel] = true
@@ -214,6 +478,7 @@ func getSearchOptions() SearchOptions {
 	}
 
 	options := SearchOptions{
+		Brands:        mapKeysToSlice(brands),
 		CarTypes:      mapKeysToSlice(carTypes),
 		Transmissions: mapKeysToSlice(transmissions),
 		Fuels:         mapKeysToSlice(fuels),
@@ -248,7 +513,7 @@ func searchCars(req SearchRequest) SearchResponse {
 
 	total := len(filtered)
 
-	// Apply pagination
+	// Apply pagination with validated limits
 	if req.Limit <= 0 {
 		req.Limit = 10 // Default limit
 	}
@@ -278,13 +543,18 @@ func searchCars(req SearchRequest) SearchResponse {
 func matchesCriteria(car Car, req SearchRequest) bool {
 	// Text search in title and description
 	if req.Query != "" {
-		query := strings.ToLower(req.Query)
-		title := strings.ToLower(car.Title)
-		description := strings.ToLower(car.Description)
+		query := normalizeString(req.Query)
+		title := normalizeString(car.Title)
+		description := normalizeString(car.Description)
 
 		if !strings.Contains(title, query) && !strings.Contains(description, query) {
 			return false
 		}
+	}
+
+	// Filter by brand (case-insensitive, partial match)
+	if req.Brand != "" && !brandMatches(car.Brand, req.Brand) {
+		return false
 	}
 
 	// Filter by car type
@@ -336,14 +606,26 @@ func matchesCriteria(car Car, req SearchRequest) bool {
 
 func corsHeaders() map[string]string {
 	return map[string]string{
-		"Access-Control-Allow-Origin":  "*",
+		"Access-Control-Allow-Origin":  "*", // In production, restrict this to specific domains
 		"Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 		"Access-Control-Allow-Headers": "Content-Type, Authorization",
 		"Content-Type":                 "application/json",
+		"X-Content-Type-Options":       "nosniff",
+		"X-Frame-Options":              "DENY",
+		"X-XSS-Protection":             "1; mode=block",
 	}
 }
 
 func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	// Basic request validation
+	if len(request.Body) > 10000 { // 10KB limit for request body
+		return events.APIGatewayProxyResponse{
+			StatusCode: http.StatusRequestEntityTooLarge,
+			Headers:    corsHeaders(),
+			Body:       `{"error": "Request body too large"}`,
+		}, nil
+	}
+
 	// Handle CORS preflight
 	if request.HTTPMethod == "OPTIONS" {
 		return events.APIGatewayProxyResponse{
@@ -367,6 +649,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		options := getSearchOptions()
 		body, err := json.Marshal(options)
 		if err != nil {
+			log.Printf("Error marshaling search options: %v", err)
 			return events.APIGatewayProxyResponse{
 				StatusCode: http.StatusInternalServerError,
 				Headers:    headers,
@@ -391,6 +674,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 		var searchReq SearchRequest
 		if err := json.Unmarshal([]byte(request.Body), &searchReq); err != nil {
+			log.Printf("Error unmarshaling search request: %v", err)
 			return events.APIGatewayProxyResponse{
 				StatusCode: http.StatusBadRequest,
 				Headers:    headers,
@@ -398,9 +682,24 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 			}, nil
 		}
 
+		// Validate request
+		if validationErrors := validateSearchRequest(&searchReq); len(validationErrors) > 0 {
+			errorResponse := ErrorResponse{
+				Error:       "Validation failed",
+				Validations: validationErrors,
+			}
+			body, _ := json.Marshal(errorResponse)
+			return events.APIGatewayProxyResponse{
+				StatusCode: http.StatusBadRequest,
+				Headers:    headers,
+				Body:       string(body),
+			}, nil
+		}
+
 		response := searchCars(searchReq)
 		body, err := json.Marshal(response)
 		if err != nil {
+			log.Printf("Error marshaling search response: %v", err)
 			return events.APIGatewayProxyResponse{
 				StatusCode: http.StatusInternalServerError,
 				Headers:    headers,

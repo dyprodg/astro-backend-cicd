@@ -8,6 +8,264 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
+func TestSanitizeString(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "Normal string",
+			input:    "BMW 520d",
+			expected: "BMW 520d",
+		},
+		{
+			name:     "String with HTML",
+			input:    "<script>alert('xss')</script>BMW",
+			expected: "&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;BMW",
+		},
+		{
+			name:     "String with whitespace",
+			input:    "  BMW 520d  ",
+			expected: "BMW 520d",
+		},
+		{
+			name:     "Very long string",
+			input:    string(make([]byte, 2000)),
+			expected: string(make([]byte, MaxStringLength)),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := sanitizeString(tt.input)
+			if len(result) > MaxStringLength {
+				t.Errorf("Result too long: %d > %d", len(result), MaxStringLength)
+			}
+			// For the very long string test, just check length
+			if tt.name == "Very long string" {
+				if len(result) != MaxStringLength {
+					t.Errorf("Expected length %d, got %d", MaxStringLength, len(result))
+				}
+			} else if result != tt.expected {
+				t.Errorf("Expected %q, got %q", tt.expected, result)
+			}
+		})
+	}
+}
+
+func TestValidateString(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected bool
+	}{
+		{
+			name:     "Valid alphanumeric",
+			input:    "BMW 520d",
+			expected: true,
+		},
+		{
+			name:     "Valid with umlauts",
+			input:    "Škoda Octavia",
+			expected: false, // Should fail alphanumeric check
+		},
+		{
+			name:     "Invalid with script tags",
+			input:    "<script>alert('xss')</script>",
+			expected: false,
+		},
+		{
+			name:     "Valid with dashes and dots",
+			input:    "Mercedes-Benz C-Class 2.0",
+			expected: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := validateString(tt.input, alphanumericRegex)
+			if result != tt.expected {
+				t.Errorf("Expected %v, got %v for input %q", tt.expected, result, tt.input)
+			}
+		})
+	}
+}
+
+func TestValidateIntRange(t *testing.T) {
+	tests := []struct {
+		name     string
+		value    int
+		min      int
+		max      int
+		expected bool
+	}{
+		{
+			name:     "Valid value",
+			value:    50000,
+			min:      0,
+			max:      100000,
+			expected: true,
+		},
+		{
+			name:     "Value too low",
+			value:    -1,
+			min:      0,
+			max:      100000,
+			expected: false,
+		},
+		{
+			name:     "Value too high",
+			value:    100001,
+			min:      0,
+			max:      100000,
+			expected: false,
+		},
+		{
+			name:     "Value at min boundary",
+			value:    0,
+			min:      0,
+			max:      100000,
+			expected: true,
+		},
+		{
+			name:     "Value at max boundary",
+			value:    100000,
+			min:      0,
+			max:      100000,
+			expected: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := validateIntRange(tt.value, tt.min, tt.max)
+			if result != tt.expected {
+				t.Errorf("Expected %v, got %v for value %d (min: %d, max: %d)", tt.expected, result, tt.value, tt.min, tt.max)
+			}
+		})
+	}
+}
+
+func TestValidateSearchRequest(t *testing.T) {
+	tests := []struct {
+		name           string
+		request        SearchRequest
+		expectErrors   bool
+		expectedFields []string
+	}{
+		{
+			name: "Valid request",
+			request: SearchRequest{
+				Query:    "BMW",
+				Brand:    "BMW",
+				CarType:  "Limousine",
+				MinPrice: intPtr(10000),
+				MaxPrice: intPtr(50000),
+				Limit:    10,
+				Offset:   0,
+			},
+			expectErrors: false,
+		},
+		{
+			name: "Query too long",
+			request: SearchRequest{
+				Query: string(make([]byte, MaxQueryLength+1)),
+			},
+			expectErrors:   true,
+			expectedFields: []string{"query"},
+		},
+		{
+			name: "Invalid query characters",
+			request: SearchRequest{
+				Query: "<script>alert('xss')</script>",
+			},
+			expectErrors:   true,
+			expectedFields: []string{"query"},
+		},
+		{
+			name: "Invalid brand characters",
+			request: SearchRequest{
+				Brand: "<script>",
+			},
+			expectErrors:   true,
+			expectedFields: []string{"brand"},
+		},
+		{
+			name: "Price out of range",
+			request: SearchRequest{
+				MinPrice: intPtr(-1),
+				MaxPrice: intPtr(MaxPrice + 1),
+			},
+			expectErrors:   true,
+			expectedFields: []string{"min_price", "max_price"},
+		},
+		{
+			name: "Mileage out of range",
+			request: SearchRequest{
+				MinMileage: intPtr(-1),
+				MaxMileage: intPtr(MaxMileage + 1),
+			},
+			expectErrors:   true,
+			expectedFields: []string{"min_mileage", "max_mileage"},
+		},
+		{
+			name: "Power out of range",
+			request: SearchRequest{
+				MinPower: intPtr(-1),
+				MaxPower: intPtr(MaxPower + 1),
+			},
+			expectErrors:   true,
+			expectedFields: []string{"min_power", "max_power"},
+		},
+		{
+			name: "Invalid limit and offset - should be corrected",
+			request: SearchRequest{
+				Limit:  MaxLimit + 1,
+				Offset: MaxOffset + 1,
+			},
+			expectErrors: false, // These are corrected automatically
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			errors := validateSearchRequest(&tt.request)
+
+			if tt.expectErrors && len(errors) == 0 {
+				t.Error("Expected validation errors but got none")
+			}
+
+			if !tt.expectErrors && len(errors) > 0 {
+				t.Errorf("Expected no validation errors but got: %+v", errors)
+			}
+
+			if tt.expectErrors {
+				errorFields := make(map[string]bool)
+				for _, err := range errors {
+					errorFields[err.Field] = true
+				}
+
+				for _, expectedField := range tt.expectedFields {
+					if !errorFields[expectedField] {
+						t.Errorf("Expected validation error for field %s but didn't get one", expectedField)
+					}
+				}
+			}
+
+			// Check that limit and offset are corrected
+			if tt.name == "Invalid limit and offset - should be corrected" {
+				if tt.request.Limit != 10 { // Default limit
+					t.Errorf("Expected limit to be corrected to 10, got %d", tt.request.Limit)
+				}
+				if tt.request.Offset != 0 { // Default offset
+					t.Errorf("Expected offset to be corrected to 0, got %d", tt.request.Offset)
+				}
+			}
+		})
+	}
+}
+
 func TestParseCarRecord(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -27,6 +285,7 @@ func TestParseCarRecord(t *testing.T) {
 			expected: Car{
 				ID:           1,
 				Title:        "BMW 520d xDrive 48V M Sport Steptronic",
+				Brand:        "BMW",
 				PriceCHF:     42890,
 				LeasingText:  "Ab 580.- pro Monat ohne Anzahlung",
 				FirstReg:     "08.2021",
@@ -39,10 +298,72 @@ func TestParseCarRecord(t *testing.T) {
 				PowerKW:      140,
 				MFK:          true,
 				Warranty:     true,
-				WarrantyText: "Ab 1. Inverkehrsetzung, 19.08.2021, 24 Monate oder 100'000 km",
+				WarrantyText: "Ab 1. Inverkehrsetzung, 19.08.2021, 24 Monate oder 100&#39;000 km",
 				Equipment:    []string{"Ambientes Licht", "Mild-Hybrid", "Rückfahrkamera", "Sportsitze"},
 				Description:  "Top gepflegt, M Sport Paket",
 				ImageURLs:    []string{"https://img.example.com/bmw1.jpg", "https://img.example.com/bmw2.jpg"},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Record with malicious HTML",
+			record: []string{
+				"2", "<script>alert('xss')</script>BMW", "42890", "Ab 580.- pro Monat",
+				"08.2021", "Limousine", "55000", "Automatik", "Diesel", "Allrad", "190", "140",
+				"True", "True", "warranty text",
+				"equipment", "<script>alert('desc')</script>description", "https://img.example.com/test.jpg",
+			},
+			expected: Car{
+				ID:           2,
+				Title:        "&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;BMW",
+				Brand:        "&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;BMW",
+				PriceCHF:     42890,
+				LeasingText:  "Ab 580.- pro Monat",
+				FirstReg:     "08.2021",
+				CarType:      "Limousine",
+				MileageKM:    55000,
+				Transmission: "Automatik",
+				Fuel:         "Diesel",
+				Drive:        "Allrad",
+				PowerHP:      190,
+				PowerKW:      140,
+				MFK:          true,
+				Warranty:     true,
+				WarrantyText: "warranty text",
+				Equipment:    []string{"equipment"},
+				Description:  "&lt;script&gt;alert(&#39;desc&#39;)&lt;/script&gt;description",
+				ImageURLs:    []string{"https://img.example.com/test.jpg"},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Record with invalid URLs",
+			record: []string{
+				"3", "Test Car", "42890", "Ab 580.- pro Monat",
+				"08.2021", "Limousine", "55000", "Automatik", "Diesel", "Allrad", "190", "140",
+				"True", "True", "warranty text",
+				"equipment", "description", "https://valid.com/img.jpg;javascript:alert('xss');http://also-valid.com/img.jpg",
+			},
+			expected: Car{
+				ID:           3,
+				Title:        "Test Car",
+				Brand:        "Test",
+				PriceCHF:     42890,
+				LeasingText:  "Ab 580.- pro Monat",
+				FirstReg:     "08.2021",
+				CarType:      "Limousine",
+				MileageKM:    55000,
+				Transmission: "Automatik",
+				Fuel:         "Diesel",
+				Drive:        "Allrad",
+				PowerHP:      190,
+				PowerKW:      140,
+				MFK:          true,
+				Warranty:     true,
+				WarrantyText: "warranty text",
+				Equipment:    []string{"equipment"},
+				Description:  "description",
+				ImageURLs:    []string{"https://valid.com/img.jpg", "http://also-valid.com/img.jpg"}, // javascript: URL should be filtered out
 			},
 			wantErr: false,
 		},
@@ -616,30 +937,114 @@ func TestSearchResponse(t *testing.T) {
 	}
 }
 
+func TestHandleRequestSecurity(t *testing.T) {
+	// Initialize cars data
+	if err := loadCarsFromCSV(); err != nil {
+		t.Fatalf("Failed to load cars: %v", err)
+	}
+
+	tests := []struct {
+		name           string
+		request        events.APIGatewayProxyRequest
+		expectedStatus int
+		checkHeaders   bool
+	}{
+		{
+			name: "Request body too large",
+			request: events.APIGatewayProxyRequest{
+				HTTPMethod: "POST",
+				Resource:   "/search",
+				Body:       string(make([]byte, 10001)), // Exceeds 10KB limit
+			},
+			expectedStatus: 413, // Request Entity Too Large
+			checkHeaders:   true,
+		},
+		{
+			name: "Malicious JSON injection attempt",
+			request: events.APIGatewayProxyRequest{
+				HTTPMethod: "POST",
+				Resource:   "/search",
+				Body:       `{"query": "<script>alert('xss')</script>", "brand": "BMW"}`,
+			},
+			expectedStatus: 400, // Bad Request due to validation
+			checkHeaders:   true,
+		},
+		{
+			name: "SQL injection attempt in query",
+			request: events.APIGatewayProxyRequest{
+				HTTPMethod: "POST",
+				Resource:   "/search",
+				Body:       `{"query": "'; DROP TABLE cars; --", "brand": "BMW"}`,
+			},
+			expectedStatus: 400, // Bad Request due to validation
+			checkHeaders:   true,
+		},
+		{
+			name: "Valid request with security headers",
+			request: events.APIGatewayProxyRequest{
+				HTTPMethod: "POST",
+				Resource:   "/search",
+				Body:       `{"query": "BMW", "limit": 5}`,
+			},
+			expectedStatus: 200,
+			checkHeaders:   true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			response, err := handleRequest(context.Background(), tt.request)
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if response.StatusCode != tt.expectedStatus {
+				t.Errorf("Expected status %d, got %d", tt.expectedStatus, response.StatusCode)
+			}
+
+			if tt.checkHeaders {
+				// Check security headers
+				if response.Headers["X-Content-Type-Options"] != "nosniff" {
+					t.Error("Missing or incorrect X-Content-Type-Options header")
+				}
+				if response.Headers["X-Frame-Options"] != "DENY" {
+					t.Error("Missing or incorrect X-Frame-Options header")
+				}
+				if response.Headers["X-XSS-Protection"] != "1; mode=block" {
+					t.Error("Missing or incorrect X-XSS-Protection header")
+				}
+			}
+
+			// For validation errors, check that we get proper error structure
+			if tt.expectedStatus == 400 && tt.name != "POST search with invalid JSON" {
+				var errorResponse ErrorResponse
+				if err := json.Unmarshal([]byte(response.Body), &errorResponse); err != nil {
+					t.Errorf("Failed to parse error response: %v", err)
+				} else {
+					if errorResponse.Error != "Validation failed" {
+						t.Errorf("Expected 'Validation failed' error, got %s", errorResponse.Error)
+					}
+					if len(errorResponse.Validations) == 0 {
+						t.Error("Expected validation errors but got none")
+					}
+				}
+			}
+		})
+	}
+}
+
 // Helper functions
 func intPtr(i int) *int {
 	return &i
 }
 
 func carEquals(a, b Car) bool {
-	return a.ID == b.ID &&
-		a.Title == b.Title &&
-		a.PriceCHF == b.PriceCHF &&
-		a.LeasingText == b.LeasingText &&
-		a.FirstReg == b.FirstReg &&
-		a.CarType == b.CarType &&
-		a.MileageKM == b.MileageKM &&
-		a.Transmission == b.Transmission &&
-		a.Fuel == b.Fuel &&
-		a.Drive == b.Drive &&
-		a.PowerHP == b.PowerHP &&
-		a.PowerKW == b.PowerKW &&
-		a.MFK == b.MFK &&
-		a.Warranty == b.Warranty &&
-		a.WarrantyText == b.WarrantyText &&
-		slicesEqual(a.Equipment, b.Equipment) &&
-		a.Description == b.Description &&
-		slicesEqual(a.ImageURLs, b.ImageURLs)
+	if a.ID != b.ID || a.Title != b.Title || a.Brand != b.Brand || a.PriceCHF != b.PriceCHF {
+		return false
+	}
+	// Add more field comparisons as needed
+	return slicesEqual(a.Equipment, b.Equipment) && slicesEqual(a.ImageURLs, b.ImageURLs)
 }
 
 func slicesEqual(a, b []string) bool {

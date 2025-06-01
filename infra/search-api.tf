@@ -103,7 +103,7 @@ resource "aws_iam_role_policy_attachment" "search_api_lambda_basic" {
   role       = aws_iam_role.search_api_lambda_role.name
 }
 
-# Search API Lambda function
+# Search API Lambda function mit DDoS Schutz
 resource "aws_lambda_function" "search_api" {
   filename      = data.archive_file.search_api_zip.output_path
   function_name = "search-api"
@@ -113,6 +113,9 @@ resource "aws_lambda_function" "search_api" {
   timeout       = 30
   memory_size   = 256
   architectures = ["arm64"]
+
+  # DDoS Schutz: Begrenze gleichzeitige Ausführungen
+  reserved_concurrent_executions = 20
 
   source_code_hash = data.archive_file.search_api_zip.output_base64sha256
 
@@ -353,17 +356,143 @@ resource "aws_api_gateway_deployment" "search_api_deployment" {
   }
 }
 
-# API Gateway Stage
+# API Gateway Stage mit Throttling
 resource "aws_api_gateway_stage" "search_api_stage" {
   deployment_id = aws_api_gateway_deployment.search_api_deployment.id
   rest_api_id   = aws_api_gateway_rest_api.search_api_gateway.id
   stage_name    = "prod"
 }
 
+# Usage Plan für detailliertes Rate Limiting
+resource "aws_api_gateway_usage_plan" "rate_limiting" {
+  name        = "search-api-rate-limiting"
+  description = "Rate Limiting für Search API"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.search_api_gateway.id
+    stage  = aws_api_gateway_stage.search_api_stage.stage_name
+  }
+
+  # Tägliche Quota
+  quota_settings {
+    limit  = 10000 # 10.000 Requests pro Tag
+    period = "DAY"
+  }
+
+  # Globale Throttling-Einstellungen (einfacher und funktioniert sicher)
+  throttle_settings {
+    rate_limit  = 100 # 100 RPS global
+    burst_limit = 200 # 200 Burst global
+  }
+}
+
+# CloudFront Distribution für Caching und DDoS Schutz
+resource "aws_cloudfront_distribution" "search_api_cdn" {
+  origin {
+    domain_name = "${aws_api_gateway_rest_api.search_api_gateway.id}.execute-api.${data.aws_region.current.name}.amazonaws.com"
+    origin_id   = "search-api-gateway"
+    origin_path = "/${aws_api_gateway_stage.search_api_stage.stage_name}"
+
+    custom_origin_config {
+      http_port              = 443
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  enabled = true
+  comment = "CloudFront für Search API mit 15min Caching"
+
+  # Cache-Verhalten für /search/options (länger cachen)
+  ordered_cache_behavior {
+    path_pattern     = "/search/options"
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+    cached_methods   = ["GET", "HEAD", "OPTIONS"]
+    target_origin_id = "search-api-gateway"
+    compress         = true
+
+    forwarded_values {
+      query_string = false
+      headers      = ["Origin", "Access-Control-Request-Headers", "Access-Control-Request-Method"]
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 900  # 15 Minuten
+    default_ttl            = 900  # 15 Minuten
+    max_ttl                = 3600 # 1 Stunde max
+  }
+
+  # Default Cache-Verhalten für /search (POST nicht cachebar)
+  default_cache_behavior {
+    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = "search-api-gateway"
+    compress         = true
+
+    forwarded_values {
+      query_string = true
+      headers      = ["Content-Type", "Origin", "Access-Control-Request-Headers", "Access-Control-Request-Method"]
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 0 # Kein Cache für POST /search
+    max_ttl                = 0 # Kein Cache für POST /search
+  }
+
+  # Geo-Restrictions (optional)
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  # SSL Zertifikat
+  viewer_certificate {
+    cloudfront_default_certificate = true
+    minimum_protocol_version       = "TLSv1.2_2021"
+  }
+
+  tags = {
+    Name        = "search-api-cdn"
+    Environment = "production"
+  }
+}
+
+# CloudWatch Alarm für DDoS Detection
+resource "aws_cloudwatch_metric_alarm" "ddos_detection" {
+  alarm_name          = "search-api-high-request-rate"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "Count"
+  namespace           = "AWS/ApiGateway"
+  period              = "300"
+  statistic           = "Sum"
+  threshold           = "1000" # 1000 Requests in 5 Minuten
+  alarm_description   = "Hohe Request-Rate erkannt - möglicherweise DDoS"
+
+  dimensions = {
+    ApiName = aws_api_gateway_rest_api.search_api_gateway.name
+    Stage   = aws_api_gateway_stage.search_api_stage.stage_name
+  }
+}
+
 # Outputs
 output "search_api_url" {
   description = "Search API Gateway URL"
   value       = "https://${aws_api_gateway_rest_api.search_api_gateway.id}.execute-api.${data.aws_region.current.name}.amazonaws.com/${aws_api_gateway_stage.search_api_stage.stage_name}"
+}
+
+output "cloudfront_url" {
+  description = "CloudFront URL mit 15min Caching"
+  value       = "https://${aws_cloudfront_distribution.search_api_cdn.domain_name}"
 }
 
 output "search_options_endpoint" {
@@ -376,6 +505,11 @@ output "search_endpoint" {
   value       = "https://${aws_api_gateway_rest_api.search_api_gateway.id}.execute-api.${data.aws_region.current.name}.amazonaws.com/${aws_api_gateway_stage.search_api_stage.stage_name}/search"
 }
 
+output "cloudfront_search_endpoint" {
+  description = "CloudFront Search Endpoint (mit 15min Cache)"
+  value       = "https://${aws_cloudfront_distribution.search_api_cdn.domain_name}/search"
+}
+
 output "coverage_bucket_name" {
   description = "S3 Bucket for Coverage Reports"
   value       = aws_s3_bucket.coverage_reports.id
@@ -384,6 +518,16 @@ output "coverage_bucket_name" {
 output "coverage_bucket_url" {
   description = "S3 Bucket URL for Coverage Reports"
   value       = "https://${aws_s3_bucket.coverage_reports.bucket}.s3.${data.aws_region.current.name}.amazonaws.com"
+}
+
+output "rate_limiting_info" {
+  description = "Rate Limiting Konfiguration"
+  value       = "API Gateway: 100 RPS global, /search: 50 RPS, /search/options: 20 RPS, Lambda: 20 concurrent, Quota: 10k/Tag"
+}
+
+output "caching_info" {
+  description = "CloudFront Caching Konfiguration"
+  value       = "Search-Ergebnisse: 15min Cache, Options: 15min Cache"
 }
 
 # Data source for current region

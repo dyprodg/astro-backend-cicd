@@ -3,7 +3,7 @@ import CarCard from './CarCard.astro';
 import Pagination from './Pagination.astro';
 
 // Deine API URL - anpassen falls nötig
-const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod';
+const API_BASE_URL = 'https://d20whpdmgfymfw.cloudfront.net';
 
 ---
 <div class="car-search-container">
@@ -25,6 +25,13 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
       </div>
       
       <div class="search-field">
+        <label for="brand">Marke</label>
+        <select id="brand" name="brand">
+          <option value="">Alle Marken</option>
+        </select>
+      </div>
+      
+      <div class="search-field">
         <label for="carType">Fahrzeugtyp</label>
         <select id="carType" name="car_type">
           <option value="">Alle Typen</option>
@@ -37,16 +44,16 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
           <option value="">Alle</option>
         </select>
       </div>
-      
+    </div>
+    
+    <div class="search-row">
       <div class="search-field">
         <label for="transmission">Getriebe</label>
         <select id="transmission" name="transmission">
           <option value="">Alle</option>
         </select>
       </div>
-    </div>
-    
-    <div class="search-row">
+      
       <div class="search-field">
         <label for="minPrice">Min. Preis (CHF)</label>
         <input type="number" id="minPrice" name="min_price" placeholder="0" />
@@ -61,7 +68,9 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
         <label for="maxMileage">Max. Kilometer</label>
         <input type="number" id="maxMileage" name="max_mileage" placeholder="200000" />
       </div>
-      
+    </div>
+
+    <div class="search-row">
       <div class="search-field search-actions">
         <button type="submit" class="search-btn">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -228,6 +237,13 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
     margin-bottom: 2rem;
   }
 
+  .car-brand {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
   .no-results {
     text-align: center;
     padding: 4rem 2rem;
@@ -283,16 +299,16 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
   // State
   let currentPage = 1;
   let totalPages = 1;
-  let searchData = {};
-  let searchOptions = {};
+  let searchData: any = {};
+  let searchOptions: any = {};
   
   // DOM Elements
-  const searchForm = document.getElementById('searchForm');
-  const carsGrid = document.getElementById('carsGrid');
-  const loading = document.getElementById('loading');
-  const resultsInfo = document.getElementById('resultsInfo');
-  const resultsCount = document.getElementById('resultsCount');
-  const paginationContainer = document.getElementById('paginationContainer');
+  const searchForm = document.getElementById('searchForm') as HTMLFormElement;
+  const carsGrid = document.getElementById('carsGrid') as HTMLElement;
+  const loading = document.getElementById('loading') as HTMLElement;
+  const resultsInfo = document.getElementById('resultsInfo') as HTMLElement;
+  const resultsCount = document.getElementById('resultsCount') as HTMLElement;
+  const paginationContainer = document.getElementById('paginationContainer') as HTMLElement;
   
   // Initialize
   async function init() {
@@ -306,17 +322,20 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
       const response = await fetch(`${API_BASE_URL}/search/options`);
       searchOptions = await response.json();
       
-      populateSelect('carType', searchOptions.car_types);
-      populateSelect('fuel', searchOptions.fuels);
-      populateSelect('transmission', searchOptions.transmissions);
+      populateSelect('brand', searchOptions.brands || []);
+      populateSelect('carType', searchOptions.car_types || []);
+      populateSelect('fuel', searchOptions.fuels || []);
+      populateSelect('transmission', searchOptions.transmissions || []);
     } catch (error) {
       console.error('Error loading search options:', error);
     }
   }
   
   // Populate select options
-  function populateSelect(elementId, options) {
-    const select = document.getElementById(elementId);
+  function populateSelect(elementId: string, options: string[]) {
+    const select = document.getElementById(elementId) as HTMLSelectElement;
+    if (!select) return;
+    
     options.forEach(option => {
       const optionElement = document.createElement('option');
       optionElement.value = option;
@@ -326,12 +345,14 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
   }
   
   // Perform search
-  async function performSearch(page = 1) {
+  async function performSearch(page: number = 1) {
     showLoading();
     
     try {
+      if (!searchForm) return;
+      
       const formData = new FormData(searchForm);
-      const searchParams = Object.fromEntries(formData.entries());
+      const searchParams: Record<string, any> = Object.fromEntries(formData.entries());
       
       // Remove empty values
       Object.keys(searchParams).forEach(key => {
@@ -353,7 +374,7 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
       
       searchData = await response.json();
       currentPage = page;
-      totalPages = Math.ceil(searchData.total / 9);
+      totalPages = Math.ceil((searchData.total || 0) / 9);
       
       renderResults();
       renderPagination();
@@ -368,7 +389,9 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
   
   // Render search results
   function renderResults() {
-    if (searchData.cars.length === 0) {
+    if (!carsGrid || !resultsInfo || !resultsCount) return;
+    
+    if (!searchData.cars || searchData.cars.length === 0) {
       carsGrid.innerHTML = `
         <div class="no-results">
           <h3>Keine Fahrzeuge gefunden</h3>
@@ -379,7 +402,7 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
       return;
     }
     
-    const carsHTML = searchData.cars.map((car, index) => `
+    const carsHTML = searchData.cars.map((car: any, index: number) => `
       <div class="car-card" style="animation-delay: ${index * 0.1}s">
         <div class="car-image">
           <img 
@@ -390,6 +413,7 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
         </div>
         <div class="car-info">
           <h3 class="car-title">${car.title}</h3>
+          <div class="car-brand">${car.brand}</div>
           <div class="car-pricing">
             <div class="car-price">CHF ${car.price_chf.toLocaleString()}</div>
             <div class="car-leasing">${car.leasing_text}</div>
@@ -400,12 +424,14 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
     
     carsGrid.innerHTML = carsHTML;
     
-    resultsCount.textContent = `${searchData.total} Fahrzeuge gefunden`;
+    resultsCount.textContent = `${searchData.total || 0} Fahrzeuge gefunden`;
     resultsInfo.style.display = 'block';
   }
   
   // Render pagination
   function renderPagination() {
+    if (!paginationContainer) return;
+    
     if (totalPages <= 1) {
       paginationContainer.innerHTML = '';
       return;
@@ -456,7 +482,7 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
   }
   
   // Get visible pages for pagination
-  function getVisiblePages(current, total) {
+  function getVisiblePages(current: number, total: number) {
     const delta = 2;
     const range = [];
     const rangeWithDots = [];
@@ -483,7 +509,7 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
   }
   
   // Go to specific page
-  window.goToPage = function(page) {
+  (window as any).goToPage = function(page: number) {
     if (page >= 1 && page <= totalPages) {
       performSearch(page);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -492,6 +518,8 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
   
   // Show loading state
   function showLoading() {
+    if (!loading || !carsGrid || !resultsInfo || !paginationContainer) return;
+    
     loading.style.display = 'flex';
     carsGrid.style.display = 'none';
     resultsInfo.style.display = 'none';
@@ -500,12 +528,16 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
   
   // Hide loading state
   function hideLoading() {
+    if (!loading || !carsGrid) return;
+    
     loading.style.display = 'none';
     carsGrid.style.display = 'grid';
   }
   
   // Show error state
   function showError() {
+    if (!carsGrid) return;
+    
     carsGrid.innerHTML = `
       <div class="no-results">
         <h3>Fehler beim Laden</h3>
@@ -515,11 +547,13 @@ const API_BASE_URL = 'https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/
   }
   
   // Event listeners
-  searchForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    currentPage = 1;
-    performSearch(1);
-  });
+  if (searchForm) {
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      currentPage = 1;
+      performSearch(1);
+    });
+  }
   
   // Initialize when DOM is loaded
   init();
