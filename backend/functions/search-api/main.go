@@ -2,18 +2,21 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
+
+//go:embed autos.csv
+var csvContent string
 
 // Car represents a single car entry
 type Car struct {
@@ -78,15 +81,9 @@ type SearchResponse struct {
 
 var cars []Car
 
-// loadCarsFromCSV loads car data from the autos.csv file
+// loadCarsFromCSV loads car data from the embedded autos.csv file
 func loadCarsFromCSV() error {
-	file, err := os.Open("autos.csv")
-	if err != nil {
-		return fmt.Errorf("error opening CSV file: %w", err)
-	}
-	defer file.Close()
-
-	reader := csv.NewReader(file)
+	reader := csv.NewReader(strings.NewReader(csvContent))
 	records, err := reader.ReadAll()
 	if err != nil {
 		return fmt.Errorf("error reading CSV: %w", err)
@@ -113,7 +110,7 @@ func loadCarsFromCSV() error {
 		cars = append(cars, car)
 	}
 
-	log.Printf("Loaded %d cars from CSV", len(cars))
+	log.Printf("Loaded %d cars from embedded CSV", len(cars))
 	return nil
 }
 
