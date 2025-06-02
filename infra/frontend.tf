@@ -76,8 +76,8 @@ resource "aws_cloudfront_distribution" "frontend" {
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
+    default_ttl            = 60  # Reduced from 3600 to 60 seconds (1 minute)
+    max_ttl                = 300 # Reduced from 86400 to 300 seconds (5 minutes)
     compress               = true
   }
 
@@ -95,9 +95,9 @@ resource "aws_cloudfront_distribution" "frontend" {
       }
     }
 
-    min_ttl                = 31536000 # 1 year
-    default_ttl            = 31536000
-    max_ttl                = 31536000
+    min_ttl                = 0   # Reduced from 31536000 to 0
+    default_ttl            = 300 # Reduced from 31536000 to 300 seconds (5 minutes)
+    max_ttl                = 600 # Reduced from 31536000 to 600 seconds (10 minutes)
     compress               = true
     viewer_protocol_policy = "redirect-to-https"
   }
