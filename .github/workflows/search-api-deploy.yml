@@ -4,20 +4,20 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'backend/functions/search-api/**'
-      - '.github/workflows/search-api-deploy.yml'
+      - "backend/functions/search-api/**"
+      - ".github/workflows/search-api-deploy.yml"
   pull_request:
     branches: [main]
     paths:
-      - 'backend/functions/search-api/**'
-      - '.github/workflows/search-api-deploy.yml'
+      - "backend/functions/search-api/**"
+      - ".github/workflows/search-api-deploy.yml"
 
 env:
-  GO_VERSION: '1.21'
-  AWS_REGION: 'eu-central-1'
-  FUNCTION_NAME: 'search-api'
-  COVERAGE_BUCKET: 'astro-backend-search-api-coverage'
-  DATA_BUCKET: 'astro-backend-data-bucket'
+  GO_VERSION: "1.21"
+  AWS_REGION: "eu-central-1"
+  FUNCTION_NAME: "search-api"
+  COVERAGE_BUCKET: "astro-backend-search-api-coverage"
+  DATA_BUCKET: "astro-backend-data-bucket"
 
 jobs:
   # Test the Go code
@@ -25,67 +25,67 @@ jobs:
     name: Test Go Code
     runs-on: ubuntu-latest
     environment: production
-    
+
     permissions:
       id-token: write
       contents: read
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
-    - name: Cache Go modules
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('backend/functions/search-api/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('backend/functions/search-api/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
-    - name: Install dependencies
-      working-directory: backend/functions/search-api
-      run: make deps
+      - name: Install dependencies
+        working-directory: backend/functions/search-api
+        run: make deps
 
-    - name: Run tests with coverage
-      working-directory: backend/functions/search-api
-      run: make test-cover
+      - name: Run tests with coverage
+        working-directory: backend/functions/search-api
+        run: make test-cover
 
-    - name: Run linter
-      working-directory: backend/functions/search-api
-      run: make lint
+      - name: Run linter
+        working-directory: backend/functions/search-api
+        run: make lint
 
-    - name: Format check
-      working-directory: backend/functions/search-api
-      run: make fmt
+      - name: Format check
+        working-directory: backend/functions/search-api
+        run: make fmt
 
-    - name: Configure AWS credentials (OIDC)
-      if: github.event_name == 'push'
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/astro-backend-cicd-role
-        aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS credentials (OIDC)
+        if: github.event_name == 'push'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/astro-backend-cicd-role
+          aws-region: ${{ env.AWS_REGION }}
 
-    - name: Upload coverage reports to S3
-      if: github.event_name == 'push'
-      working-directory: backend/functions/search-api
-      run: |
-        # Erstelle Dateinamen mit Timestamp
-        TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-        
-        # Upload coverage files mit Datum als Namen
-        aws s3 cp coverage.out s3://${COVERAGE_BUCKET}/coverage-${TIMESTAMP}.out
-        aws s3 cp coverage.html s3://${COVERAGE_BUCKET}/coverage-${TIMESTAMP}.html
-        
-        # Link für den Report ausgeben
-        echo "📊 Coverage Report: https://${COVERAGE_BUCKET}.s3.${AWS_REGION}.amazonaws.com/coverage-${TIMESTAMP}.html"
-        echo "COVERAGE_URL=https://${COVERAGE_BUCKET}.s3.${AWS_REGION}.amazonaws.com/coverage-${TIMESTAMP}.html" >> $GITHUB_ENV
+      - name: Upload coverage reports to S3
+        if: github.event_name == 'push'
+        working-directory: backend/functions/search-api
+        run: |
+          # Erstelle Dateinamen mit Timestamp
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+
+          # Upload coverage files mit Datum als Namen
+          aws s3 cp coverage.out s3://${COVERAGE_BUCKET}/coverage-${TIMESTAMP}.out
+          aws s3 cp coverage.html s3://${COVERAGE_BUCKET}/coverage-${TIMESTAMP}.html
+
+          # Link für den Report ausgeben
+          echo "📊 Coverage Report: https://${COVERAGE_BUCKET}.s3.${AWS_REGION}.amazonaws.com/coverage-${TIMESTAMP}.html"
+          echo "COVERAGE_URL=https://${COVERAGE_BUCKET}.s3.${AWS_REGION}.amazonaws.com/coverage-${TIMESTAMP}.html" >> $GITHUB_ENV
 
   # Build and deploy (only on main branch)
   deploy:
@@ -94,87 +94,108 @@ jobs:
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: production
-    
+
     permissions:
       id-token: write
       contents: read
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
-    - name: Cache Go modules
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('backend/functions/search-api/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('backend/functions/search-api/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
 
-    - name: Configure AWS credentials (OIDC)
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/astro-backend-cicd-role
-        aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/astro-backend-cicd-role
+          aws-region: ${{ env.AWS_REGION }}
 
-    - name: Initialize Data Bucket with CSV
-      working-directory: backend/functions/search-api
-      run: |
-        echo "🔍 Checking if CSV exists in S3..."
-        if ! aws s3 ls s3://${DATA_BUCKET}/autos.csv > /dev/null 2>&1; then
-          echo "📤 CSV not found in S3, uploading local version..."
-          if [ -f ./autos.csv ]; then
-            aws s3 cp ./autos.csv s3://${DATA_BUCKET}/autos.csv
-            echo "✅ CSV uploaded to S3 data bucket!"
+      - name: Download CSV from S3 Data Bucket
+        working-directory: backend/functions/search-api
+        run: |
+          echo "🔍 Checking if CSV exists in S3..."
+          if aws s3 ls s3://${DATA_BUCKET}/autos.csv > /dev/null 2>&1; then
+            echo "📥 Downloading CSV from S3..."
+            aws s3 cp s3://${DATA_BUCKET}/autos.csv ./autos.csv
+            echo "✅ CSV downloaded successfully!"
           else
-            echo "❌ No local CSV found!"
-            exit 1
+            echo "⚠️  CSV not found in S3, using local version"
+            if [ ! -f ./autos.csv ]; then
+              echo "❌ No local CSV found either! Please upload autos.csv to S3 first."
+              exit 1
+            fi
           fi
-        else
-          echo "✅ CSV already exists in S3 data bucket"
-        fi
 
-    - name: Build and Deploy Lambda
-      working-directory: backend/functions/search-api
-      run: make update-lambda
+      - name: Build Go binary for ARM64 Linux
+        working-directory: backend/functions/search-api
+        run: |
+          echo "🏗️ Building Go binary for Lambda (Linux ARM64)..."
+          GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o bootstrap main.go
+          echo "✅ Binary built successfully!"
 
-    - name: Test deployed API
-      run: |
-        echo "Testing deployed API endpoints..."
-        
-        echo "1. Testing search options..."
-        curl -f "https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search/options" | jq .
-        
-        echo "2. Testing search..."
-        curl -f -X POST "https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search" \
-          -H "Content-Type: application/json" \
-          -d '{"query": "BMW", "limit": 1}' | jq .
+      - name: Create deployment ZIP
+        working-directory: backend/functions/search-api
+        run: |
+          echo "📦 Creating deployment ZIP..."
+          zip -r search-api.zip bootstrap autos.csv
+          echo "✅ ZIP created successfully!"
 
-    - name: Post deployment summary
-      run: |
-        echo "## 🚀 Lambda Function Updated" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### API Endpoints:" >> $GITHUB_STEP_SUMMARY
-        echo "- **Search Options:** https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search/options" >> $GITHUB_STEP_SUMMARY
-        echo "- **Search:** https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### Data Sources:" >> $GITHUB_STEP_SUMMARY
-        echo "- **CSV Data:** s3://${DATA_BUCKET}/autos.csv" >> $GITHUB_STEP_SUMMARY
-        echo "- **Images:** s3://${DATA_BUCKET}/images/" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### Deployment:" >> $GITHUB_STEP_SUMMARY
-        echo "- **Function:** ${{ env.FUNCTION_NAME }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Runtime:** provided.al2023 (ARM64)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-        if [ ! -z "${{ env.COVERAGE_URL }}" ]; then
+      - name: Update Lambda function
+        working-directory: backend/functions/search-api
+        run: |
+          echo "🚀 Updating Lambda function..."
+          aws lambda update-function-code \
+            --function-name ${{ env.FUNCTION_NAME }} \
+            --zip-file fileb://search-api.zip
+          echo "✅ Lambda function updated successfully!"
+
+      - name: Test deployed API
+        run: |
+          echo "🧪 Testing deployed API endpoints..."
+
+          # Wait a bit for the function to be ready
+          sleep 10
+
+          echo "1. Testing search options..."
+          curl -f "https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search/options" | jq .
+
+          echo "2. Testing search..."
+          curl -f -X POST "https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search" \
+            -H "Content-Type: application/json" \
+            -d '{"query": "BMW", "limit": 1}' | jq .
+
+      - name: Post deployment summary
+        run: |
+          echo "## 🚀 Lambda Function Updated" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📊 Coverage Report:" >> $GITHUB_STEP_SUMMARY
-          echo "- **Report:** [${{ env.COVERAGE_URL }}](${{ env.COVERAGE_URL }})" >> $GITHUB_STEP_SUMMARY
-        fi 
+          echo "### API Endpoints:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Search Options:** https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search/options" >> $GITHUB_STEP_SUMMARY
+          echo "- **Search:** https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Data Sources:" >> $GITHUB_STEP_SUMMARY
+          echo "- **CSV Data:** s3://${DATA_BUCKET}/autos.csv" >> $GITHUB_STEP_SUMMARY
+          echo "- **Images:** s3://${DATA_BUCKET}/images/" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Deployment:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Function:** ${{ env.FUNCTION_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Runtime:** provided.al2023 (ARM64)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          if [ ! -z "${{ env.COVERAGE_URL }}" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 📊 Coverage Report:" >> $GITHUB_STEP_SUMMARY
+            echo "- **Report:** [${{ env.COVERAGE_URL }}](${{ env.COVERAGE_URL }})" >> $GITHUB_STEP_SUMMARY
+          fi
