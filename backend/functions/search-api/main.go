@@ -404,6 +404,7 @@ func parseCarRecord(record []string) (Car, error) {
 			// Basic URL validation - ensure it's a valid HTTP(S) URL
 			part = strings.TrimSpace(part)
 			if strings.HasPrefix(part, "http://") || strings.HasPrefix(part, "https://") {
+				// Don't sanitize URLs as it breaks them with HTML escaping
 				imageURLs = append(imageURLs, part)
 			}
 		}
@@ -685,7 +686,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		// Validate request
 		if validationErrors := validateSearchRequest(&searchReq); len(validationErrors) > 0 {
 			errorResponse := ErrorResponse{
-				Error:       "Validation failed!",
+				Error:       "Validation failed",
 				Validations: validationErrors,
 			}
 			body, _ := json.Marshal(errorResponse)

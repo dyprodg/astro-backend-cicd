@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -1080,4 +1081,37 @@ func slicesEqual(a, b []string) bool {
 func isValidJSON(s string) bool {
 	var js json.RawMessage
 	return json.Unmarshal([]byte(s), &js) == nil
+}
+
+func TestImageURLsFromRealCSV(t *testing.T) {
+	if err := loadCarsFromCSV(); err != nil {
+		t.Fatalf("Failed to load cars: %v", err)
+	}
+
+	// Check that we have cars loaded
+	if len(cars) == 0 {
+		t.Fatal("No cars loaded from CSV")
+	}
+
+	// Check first few cars for image URLs
+	carsWithImages := 0
+	for i, car := range cars {
+		if len(car.ImageURLs) > 0 {
+			carsWithImages++
+			t.Logf("Car %d (%s) has %d image URLs: %v", i+1, car.Title, len(car.ImageURLs), car.ImageURLs)
+
+			// Verify URLs are valid format
+			for _, url := range car.ImageURLs {
+				if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+					t.Errorf("Invalid URL format for car %d: %s", i+1, url)
+				}
+			}
+		}
+	}
+
+	if carsWithImages == 0 {
+		t.Error("No cars have image URLs - this suggests the URL parsing is broken")
+	} else {
+		t.Logf("Found %d cars with image URLs out of %d total cars", carsWithImages, len(cars))
+	}
 }
