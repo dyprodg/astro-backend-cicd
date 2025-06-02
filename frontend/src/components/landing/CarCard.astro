@@ -20,13 +20,14 @@ const { car, index = 0 } = Astro.props;
 ---
 
 <div 
-  class="bg-secondary p-6 group hover:bg-primary transition-colors duration-300"
+  class="bg-secondary p-6 group hover:bg-primary transition-colors duration-300 cursor-pointer car-card-clickable"
   data-aos="fade-up" 
   data-aos-duration="500"
-  data-aos-delay={index * 100}>
+  data-aos-delay={index * 100}
+  data-car={JSON.stringify(car)}>
   
   <!-- Car Image -->
-  <div class="aspect-video bg-primary mb-4 overflow-hidden group-hover:bg-secondary transition-colors duration-300">
+  <div class="aspect-video bg-primary mb-4 overflow-hidden group-hover:bg-secondary transition-colors duration-300 relative">
     {car.image_urls?.[0] ? (
       <img 
         src={car.image_urls[0]} 
@@ -77,4 +78,25 @@ const { car, index = 0 } = Astro.props;
       </div>
     )}
   </div>
-</div> 
+</div>
+
+<script>
+  // Add click event for opening modal
+  function initCarCardClicks() {
+    const carCards = document.querySelectorAll('.car-card-clickable');
+    
+    carCards.forEach((card) => {
+      card.addEventListener('click', (e) => {
+        const carData = card.getAttribute('data-car');
+        if (carData && (window as any).openCarModal) {
+          const car = JSON.parse(carData);
+          (window as any).openCarModal(car);
+        }
+      });
+    });
+  }
+
+  // Initialize card clicks
+  document.addEventListener('DOMContentLoaded', initCarCardClicks);
+  document.addEventListener('cardsUpdated', initCarCardClicks);
+</script> 

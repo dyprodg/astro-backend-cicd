@@ -1,0 +1,120 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/landing/Header.astro";
+import Footer from "../components/landing/Footer.astro";
+---
+
+<BaseLayout>
+  <Header />
+  
+  <main class="bg-primary pt-20">
+    <div class="px-8 2xl:max-w-7xl mx-auto py-24">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-secondary text-4xl md:text-5xl font-bold mb-12">
+          Impressum
+        </h1>
+        
+        <div class="text-secondary/80 space-y-8">
+          <section>
+            <h2 class="text-secondary text-2xl font-bold mb-4">Anbieter</h2>
+            <div class="bg-secondary/10 border border-secondary/20 p-6 rounded-none">
+              <p class="font-semibold text-secondary mb-4">Autosalon Volketswil</p>
+              <div class="space-y-1">
+                <p>Javastrasse 2</p>
+                <p>8604 Volketswil</p>
+                <p>Schweiz</p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-secondary text-2xl font-bold mb-4">Kontakt</h2>
+            <div class="space-y-2">
+              <p><strong>E-Mail:</strong> Verkauf@autosalonvolketswil.ch</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-secondary text-2xl font-bold mb-4">Vertretungsberechtigte Personen</h2>
+            <div class="space-y-1">
+              <p>Autosalon Volketswil</p>
+              <p>Javastrasse 2</p>
+              <p>8604 Volketswil</p>
+              <p>Schweiz</p>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-secondary text-2xl font-bold mb-4">Haftungsausschluss</h2>
+            
+            <h3 class="text-secondary text-xl font-semibold mb-3">Inhalt des Onlineangebotes</h3>
+            <p class="mb-4">
+              Der Autor übernimmt keinerlei Gewähr für die Aktualität, Korrektheit, Vollständigkeit oder Qualität der bereitgestellten Informationen. Haftungsansprüche gegen den Autor, welche sich auf Schäden materieller oder ideeller Art beziehen, die durch die Nutzung oder Nichtnutzung der dargebotenen Informationen bzw. durch die Nutzung fehlerhafter und unvollständiger Informationen verursacht wurden, sind grundsätzlich ausgeschlossen.
+            </p>
+            <p class="mb-4">
+              Alle Angebote sind freibleibend und unverbindlich. Der Autor behält es sich ausdrücklich vor, Teile der Seiten oder das gesamte Angebot ohne gesonderte Ankündigung zu verändern, zu ergänzen, zu löschen oder die Veröffentlichung zeitweise oder endgültig einzustellen.
+            </p>
+
+            <h3 class="text-secondary text-xl font-semibold mb-3">Verweise und Links</h3>
+            <p class="mb-4">
+              Bei direkten oder indirekten Verweisen auf fremde Internetseiten („Links"), die ausserhalb des Verantwortungsbereiches des Autors liegen, würde eine Haftungsverpflichtung ausschliesslich in dem Fall in Kraft treten, in dem der Autor von den Inhalten Kenntnis hat und es ihm technisch möglich und zumutbar wäre, die Nutzung im Falle rechtswidriger Inhalte zu verhindern.
+            </p>
+            <p class="mb-4">
+              Der Autor erklärt hiermit ausdrücklich, dass zum Zeitpunkt der Linksetzung keine illegalen Inhalte auf den zu verlinkenden Seiten erkennbar waren. Auf die aktuelle und zukünftige Gestaltung, die Inhalte oder die Urheberschaft der gelinkten/verknüpften Seiten hat der Autor keinerlei Einfluss.
+            </p>
+            <p class="mb-4">
+              Deshalb distanziert er sich hiermit ausdrücklich von allen Inhalten aller gelinkten/verknüpften Seiten, die nach der Linksetzung verändert wurden. Diese Feststellung gilt für alle innerhalb des eigenen Internetangebotes gesetzten Links und Verweise.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-secondary text-2xl font-bold mb-4">Urheberrecht und Kennzeichenrecht</h2>
+            <p class="mb-4">
+              Der Autor ist bestrebt, in allen Publikationen die Urheberrechte der verwendeten Grafiken, Tondokumente, Videosequenzen und Texte zu beachten, von ihm selbst erstellte Grafiken, Tondokumente, Videosequenzen und Texte zu nutzen oder auf lizenzfreie Grafiken, Tondokumente, Videosequenzen und Texte zurückzugreifen.
+            </p>
+            <p class="mb-4">
+              Alle innerhalb des Internetangebotes genannten und ggf. durch Dritte geschützten Marken- und Warenzeichen unterliegen uneingeschränkt den Bestimmungen des jeweils gültigen Kennzeichenrechts und den Besitzrechten der jeweiligen eingetragenen Eigentümer.
+            </p>
+            <p class="mb-4">
+              Das Copyright für veröffentlichte, vom Autor selbst erstellte Objekte bleibt allein beim Autor der Seiten. Eine Vervielfältigung oder Verwendung solcher Grafiken, Tondokumente, Videosequenzen und Texte in anderen elektronischen oder gedruckten Publikationen ist ohne ausdrückliche Zustimmung des Autors nicht gestattet.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-secondary text-2xl font-bold mb-4">Rechtswirksamkeit</h2>
+            <p class="mb-4">
+              Dieser Haftungsausschluss ist als Teil des Internetangebotes zu betrachten, von dem aus auf diese Seite verwiesen wurde. Sofern Teile oder einzelne Formulierungen dieses Textes der geltenden Rechtslage nicht, nicht mehr oder nicht vollständig entsprechen sollten, bleiben die übrigen Teile des Dokumentes in ihrem Inhalt und ihrer Gültigkeit davon unberührt.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-secondary text-2xl font-bold mb-4">Datenschutz</h2>
+            <p class="mb-4">
+              Sofern innerhalb des Internetangebotes die Möglichkeit zur Eingabe persönlicher oder geschäftlicher Daten (E-Mail-Adressen, Namen, Anschriften) besteht, so erfolgt die Preisgabe dieser Daten seitens des Nutzers auf ausdrücklich freiwilliger Basis.
+            </p>
+            <p class="mb-4">
+              Die Inanspruchnahme und Bezahlung aller angebotenen Dienste ist - soweit technisch möglich und zumutbar - auch ohne Angabe solcher Daten bzw. unter Angabe anonymisierter Daten oder eines Pseudonyms gestattet.
+            </p>
+            <p class="mb-4">
+              Weitere Informationen zum Datenschutz finden Sie in unserer <a href="/datenschutz" class="text-secondary hover:text-secondary/80 underline">Datenschutzerklärung</a>.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-secondary text-2xl font-bold mb-4">Anwendbares Recht</h2>
+            <p class="mb-4">
+              Auf das vorliegende Rechtsverhältnis ist schweizerisches Recht anwendbar. Ausschliesslicher Gerichtsstand für alle Streitigkeiten aus diesem Rechtsverhältnis ist Zürich, Schweiz.
+            </p>
+          </section>
+
+          <p class="text-sm text-secondary/60 mt-12 pt-8 border-t border-secondary/20">
+            Stand: Januar 2024
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout> 
+</BaseLayout> 

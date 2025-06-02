@@ -1,0 +1,241 @@
+---
+// Modern Header with sliding sidebar navigation
+---
+
+<header class="fixed top-0 w-full bg-primary/95 backdrop-blur-sm border-b-2 border-secondary/30 z-40">
+  <div class="px-8 2xl:max-w-7xl mx-auto py-6">
+    <div class="flex justify-between items-center">
+      <!-- Logo -->
+      <a href="/" class="flex items-center z-50 relative">
+        <img src="/autosalon.svg" alt="Autosalon" class="h-8 w-auto" />
+      </a>
+      
+      <!-- Burger Menu Button -->
+      <button 
+        id="sidebarToggle"
+        class="relative w-8 h-8 flex flex-col justify-center items-center space-y-1.5 z-50 transition-all duration-300"
+        aria-label="Menu öffnen">
+        <span class="burger-line block h-0.5 w-6 bg-secondary transition-all duration-300"></span>
+        <span class="burger-line block h-0.5 w-6 bg-secondary transition-all duration-300"></span>
+        <span class="burger-line block h-0.5 w-6 bg-secondary transition-all duration-300"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Sidebar Overlay -->
+<div 
+  id="sidebarOverlay" 
+  class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 opacity-0 invisible transition-all duration-500 ease-out">
+</div>
+
+<!-- Sliding Sidebar -->
+<div 
+  id="sidebar" 
+  class="fixed top-0 right-0 h-full w-full sm:w-96 bg-primary border-l-2 border-secondary/30 z-50 transform translate-x-full transition-transform duration-500 ease-out">
+  
+  <!-- Sidebar Header -->
+  <div class="p-8 border-b border-secondary/20">
+    <div class="flex items-center justify-between">
+      <img src="/autosalon.svg" alt="Autosalon" class="h-10 w-auto" />
+      <button 
+        id="sidebarClose"
+        class="w-10 h-10 flex items-center justify-center border-2 border-secondary/30 hover:border-secondary transition-colors"
+        aria-label="Menu schließen">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-secondary">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="p-8">
+    <ul class="space-y-1">
+      <li>
+        <a 
+          href="/" 
+          class="nav-link block px-4 py-4 text-secondary/80 hover:text-secondary hover:bg-secondary/10 border-2 border-transparent hover:border-secondary/20 transition-all duration-300 text-lg font-semibold">
+          <div class="flex items-center justify-between">
+            Startseite
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
+          </div>
+        </a>
+      </li>
+      
+      <li>
+        <a 
+          href="/#about" 
+          class="nav-link block px-4 py-4 text-secondary/80 hover:text-secondary hover:bg-secondary/10 border-2 border-transparent hover:border-secondary/20 transition-all duration-300 text-lg font-semibold">
+          <div class="flex items-center justify-between">
+            Über uns
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
+          </div>
+        </a>
+      </li>
+      
+      <li>
+        <a 
+          href="/#features" 
+          class="nav-link block px-4 py-4 text-secondary/80 hover:text-secondary hover:bg-secondary/10 border-2 border-transparent hover:border-secondary/20 transition-all duration-300 text-lg font-semibold">
+          <div class="flex items-center justify-between">
+            Leistungen
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
+          </div>
+        </a>
+      </li>
+      
+      <li>
+        <a 
+          href="/#search" 
+          class="nav-link block px-4 py-4 text-secondary/80 hover:text-secondary hover:bg-secondary/10 border-2 border-transparent hover:border-secondary/20 transition-all duration-300 text-lg font-semibold">
+          <div class="flex items-center justify-between">
+            Fahrzeugsuche
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
+          </div>
+        </a>
+      </li>
+      
+      <li>
+        <a 
+          href="/kontakt" 
+          class="nav-link block px-4 py-4 text-secondary/80 hover:text-secondary hover:bg-secondary/10 border-2 border-transparent hover:border-secondary/20 transition-all duration-300 text-lg font-semibold">
+          <div class="flex items-center justify-between">
+            Kontakt
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Contact Info -->
+  <div class="p-8 border-t border-secondary/20 mt-auto">
+    <div class="space-y-4">
+      <div>
+        <p class="text-secondary font-bold text-sm mb-1">Öffnungszeiten</p>
+        <p class="text-secondary/70 text-sm">Mo-Fr: 09:00-19:00</p>
+        <p class="text-secondary/70 text-sm">Sa: 09:00-17:00</p>
+      </div>
+      
+      <div>
+        <p class="text-secondary font-bold text-sm mb-1">Kontakt</p>
+        <a 
+          href="mailto:Verkauf@autosalonvolketswil.ch" 
+          class="text-secondary/70 text-sm hover:text-secondary transition-colors">
+          Verkauf@autosalonvolketswil.ch
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legal Links -->
+  <div class="p-8 border-t border-secondary/20">
+    <div class="flex flex-wrap gap-4 text-xs">
+      <a href="/impressum" class="text-secondary/60 hover:text-secondary transition-colors">
+        Impressum
+      </a>
+      <a href="/datenschutz" class="text-secondary/60 hover:text-secondary transition-colors">
+        Datenschutz
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Burger Menu Animation */
+  .sidebar-open .burger-line:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+  }
+  
+  .sidebar-open .burger-line:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .sidebar-open .burger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+  }
+
+  /* Navigation Link Hover Animation */
+  .nav-link:hover svg {
+    transform: translateX(4px);
+  }
+
+  /* Scrollbar styling for sidebar */
+  #sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(244, 245, 239, 0.3) transparent;
+  }
+
+  #sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  #sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(244, 245, 239, 0.3);
+    border-radius: 2px;
+  }
+</style>
+
+<script>
+  // Sidebar functionality
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebarClose = document.getElementById('sidebarClose');
+  const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+  const body = document.body;
+
+  function openSidebar() {
+    sidebar?.classList.remove('translate-x-full');
+    sidebarOverlay?.classList.remove('opacity-0', 'invisible');
+    sidebarToggle?.classList.add('sidebar-open');
+    body.classList.add('overflow-hidden');
+  }
+
+  function closeSidebar() {
+    sidebar?.classList.add('translate-x-full');
+    sidebarOverlay?.classList.add('opacity-0', 'invisible');
+    sidebarToggle?.classList.remove('sidebar-open');
+    body.classList.remove('overflow-hidden');
+  }
+
+  // Event listeners
+  sidebarToggle?.addEventListener('click', openSidebar);
+  sidebarClose?.addEventListener('click', closeSidebar);
+  sidebarOverlay?.addEventListener('click', closeSidebar);
+
+  // Close sidebar when clicking on navigation links
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => {
+    link.addEventListener('click', closeSidebar);
+  });
+
+  // Close sidebar on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeSidebar();
+    }
+  });
+
+  // Prevent body scroll when sidebar is open
+  document.addEventListener('touchmove', (e) => {
+    if (body.classList.contains('overflow-hidden')) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+</script> 

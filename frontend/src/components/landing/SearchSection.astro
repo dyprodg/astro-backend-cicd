@@ -6,66 +6,72 @@
   <div class="px-8 2xl:max-w-7xl mx-auto py-24">
     <div data-aos="fade-up" data-aos-duration="1000">
       <h2 class="text-secondary text-4xl md:text-5xl font-bold mb-12">
-        Find Your Vehicle
+        Finden Sie Ihr Fahrzeug
       </h2>
       
       <!-- Search Container -->
-      <div id="search-container" class="bg-secondary p-8">
+      <div id="search-container" class="bg-primary border-2 border-secondary/30 p-8">
         <!-- Search Form -->
         <form id="searchForm" class="space-y-6">
           <!-- First Row -->
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <!-- Query -->
             <div>
-              <label for="query" class="block text-primary text-sm font-bold mb-2">
-                Search
+              <label for="query" class="block text-secondary text-sm font-bold mb-2">
+                Suchen
               </label>
               <input
                 type="text"
                 id="query"
                 name="query"
                 placeholder="BMW, Mercedes, etc..."
-                class="w-full px-4 py-3 bg-primary text-secondary placeholder-secondary/50 border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                class="custom-input"
               />
             </div>
 
             <!-- Brand -->
             <div>
-              <label for="brand" class="block text-primary text-sm font-bold mb-2">
-                Brand
+              <label for="brand" class="block text-secondary text-sm font-bold mb-2">
+                Marke
               </label>
-              <select
-                id="brand"
-                name="brand"
-                class="w-full px-4 py-3 bg-primary text-secondary border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <option value="">All Brands</option>
-              </select>
+              <div class="custom-select-wrapper">
+                <select
+                  id="brand"
+                  name="brand"
+                  class="custom-select">
+                  <option value="">Alle Marken</option>
+                </select>
+              </div>
             </div>
 
             <!-- Car Type -->
             <div>
-              <label for="carType" class="block text-primary text-sm font-bold mb-2">
-                Vehicle Type
+              <label for="carType" class="block text-secondary text-sm font-bold mb-2">
+                Fahrzeugtyp
               </label>
-              <select
-                id="carType"
-                name="car_type"
-                class="w-full px-4 py-3 bg-primary text-secondary border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <option value="">All Types</option>
-              </select>
+              <div class="custom-select-wrapper">
+                <select
+                  id="carType"
+                  name="car_type"
+                  class="custom-select">
+                  <option value="">Alle Typen</option>
+                </select>
+              </div>
             </div>
 
             <!-- Fuel -->
             <div>
-              <label for="fuel" class="block text-primary text-sm font-bold mb-2">
-                Fuel
+              <label for="fuel" class="block text-secondary text-sm font-bold mb-2">
+                Kraftstoff
               </label>
-              <select
-                id="fuel"
-                name="fuel"
-                class="w-full px-4 py-3 bg-primary text-secondary border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <option value="">All</option>
-              </select>
+              <div class="custom-select-wrapper">
+                <select
+                  id="fuel"
+                  name="fuel"
+                  class="custom-select">
+                  <option value="">Alle</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -73,56 +79,58 @@
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <!-- Transmission -->
             <div>
-              <label for="transmission" class="block text-primary text-sm font-bold mb-2">
-                Transmission
+              <label for="transmission" class="block text-secondary text-sm font-bold mb-2">
+                Getriebe
               </label>
-              <select
-                id="transmission"
-                name="transmission"
-                class="w-full px-4 py-3 bg-primary text-secondary border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20">
-                <option value="">All</option>
-              </select>
+              <div class="custom-select-wrapper">
+                <select
+                  id="transmission"
+                  name="transmission"
+                  class="custom-select">
+                  <option value="">Alle</option>
+                </select>
+              </div>
             </div>
 
             <!-- Min Price -->
             <div>
-              <label for="minPrice" class="block text-primary text-sm font-bold mb-2">
-                Min. Price (CHF)
+              <label for="minPrice" class="block text-secondary text-sm font-bold mb-2">
+                Min. Preis (CHF)
               </label>
               <input
                 type="number"
                 id="minPrice"
                 name="min_price"
                 placeholder="0"
-                class="w-full px-4 py-3 bg-primary text-secondary placeholder-secondary/50 border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                class="custom-input"
               />
             </div>
 
             <!-- Max Price -->
             <div>
-              <label for="maxPrice" class="block text-primary text-sm font-bold mb-2">
-                Max. Price (CHF)
+              <label for="maxPrice" class="block text-secondary text-sm font-bold mb-2">
+                Max. Preis (CHF)
               </label>
               <input
                 type="number"
                 id="maxPrice"
                 name="max_price"
                 placeholder="100000"
-                class="w-full px-4 py-3 bg-primary text-secondary placeholder-secondary/50 border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                class="custom-input"
               />
             </div>
 
             <!-- Max Mileage -->
             <div>
-              <label for="maxMileage" class="block text-primary text-sm font-bold mb-2">
-                Max. Mileage
+              <label for="maxMileage" class="block text-secondary text-sm font-bold mb-2">
+                Max. Kilometerstand
               </label>
               <input
                 type="number"
                 id="maxMileage"
                 name="max_mileage"
                 placeholder="200000"
-                class="w-full px-4 py-3 bg-primary text-secondary placeholder-secondary/50 border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                class="custom-input"
               />
             </div>
           </div>
@@ -130,28 +138,28 @@
           <!-- Search Button -->
           <button
             type="submit"
-            class="w-full md:w-auto px-8 py-4 bg-primary text-secondary font-bold hover:bg-primary/90 transition-colors duration-200 flex items-center justify-center gap-2">
+            class="w-full md:w-auto px-8 py-4 bg-secondary text-primary border-2 border-secondary font-bold hover:bg-primary hover:text-secondary hover:border-secondary transition-all duration-200 flex items-center justify-center gap-2">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8"></circle>
               <path d="m21 21-4.35-4.35"></path>
             </svg>
-            SEARCH VEHICLES
+            FAHRZEUGE SUCHEN
           </button>
         </form>
 
         <!-- Results Info -->
         <div id="resultsInfo" class="hidden mt-8">
           <div class="flex justify-between items-center mb-6">
-            <h3 class="text-primary text-2xl font-bold">
-              <span id="resultsCount">0</span> Vehicles Found
+            <h3 class="text-secondary text-2xl font-bold">
+              <span id="resultsCount">0</span> Fahrzeuge gefunden
             </h3>
           </div>
         </div>
 
         <!-- Loading State -->
         <div id="loading" class="hidden mt-12 text-center">
-          <div class="inline-block animate-spin h-8 w-8 border-4 border-primary/20 border-t-primary rounded-full"></div>
-          <p class="text-primary mt-4">Searching vehicles...</p>
+          <div class="inline-block animate-spin h-8 w-8 border-4 border-secondary/20 border-t-secondary rounded-full"></div>
+          <p class="text-secondary mt-4">Suche Fahrzeuge...</p>
         </div>
 
         <!-- Results Grid -->
@@ -165,14 +173,115 @@
         </div>
 
         <!-- Error State -->
-        <div id="error" class="hidden mt-12 bg-red-50 border-2 border-red-200 p-6">
-          <p class="text-red-800 font-bold">Error</p>
-          <p id="errorMessage" class="text-red-600 mt-2"></p>
+        <div id="error" class="hidden mt-12 bg-red-900/20 border-2 border-red-500/50 p-6">
+          <p class="text-red-300 font-bold">Fehler</p>
+          <p id="errorMessage" class="text-red-400 mt-2"></p>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  /* Custom Form Input Styles */
+  .custom-input {
+    @apply w-full px-4 py-3 bg-secondary text-primary border-2 border-secondary/50 transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary;
+    @apply hover:border-secondary/70;
+    
+    /* Remove browser defaults */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .custom-input::placeholder {
+    @apply text-primary/50;
+  }
+
+  /* Custom Select Wrapper */
+  .custom-select-wrapper {
+    @apply relative;
+  }
+
+  /* Custom Select Dropdown Arrow */
+  .custom-select-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid;
+    @apply border-t-primary;
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
+
+  /* Custom Select Styles */
+  .custom-select {
+    @apply w-full px-4 py-3 pr-12 bg-secondary text-primary border-2 border-secondary/50 transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary;
+    @apply hover:border-secondary/70 cursor-pointer;
+    
+    /* Remove browser defaults */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0;
+    box-shadow: none;
+    background-image: none;
+  }
+
+  /* Remove default arrow in IE */
+  .custom-select::-ms-expand {
+    display: none;
+  }
+
+  /* Custom Select Option Styles */
+  .custom-select option {
+    @apply bg-secondary text-primary py-2;
+    border: none;
+  }
+
+  /* Focus and Hover States */
+  .custom-select:focus + .custom-select-wrapper::after,
+  .custom-select:hover + .custom-select-wrapper::after {
+    @apply border-t-primary;
+  }
+
+  /* Number input spinner removal */
+  .custom-input[type="number"]::-webkit-outer-spin-button,
+  .custom-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .custom-input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  /* Active/Selected state */
+  .custom-select:focus,
+  .custom-input:focus {
+    @apply border-secondary ring-2 ring-secondary/40;
+  }
+
+  /* Disabled state */
+  .custom-select:disabled,
+  .custom-input:disabled {
+    @apply bg-secondary/50 text-primary/50 cursor-not-allowed border-secondary/30;
+  }
+
+  .custom-select:disabled + .custom-select-wrapper::after {
+    @apply border-t-primary/50;
+  }
+</style>
 
 <script>
   // API Configuration
@@ -259,7 +368,7 @@
       });
       
       if (!response.ok) {
-        throw new Error(`Search failed: ${response.statusText}`);
+        throw new Error(`Suche fehlgeschlagen: ${response.statusText}`);
       }
       
       searchData = await response.json();
@@ -283,73 +392,102 @@
     if (!searchData.cars || searchData.cars.length === 0) {
       carsGrid.innerHTML = `
         <div class="col-span-full text-center py-12">
-          <h3 class="text-primary text-2xl font-bold mb-4">No vehicles found</h3>
-          <p class="text-primary/60">Try adjusting your search criteria.</p>
+          <h3 class="text-secondary text-2xl font-bold mb-4">Keine Fahrzeuge gefunden</h3>
+          <p class="text-secondary/60">Versuchen Sie, Ihre Suchkriterien anzupassen.</p>
         </div>
       `;
       resultsInfo.classList.add('hidden');
       return;
     }
     
-    const carsHTML = searchData.cars.map((car: any, index: number) => `
-      <div 
-        class="bg-secondary p-6 group hover:bg-primary transition-colors duration-300"
-        data-aos="fade-up" 
-        data-aos-duration="500"
-        data-aos-delay="${index * 100}">
-        
-        <!-- Car Image -->
-        <div class="aspect-video bg-primary mb-4 overflow-hidden group-hover:bg-secondary transition-colors duration-300">
-          ${car.image_urls?.[0] ? `
-            <img 
-              src="${car.image_urls[0]}" 
-              alt="${car.title}"
-              class="w-full h-full object-cover"
-              loading="lazy"
-            />
-          ` : `
-            <div class="w-full h-full flex items-center justify-center">
-              <div class="w-16 h-16 bg-secondary group-hover:bg-primary transition-colors duration-300"></div>
-            </div>
-          `}
-        </div>
-
-        <!-- Car Info -->
-        <div class="space-y-2">
-          <!-- Brand -->
-          <div class="text-primary/60 group-hover:text-secondary/60 text-xs font-bold uppercase tracking-wider transition-colors duration-300">
-            ${car.brand}
+    const carsHTML = searchData.cars.map((car: any, index: number) => {
+      return `
+        <div 
+          class="bg-primary border-2 border-secondary/30 p-6 group hover:border-secondary/60 transition-all duration-300 car-card cursor-pointer"
+          data-aos="fade-up" 
+          data-aos-duration="500"
+          data-aos-delay="${index * 100}"
+          data-car='${JSON.stringify(car).replace(/'/g, "&#39;")}'>
+          
+          <!-- Car Image -->
+          <div class="aspect-video bg-secondary/20 border border-secondary/20 mb-4 overflow-hidden transition-colors duration-300 relative">
+            ${car.image_urls?.[0] ? `
+              <img 
+                src="${car.image_urls[0]}" 
+                alt="${car.title}"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ` : `
+              <div class="w-full h-full flex items-center justify-center">
+                <div class="w-16 h-16 bg-secondary/20 border border-secondary/30"></div>
+              </div>
+            `}
           </div>
 
-          <!-- Title -->
-          <h3 class="text-primary group-hover:text-secondary font-bold text-lg leading-tight transition-colors duration-300">
-            ${car.title}
-          </h3>
-
-          <!-- Price -->
-          <div class="text-primary group-hover:text-secondary font-bold text-xl transition-colors duration-300">
-            CHF ${car.price_chf.toLocaleString()}
-          </div>
-
-          <!-- Leasing Text -->
-          ${car.leasing_text ? `
-            <div class="text-primary/60 group-hover:text-secondary/60 text-sm transition-colors duration-300">
-              ${car.leasing_text}
+          <!-- Car Info -->
+          <div class="space-y-2">
+            <!-- Brand -->
+            <div class="text-secondary/60 text-xs font-bold uppercase tracking-wider transition-colors duration-300">
+              ${car.brand}
             </div>
-          ` : ''}
+
+            <!-- Title -->
+            <h3 class="text-secondary font-bold text-lg leading-tight transition-colors duration-300">
+              ${car.title}
+            </h3>
+
+            <!-- Price -->
+            <div class="text-secondary font-bold text-xl transition-colors duration-300">
+              CHF ${car.price_chf.toLocaleString()}
+            </div>
+
+            <!-- Leasing Text -->
+            ${car.leasing_text ? `
+              <div class="text-secondary/60 text-sm transition-colors duration-300">
+                ${car.leasing_text}
+              </div>
+            ` : ''}
+          </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
     
     carsGrid.innerHTML = carsHTML;
     
     resultsCount.textContent = `${searchData.total || 0}`;
     resultsInfo.classList.remove('hidden');
 
+    // Initialize click events for the new car cards
+    initDynamicCarCardClicks();
+
     // Reinitialize AOS for new elements
     if (typeof (window as any).AOS !== 'undefined') {
       (window as any).AOS.refresh();
     }
+  }
+
+  // Click event handling for dynamically created car cards
+  function initDynamicCarCardClicks() {
+    const carCards = document.querySelectorAll('.car-card');
+    
+    carCards.forEach((card) => {
+      // Remove existing click listeners to avoid duplicates
+      const newCard = card.cloneNode(true) as HTMLElement;
+      card.parentNode?.replaceChild(newCard, card);
+      
+      newCard.addEventListener('click', (e) => {
+        const carData = newCard.getAttribute('data-car');
+        if (carData && (window as any).openCarModal) {
+          try {
+            const car = JSON.parse(carData.replace(/&#39;/g, "'"));
+            (window as any).openCarModal(car);
+          } catch (e) {
+            console.error('Error parsing car data:', e);
+          }
+        }
+      });
+    });
   }
 
   // Render pagination
@@ -364,11 +502,11 @@
     const visiblePages = getVisiblePages(currentPage, totalPages);
     const pagesHTML = visiblePages.map(page => {
       if (page === '...') {
-        return '<span class="px-2 text-primary">...</span>';
+        return '<span class="px-2 text-secondary">...</span>';
       }
       return `
         <button 
-          class="px-4 py-2 ${page === currentPage ? 'bg-primary text-secondary' : 'bg-secondary text-primary border border-primary hover:bg-primary hover:text-secondary'} font-bold transition-colors duration-200"
+          class="px-4 py-2 ${page === currentPage ? 'bg-secondary text-primary' : 'bg-primary text-secondary border-2 border-secondary/50 hover:bg-secondary hover:text-primary'} font-bold transition-colors duration-200"
           onclick="goToPage(${page})"
         >
           ${page}
@@ -379,22 +517,22 @@
     paginationContainer.innerHTML = `
       <div class="flex justify-center items-center gap-2 flex-wrap">
         <button 
-          class="px-4 py-2 bg-secondary text-primary border border-primary hover:bg-primary hover:text-secondary font-bold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          class="px-4 py-2 bg-primary text-secondary border-2 border-secondary/50 hover:bg-secondary hover:text-primary font-bold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           ${currentPage <= 1 ? 'disabled' : ''}
           onclick="goToPage(${currentPage - 1})"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="15,18 9,12 15,6"></polyline>
           </svg>
-          Previous
+          Zurück
         </button>
         ${pagesHTML}
         <button 
-          class="px-4 py-2 bg-secondary text-primary border border-primary hover:bg-primary hover:text-secondary font-bold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          class="px-4 py-2 bg-primary text-secondary border-2 border-secondary/50 hover:bg-secondary hover:text-primary font-bold transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           ${currentPage >= totalPages ? 'disabled' : ''}
           onclick="goToPage(${currentPage + 1})"
         >
-          Next
+          Weiter
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="9,18 15,12 9,6"></polyline>
           </svg>

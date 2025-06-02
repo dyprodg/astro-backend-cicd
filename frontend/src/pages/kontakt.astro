@@ -1,0 +1,265 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/landing/Header.astro";
+import Footer from "../components/landing/Footer.astro";
+---
+
+<BaseLayout>
+  <Header />
+  
+  <main class="bg-primary pt-20">
+    <div class="px-8 2xl:max-w-7xl mx-auto py-24">
+      <div class="max-w-6xl mx-auto">
+        <h1 class="text-secondary text-4xl md:text-5xl font-bold mb-12 text-center">
+          Kontakt
+        </h1>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- Contact Form -->
+          <div>
+            <h2 class="text-secondary text-2xl font-bold mb-6">Schreiben Sie uns</h2>
+            <form id="contactForm" class="space-y-6">
+              <!-- Name -->
+              <div>
+                <label for="name" class="block text-secondary text-sm font-bold mb-2">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  required
+                  class="w-full px-4 py-3 bg-secondary text-primary border-2 border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all duration-200"
+                  placeholder="Ihr vollständiger Name"
+                />
+              </div>
+
+              <!-- Email -->
+              <div>
+                <label for="email" class="block text-secondary text-sm font-bold mb-2">
+                  E-Mail *
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  class="w-full px-4 py-3 bg-secondary text-primary border-2 border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all duration-200"
+                  placeholder="ihre.email@beispiel.com"
+                />
+              </div>
+
+              <!-- Phone -->
+              <div>
+                <label for="phone" class="block text-secondary text-sm font-bold mb-2">
+                  Telefon
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  class="w-full px-4 py-3 bg-secondary text-primary border-2 border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all duration-200"
+                  placeholder="+41 XX XXX XX XX"
+                />
+              </div>
+
+              <!-- Subject -->
+              <div>
+                <label for="subject" class="block text-secondary text-sm font-bold mb-2">
+                  Betreff *
+                </label>
+                <select
+                  id="subject"
+                  name="subject"
+                  required
+                  class="w-full px-4 py-3 bg-secondary text-primary border-2 border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all duration-200">
+                  <option value="">Bitte wählen Sie einen Betreff</option>
+                  <option value="fahrzeug-interesse">Interesse an einem Fahrzeug</option>
+                  <option value="beratung">Allgemeine Beratung</option>
+                  <option value="finanzierung">Finanzierung</option>
+                  <option value="service">Service & Wartung</option>
+                  <option value="sonstiges">Sonstiges</option>
+                </select>
+              </div>
+
+              <!-- Message -->
+              <div>
+                <label for="message" class="block text-secondary text-sm font-bold mb-2">
+                  Nachricht *
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="6"
+                  required
+                  class="w-full px-4 py-3 bg-secondary text-primary border-2 border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/40 focus:border-secondary transition-all duration-200 resize-vertical"
+                  placeholder="Beschreiben Sie Ihr Anliegen..."></textarea>
+              </div>
+
+              <!-- Privacy Checkbox -->
+              <div class="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="privacy"
+                  name="privacy"
+                  required
+                  class="mt-1 w-4 h-4 text-secondary bg-secondary border-secondary/50 focus:ring-secondary/40"
+                />
+                <label for="privacy" class="text-secondary/80 text-sm">
+                  Ich habe die <a href="/datenschutz" class="text-secondary hover:text-secondary/80 underline">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Daten zu. *
+                </label>
+              </div>
+
+              <!-- Submit Button -->
+              <button
+                type="submit"
+                class="w-full px-8 py-4 bg-secondary text-primary border-2 border-secondary font-bold hover:bg-primary hover:text-secondary hover:border-secondary transition-all duration-200 flex items-center justify-center gap-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m22 2-7 20-4-9-9-4z"></path>
+                  <path d="M22 2 11 13"></path>
+                </svg>
+                NACHRICHT SENDEN
+              </button>
+            </form>
+
+            <!-- Success/Error Messages -->
+            <div id="formMessage" class="hidden mt-6 p-4 border-2"></div>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="space-y-8">
+            <!-- Business Info -->
+            <div>
+              <h2 class="text-secondary text-2xl font-bold mb-6">Unser Standort</h2>
+              <div class="bg-secondary/10 border border-secondary/20 p-6 space-y-4">
+                <div>
+                  <h3 class="text-secondary font-bold mb-2">Autosalon Volketswil</h3>
+                  <div class="text-secondary/80 space-y-1">
+                    <p>Javastrasse 2</p>
+                    <p>8604 Volketswil</p>
+                    <p>Schweiz</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 class="text-secondary font-semibold mb-2">Kontaktdaten</h4>
+                  <div class="text-secondary/80 space-y-1">
+                    <p><strong>E-Mail:</strong> 
+                      <a href="mailto:Verkauf@autosalonvolketswil.ch" class="text-secondary hover:text-secondary/80 transition-colors">
+                        Verkauf@autosalonvolketswil.ch
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Opening Hours -->
+            <div>
+              <h2 class="text-secondary text-2xl font-bold mb-6">Öffnungszeiten</h2>
+              <div class="bg-secondary/10 border border-secondary/20 p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-secondary font-semibold mb-1">Montag - Freitag</p>
+                    <p class="text-secondary/80">09:00 - 19:00</p>
+                  </div>
+                  <div>
+                    <p class="text-secondary font-semibold mb-1">Samstag</p>
+                    <p class="text-secondary/80">09:00 - 17:00</p>
+                  </div>
+                  <div>
+                    <p class="text-secondary font-semibold mb-1">Sonntag</p>
+                    <p class="text-secondary/80">Geschlossen</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Why Contact Us -->
+            <div>
+              <h2 class="text-secondary text-2xl font-bold mb-6">Warum uns kontaktieren?</h2>
+              <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 bg-secondary/20 border border-secondary/30 mt-1 flex-shrink-0 flex items-center justify-center">
+                    <div class="w-2 h-2 bg-secondary"></div>
+                  </div>
+                  <div>
+                    <h3 class="text-secondary font-semibold mb-1">Persönliche Beratung</h3>
+                    <p class="text-secondary/80 text-sm">Individuelle Fahrzeugberatung nach Ihren Wünschen</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 bg-secondary/20 border border-secondary/30 mt-1 flex-shrink-0 flex items-center justify-center">
+                    <div class="w-2 h-2 bg-secondary"></div>
+                  </div>
+                  <div>
+                    <h3 class="text-secondary font-semibold mb-1">Finanzierungsoptionen</h3>
+                    <p class="text-secondary/80 text-sm">Flexible Finanzierungs- und Leasingmöglichkeiten</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 bg-secondary/20 border border-secondary/30 mt-1 flex-shrink-0 flex items-center justify-center">
+                    <div class="w-2 h-2 bg-secondary"></div>
+                  </div>
+                  <div>
+                    <h3 class="text-secondary font-semibold mb-1">Garantie & Service</h3>
+                    <p class="text-secondary/80 text-sm">Umfassende Garantie und professioneller Service</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+  // Contact form handling
+  const contactForm = document.getElementById('contactForm') as HTMLFormElement;
+  const formMessage = document.getElementById('formMessage') as HTMLElement;
+
+  if (contactForm && formMessage) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // Simulate form submission
+      const formData = new FormData(contactForm);
+      
+      // Show loading state
+      const submitBtn = contactForm.querySelector('button[type="submit"]') as HTMLButtonElement;
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = 'WIRD GESENDET...';
+      submitBtn.disabled = true;
+      
+      // Simulate API call
+      setTimeout(() => {
+        // Show success message
+        formMessage.className = 'mt-6 p-4 border-2 border-green-500/50 bg-green-900/20';
+        formMessage.innerHTML = `
+          <p class="text-green-300 font-bold">Nachricht erfolgreich gesendet!</p>
+          <p class="text-green-400 text-sm mt-1">Wir werden uns schnellstmöglich bei Ihnen melden.</p>
+        `;
+        formMessage.classList.remove('hidden');
+        
+        // Reset form
+        contactForm.reset();
+        
+        // Reset button
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
+        // Hide message after 5 seconds
+        setTimeout(() => {
+          formMessage.classList.add('hidden');
+        }, 5000);
+        
+      }, 2000);
+    });
+  }
+</script> 

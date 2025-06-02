@@ -1,0 +1,471 @@
+---
+// Car Detail Modal component
+export interface Car {
+  id: number;
+  title: string;
+  brand: string;
+  price_chf: number;
+  leasing_text?: string;
+  first_registration?: string;
+  car_type?: string;
+  mileage_km?: number;
+  transmission?: string;
+  fuel?: string;
+  drive?: string;
+  power_hp?: number;
+  power_kw?: number;
+  mfk?: boolean;
+  warranty?: boolean;
+  warranty_text?: string;
+  equipment?: string[];
+  description?: string;
+  image_urls?: string[];
+}
+---
+
+<!-- Modal Overlay -->
+<div id="carDetailModal" class="fixed inset-0 bg-black/80 z-50 hidden opacity-0 transition-opacity duration-300">
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <!-- Modal Content -->
+    <div class="bg-secondary max-w-4xl w-full max-h-[90vh] overflow-y-auto relative transform scale-95 transition-transform duration-300">
+      
+      <!-- Close Button -->
+      <button id="closeModal" class="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors duration-200">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="p-6 border-b border-primary/10">
+        <div class="flex justify-between items-start">
+          <div class="flex-1">
+            <div id="modalBrand" class="text-primary/60 text-sm font-bold uppercase tracking-wider mb-2"></div>
+            <h2 id="modalTitle" class="text-primary text-2xl md:text-3xl font-bold mb-3"></h2>
+            <div class="flex flex-col sm:flex-row sm:items-end gap-2">
+              <div id="modalPrice" class="text-primary text-2xl md:text-3xl font-bold"></div>
+              <div id="modalLeasingText" class="text-primary/60 text-sm"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+        
+        <!-- Left Side - Images -->
+        <div class="bg-primary relative">
+          
+          <!-- Image Container -->
+          <div class="aspect-video lg:aspect-square relative overflow-hidden">
+            <div id="modalImageContainer" class="w-full h-full">
+              <!-- Images will be inserted here -->
+            </div>
+            
+            <!-- Navigation Arrows -->
+            <button id="modalPrevBtn" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full opacity-0 transition-opacity duration-300">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15,18 9,12 15,6"></polyline>
+              </svg>
+            </button>
+            
+            <button id="modalNextBtn" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full opacity-0 transition-opacity duration-300">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"></polyline>
+              </svg>
+            </button>
+
+            <!-- Image Indicators -->
+            <div id="modalImageIndicators" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+              <!-- Indicators will be inserted here -->
+            </div>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="bg-secondary p-6 border-t border-primary/10">
+            <h3 class="text-primary font-bold text-lg mb-4">Kontakt</h3>
+            <div class="space-y-3">
+              <!-- Dealer/Company -->
+              <div class="flex items-start gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary/60 mt-0.5 flex-shrink-0">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <div>
+                  <div id="modalDealerName" class="text-primary font-semibold">Auto Salon</div>
+                  <div id="modalDealerTitle" class="text-primary/60 text-sm">Volketsvil</div>
+                </div>
+              </div>
+
+              <!-- Address -->
+              <div class="flex items-start gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary/60 mt-0.5 flex-shrink-0">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <div>
+                  <div id="modalAddress" class="text-primary text-sm">
+                    Javastrasse 2<br>
+                    8604 Volketswil
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phone -->
+              <div class="flex items-center gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary/60 flex-shrink-0">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <a href="tel:+41441234567" id="modalPhone" class="text-primary text-sm hover:text-primary/80 transition-colors">
+                  +41 44 442 30 00
+                </a>
+              </div>
+
+              <!-- Email -->
+              <div class="flex items-center gap-3">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary/60 flex-shrink-0">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                <a href="mailto:verkauf@autosalonvolketswil.ch" id="modalEmail" class="text-primary text-sm hover:text-primary/80 transition-colors">
+                    verkauf@autosalonvolketswil.ch
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side - Details -->
+        <div class="p-6 lg:p-8 space-y-6">
+          
+          <!-- Description -->
+          <div id="modalDescription" class="text-primary text-lg leading-relaxed"></div>
+
+          <!-- Key Specs Grid -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="text-primary/60 text-xs font-bold uppercase tracking-wider mb-1">Erstzulassung</div>
+              <div id="modalFirstRegistration" class="text-primary font-semibold"></div>
+            </div>
+            <div>
+              <div class="text-primary/60 text-xs font-bold uppercase tracking-wider mb-1">Fahrzeugtyp</div>
+              <div id="modalCarType" class="text-primary font-semibold"></div>
+            </div>
+            <div>
+              <div class="text-primary/60 text-xs font-bold uppercase tracking-wider mb-1">Kilometerstand</div>
+              <div id="modalMileage" class="text-primary font-semibold"></div>
+            </div>
+            <div>
+              <div class="text-primary/60 text-xs font-bold uppercase tracking-wider mb-1">Getriebe</div>
+              <div id="modalTransmission" class="text-primary font-semibold"></div>
+            </div>
+            <div>
+              <div class="text-primary/60 text-xs font-bold uppercase tracking-wider mb-1">Kraftstoff</div>
+              <div id="modalFuel" class="text-primary font-semibold"></div>
+            </div>
+            <div>
+              <div class="text-primary/60 text-xs font-bold uppercase tracking-wider mb-1">Antrieb</div>
+              <div id="modalDrive" class="text-primary font-semibold"></div>
+            </div>
+            <div>
+              <div class="text-primary/60 text-xs font-bold uppercase tracking-wider mb-1">Leistung</div>
+              <div id="modalPower" class="text-primary font-semibold"></div>
+            </div>
+            <div>
+              <div class="text-primary/60 text-xs font-bold uppercase tracking-wider mb-1">Status</div>
+              <div id="modalStatus" class="text-primary font-semibold"></div>
+            </div>
+          </div>
+
+          <!-- Warranty Info -->
+          <div id="modalWarrantyContainer" class="hidden">
+            <div class="text-primary/60 text-xs font-bold uppercase tracking-wider mb-2">Garantie</div>
+            <div id="modalWarranty" class="text-primary text-sm bg-primary/5 p-3 rounded"></div>
+          </div>
+
+          <!-- Equipment -->
+          <div id="modalEquipmentContainer" class="hidden">
+            <div class="text-primary/60 text-xs font-bold uppercase tracking-wider mb-3">Ausstattung</div>
+            <div id="modalEquipment" class="grid grid-cols-1 gap-2">
+              <!-- Equipment items will be inserted here -->
+            </div>
+          </div>
+
+          <!-- Inquiry Button -->
+          <div class="pt-6 border-t border-primary/10">
+            <button id="inquiryBtn" class="w-full bg-primary text-secondary font-bold py-4 px-6 hover:bg-primary/90 transition-colors duration-200 flex items-center justify-center gap-3">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7,10 12,15 17,10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              ANFRAGE SENDEN
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Modal functionality
+  let currentModalImageIndex = 0;
+  let modalImages: string[] = [];
+  let currentCar: any = null;
+
+  // Get modal elements
+  const modal = document.getElementById('carDetailModal') as HTMLElement;
+  const modalContent = modal?.querySelector('.bg-secondary') as HTMLElement;
+  const closeBtn = document.getElementById('closeModal') as HTMLElement;
+  const prevBtn = document.getElementById('modalPrevBtn') as HTMLElement;
+  const nextBtn = document.getElementById('modalNextBtn') as HTMLElement;
+  const imageContainer = document.getElementById('modalImageContainer') as HTMLElement;
+  const imageIndicators = document.getElementById('modalImageIndicators') as HTMLElement;
+  const inquiryBtn = document.getElementById('inquiryBtn') as HTMLElement;
+
+  // Open modal function
+  function openCarModal(car: any) {
+    currentCar = car;
+    populateModal(car);
+    
+    if (modal) {
+      modal.classList.remove('hidden');
+      // Force reflow
+      modal.offsetHeight;
+      modal.classList.remove('opacity-0');
+      modalContent.classList.remove('scale-95');
+      modalContent.classList.add('scale-100');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  // Close modal function
+  function closeCarModal() {
+    if (modal) {
+      modal.classList.add('opacity-0');
+      modalContent.classList.remove('scale-100');
+      modalContent.classList.add('scale-95');
+      
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+      }, 300);
+    }
+  }
+
+  // Populate modal with car data
+  function populateModal(car: any) {
+    // Basic info
+    document.getElementById('modalBrand')!.textContent = car.brand;
+    document.getElementById('modalTitle')!.textContent = car.title;
+    document.getElementById('modalPrice')!.textContent = `CHF ${car.price_chf.toLocaleString()}`;
+    
+    const leasingTextEl = document.getElementById('modalLeasingText') as HTMLElement;
+    if (car.leasing_text) {
+      leasingTextEl.textContent = car.leasing_text;
+      leasingTextEl.style.display = 'block';
+    } else {
+      leasingTextEl.style.display = 'none';
+    }
+
+    // Description
+    const descEl = document.getElementById('modalDescription') as HTMLElement;
+    if (car.description) {
+      descEl.textContent = car.description;
+      descEl.style.display = 'block';
+    } else {
+      descEl.style.display = 'none';
+    }
+
+    // Specs
+    document.getElementById('modalFirstRegistration')!.textContent = car.first_registration || '-';
+    document.getElementById('modalCarType')!.textContent = car.car_type || '-';
+    document.getElementById('modalMileage')!.textContent = car.mileage_km ? `${car.mileage_km.toLocaleString()} km` : '-';
+    document.getElementById('modalTransmission')!.textContent = car.transmission || '-';
+    document.getElementById('modalFuel')!.textContent = car.fuel || '-';
+    document.getElementById('modalDrive')!.textContent = car.drive || '-';
+    
+    const powerText = car.power_hp && car.power_kw ? `${car.power_hp} PS (${car.power_kw} kW)` : '-';
+    document.getElementById('modalPower')!.textContent = powerText;
+    
+    const statusParts = [];
+    if (car.mfk) statusParts.push('MFK');
+    if (car.warranty) statusParts.push('Garantie');
+    document.getElementById('modalStatus')!.textContent = statusParts.length > 0 ? statusParts.join(', ') : '-';
+
+    // Warranty
+    const warrantyContainer = document.getElementById('modalWarrantyContainer') as HTMLElement;
+    const warrantyEl = document.getElementById('modalWarranty') as HTMLElement;
+    if (car.warranty && car.warranty_text) {
+      warrantyEl.textContent = car.warranty_text;
+      warrantyContainer.classList.remove('hidden');
+    } else {
+      warrantyContainer.classList.add('hidden');
+    }
+
+    // Equipment
+    const equipmentContainer = document.getElementById('modalEquipmentContainer') as HTMLElement;
+    const equipmentEl = document.getElementById('modalEquipment') as HTMLElement;
+    if (car.equipment && car.equipment.length > 0) {
+      const equipmentHTML = car.equipment.map((item: string) => `
+        <div class="flex items-center gap-2 text-primary text-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary/60">
+            <polyline points="20,6 9,17 4,12"></polyline>
+          </svg>
+          ${item}
+        </div>
+      `).join('');
+      equipmentEl.innerHTML = equipmentHTML;
+      equipmentContainer.classList.remove('hidden');
+    } else {
+      equipmentContainer.classList.add('hidden');
+    }
+
+    // Images
+    modalImages = car.image_urls || [];
+    currentModalImageIndex = 0;
+    setupModalImages();
+  }
+
+  // Setup modal images
+  function setupModalImages() {
+    if (!imageContainer || !imageIndicators) return;
+
+    if (modalImages.length === 0) {
+      imageContainer.innerHTML = `
+        <div class="w-full h-full bg-primary/20 flex items-center justify-center">
+          <div class="w-16 h-16 bg-secondary/20 rounded"></div>
+        </div>
+      `;
+      imageIndicators.innerHTML = '';
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+      return;
+    }
+
+    // Create images
+    const imagesHTML = modalImages.map((url, index) => `
+      <img 
+        src="${url}" 
+        alt="Car image ${index + 1}"
+        class="modal-image w-full h-full object-cover absolute top-0 left-0 transition-opacity duration-300 ${index === 0 ? 'opacity-100' : 'opacity-0'}"
+        data-index="${index}"
+      />
+    `).join('');
+    
+    imageContainer.innerHTML = `<div class="relative w-full h-full">${imagesHTML}</div>`;
+
+    // Create indicators
+    if (modalImages.length > 1) {
+      const indicatorsHTML = modalImages.map((_, index) => `
+        <button 
+          class="modal-indicator w-3 h-3 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/50'} transition-colors duration-200"
+          data-index="${index}">
+        </button>
+      `).join('');
+      imageIndicators.innerHTML = indicatorsHTML;
+
+      // Show navigation
+      prevBtn.style.display = 'block';
+      nextBtn.style.display = 'block';
+      
+      // Add hover effect to show navigation
+      imageContainer.addEventListener('mouseenter', () => {
+        prevBtn.classList.remove('opacity-0');
+        nextBtn.classList.remove('opacity-0');
+      });
+      
+      imageContainer.addEventListener('mouseleave', () => {
+        prevBtn.classList.add('opacity-0');
+        nextBtn.classList.add('opacity-0');
+      });
+
+      // Setup indicator click events
+      const indicators = imageIndicators.querySelectorAll('.modal-indicator');
+      indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => showModalImage(index));
+      });
+    } else {
+      imageIndicators.innerHTML = '';
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+    }
+  }
+
+  // Show specific modal image
+  function showModalImage(index: number) {
+    if (index < 0 || index >= modalImages.length) return;
+
+    const images = imageContainer.querySelectorAll('.modal-image');
+    const indicators = imageIndicators.querySelectorAll('.modal-indicator');
+
+    images.forEach((img, i) => {
+      (img as HTMLElement).classList.toggle('opacity-100', i === index);
+      (img as HTMLElement).classList.toggle('opacity-0', i !== index);
+    });
+
+    indicators.forEach((indicator, i) => {
+      (indicator as HTMLElement).classList.toggle('bg-white', i === index);
+      (indicator as HTMLElement).classList.toggle('bg-white/50', i !== index);
+    });
+
+    currentModalImageIndex = index;
+  }
+
+  // Navigation functions
+  function nextModalImage() {
+    const nextIndex = (currentModalImageIndex + 1) % modalImages.length;
+    showModalImage(nextIndex);
+  }
+
+  function prevModalImage() {
+    const prevIndex = (currentModalImageIndex - 1 + modalImages.length) % modalImages.length;
+    showModalImage(prevIndex);
+  }
+
+  // Event listeners
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeCarModal);
+  }
+
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeCarModal();
+      }
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', prevModalImage);
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', nextModalImage);
+  }
+
+  if (inquiryBtn) {
+    inquiryBtn.addEventListener('click', () => {
+      // TODO: Implement inquiry functionality
+      console.log('Inquiry for car:', currentCar);
+      alert('Anfrage-Funktionalität wird bald implementiert!');
+    });
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (!modal.classList.contains('hidden')) {
+      if (e.key === 'Escape') {
+        closeCarModal();
+      } else if (e.key === 'ArrowLeft' && modalImages.length > 1) {
+        prevModalImage();
+      } else if (e.key === 'ArrowRight' && modalImages.length > 1) {
+        nextModalImage();
+      }
+    }
+  });
+
+  // Make openCarModal globally available
+  (window as any).openCarModal = openCarModal;
+</script> 
