@@ -1,5 +1,6 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
+import CookieBanner from "../components/CookieBanner.astro";
 ---
 
 <html lang="en" class="selection:bg-secondary selection:text-secondary">
@@ -11,6 +12,9 @@ import BaseHead from "../components/BaseHead.astro";
 
   <body class="bg-primary">
     <slot />
+    
+    <!-- Cookie Banner -->
+    <CookieBanner />
     
     <!-- AOS Script -->
     <script type="text/javascript" src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
