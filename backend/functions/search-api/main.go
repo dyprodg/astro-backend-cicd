@@ -685,7 +685,7 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 		// Validate request
 		if validationErrors := validateSearchRequest(&searchReq); len(validationErrors) > 0 {
 			errorResponse := ErrorResponse{
-				Error:       "Validation failed",
+				Error:       "Validation failed!",
 				Validations: validationErrors,
 			}
 			body, _ := json.Marshal(errorResponse)
