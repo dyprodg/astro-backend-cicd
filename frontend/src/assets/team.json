@@ -1,0 +1,57 @@
+[
+    {
+      "name": "Antonio Castellano",
+      "image": "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Antonio-scaled.jpg",
+      "position": "Automobilverkäufer"
+    },
+    {
+      "name": "Kenan Midzan",
+      "image": "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Kenan-scaled.jpg",
+      "position": "Automobilverkäufer"
+    },
+    {
+        "name": "Selina Doll",
+        "image": "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Selina-scaled.jpg",
+        "position": "Assistenz der Geschäftsleitung"
+      },
+      {
+        "name": "Francesco Sigillo",
+        "image": "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Francesco-scaled.jpg",
+        "position": "Marketing"
+      },
+      {
+        "name": "Mikael Da Costa Botelho",
+        "title": "Aufbereiter",
+        "image": "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Miki-scaled.jpg"
+      },
+      {
+        "name": "Rodion Wagner",
+        "title": "Aufbereiter",
+        "image": "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Rodion-scaled.jpg"
+      },
+      {
+        "name": "Fernando Pinheiro",
+        "title": "Aufbereiter",
+        "image": "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Fernando-scaled.jpg"
+      },
+      {
+        "name": "Levin Paprotka",
+        "title": "Mechaniker",
+        "image": "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Levin-scaled.jpg"
+      },
+      {
+        "name": "Nadim Ghani",
+        "title": "Mitglied GL & Verkaufsleiter",
+        "image": "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/DSC01352-scaled.jpg"
+      },
+      {
+        "name": "Mario Betschart",
+        "title": "Mitglied GL & Einkäufer",
+        "image": "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/DSC01454-2-scaled.jpg"
+      },
+      {
+        "name": "Sali Saliu",
+        "title": "Inhaber & Geschäftsführer",
+        "image": "https://autosalonvolketswil.ch/wp-content/uploads/2024/01/DSC6181-scaled.jpg"
+      }
+]

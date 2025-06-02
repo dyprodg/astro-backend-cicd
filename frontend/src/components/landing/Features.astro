@@ -162,6 +162,7 @@ import BlurImage from '../lib/BlurImage.astro';
           <!-- CTA Button -->
           <div class="text-center">
             <button 
+              id="open-sell-modal"
               class="bg-secondary text-primary px-12 py-4 text-xl font-bold border-2 border-secondary hover:bg-primary hover:text-secondary hover:border-secondary transition-all duration-300 transform hover:scale-105">
               Verkauf Starten
             </button>
@@ -170,4 +171,221 @@ import BlurImage from '../lib/BlurImage.astro';
       </div>
     </div>
   </div>
-</section> 
+</section>
+
+<!-- Sell Car Modal -->
+<div 
+  id="sell-modal" 
+  class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300">
+  <div class="bg-primary border-2 border-secondary/30 max-w-2xl w-full max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300">
+    <!-- Modal Header -->
+    <div class="border-b border-secondary/20 p-6">
+      <div class="flex items-center justify-between">
+        <h3 class="text-secondary text-2xl md:text-3xl font-bold">Auto verkaufen</h3>
+        <button 
+          id="close-sell-modal"
+          class="text-secondary/60 hover:text-secondary text-3xl font-bold transition-colors">
+          ×
+        </button>
+      </div>
+      <p class="text-secondary/70 mt-2">Füllen Sie das Formular aus und wir melden uns innerhalb von 24 Stunden bei Ihnen.</p>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-6">
+      <form id="sell-car-form" class="space-y-6">
+        <!-- Vehicle Information -->
+        <div>
+          <h4 class="text-secondary text-xl font-semibold mb-4">Fahrzeugdaten</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Marke -->
+            <div>
+              <label for="marke" class="block text-secondary font-medium mb-2">Marke *</label>
+              <input 
+                type="text" 
+                id="marke" 
+                name="marke" 
+                required
+                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                placeholder="z.B. BMW, Mercedes, Audi">
+            </div>
+
+            <!-- Modell -->
+            <div>
+              <label for="modell" class="block text-secondary font-medium mb-2">Modell *</label>
+              <input 
+                type="text" 
+                id="modell" 
+                name="modell" 
+                required
+                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                placeholder="z.B. 3er, C-Klasse, A4">
+            </div>
+
+            <!-- Baujahr -->
+            <div>
+              <label for="baujahr" class="block text-secondary font-medium mb-2">Baujahr *</label>
+              <input 
+                type="number" 
+                id="baujahr" 
+                name="baujahr" 
+                required
+                min="1980"
+                max="2025"
+                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                placeholder="z.B. 2020">
+            </div>
+
+            <!-- Kilometerstand -->
+            <div>
+              <label for="kilometerstand" class="block text-secondary font-medium mb-2">Kilometerstand *</label>
+              <input 
+                type="number" 
+                id="kilometerstand" 
+                name="kilometerstand" 
+                required
+                min="0"
+                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                placeholder="z.B. 50000">
+            </div>
+
+            <!-- Gewünschter Preis -->
+            <div>
+              <label for="preis" class="block text-secondary font-medium mb-2">Gewünschter Preis (CHF)</label>
+              <input 
+                type="number" 
+                id="preis" 
+                name="preis" 
+                min="0"
+                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                placeholder="z.B. 25000">
+            </div>
+
+            <!-- Zustand -->
+            <div>
+              <label for="zustand" class="block text-secondary font-medium mb-2">Zustand *</label>
+              <div class="relative">
+                <select 
+                  id="zustand" 
+                  name="zustand" 
+                  required
+                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors appearance-none cursor-pointer">
+                  <option value="">Bitte wählen</option>
+                  <option value="sehr-gut">Sehr gut</option>
+                  <option value="gut">Gut</option>
+                  <option value="befriedigend">Befriedigend</option>
+                  <option value="reparaturbedürftig">Reparaturbedürftig</option>
+                </select>
+                <!-- Custom Arrow -->
+                <div class="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div>
+          <h4 class="text-secondary text-xl font-semibold mb-4">Kontaktdaten</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Name -->
+            <div class="md:col-span-2">
+              <label for="name" class="block text-secondary font-medium mb-2">Vollständiger Name *</label>
+              <input 
+                type="text" 
+                id="name" 
+                name="name" 
+                required
+                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                placeholder="Vor- und Nachname">
+            </div>
+
+            <!-- Email -->
+            <div class="md:col-span-2">
+              <label for="email" class="block text-secondary font-medium mb-2">E-Mail Adresse *</label>
+              <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                required
+                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                placeholder="ihre.email@beispiel.ch">
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-4">
+          <button 
+            type="submit"
+            class="w-full bg-secondary text-primary px-8 py-4 text-lg font-bold border-2 border-secondary hover:bg-primary hover:text-secondary hover:border-secondary transition-all duration-300">
+            Anfrage senden
+          </button>
+          <p class="text-secondary/60 text-sm mt-2 text-center">
+            * Pflichtfelder - Wir melden uns innerhalb von 24 Stunden bei Ihnen
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const openModalBtn = document.getElementById('open-sell-modal');
+    const closeModalBtn = document.getElementById('close-sell-modal');
+    const modal = document.getElementById('sell-modal');
+    const form = document.getElementById('sell-car-form');
+    
+    if (!openModalBtn || !closeModalBtn || !modal || !form) return;
+
+    // Open Modal
+    openModalBtn.addEventListener('click', () => {
+      modal.classList.remove('opacity-0', 'invisible');
+      const modalContent = modal.querySelector('div');
+      if (modalContent) {
+        modalContent.classList.remove('scale-95');
+        modalContent.classList.add('scale-100');
+      }
+      document.body.style.overflow = 'hidden';
+    });
+
+    // Close Modal Function
+    const closeModal = () => {
+      modal.classList.add('opacity-0', 'invisible');
+      const modalContent = modal.querySelector('div');
+      if (modalContent) {
+        modalContent.classList.add('scale-95');
+        modalContent.classList.remove('scale-100');
+      }
+      document.body.style.overflow = 'auto';
+    };
+
+    // Close Modal Events
+    closeModalBtn.addEventListener('click', closeModal);
+    
+    // Close on overlay click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Close on ESC key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('invisible')) {
+        closeModal();
+      }
+    });
+
+    // Form Submit (placeholder - no actual functionality yet)
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      console.log('Form submitted - functionality to be implemented');
+      // TODO: Add form submission logic later
+      alert('Formular wurde gesendet! (Funktionalität wird später implementiert)');
+      closeModal();
+    });
+  });
+</script> 
