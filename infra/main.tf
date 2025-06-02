@@ -38,7 +38,7 @@ resource "aws_iam_role" "astro_backend_cicd" {
         Condition = {
           StringLike = {
             "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com",
-            "token.actions.githubusercontent.com:sub" : "repo:dennisdiepolder/astro-backend-cicd:*"
+            "token.actions.githubusercontent.com:sub" : "repo:dyprodg/astro-backend-cicd:*"
           }
         }
       }
