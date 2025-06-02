@@ -159,7 +159,7 @@ jobs:
 
     - name: Post deployment summary
       run: |
-        echo "## 🚀 Lambda Function Updated!" >> $GITHUB_STEP_SUMMARY
+        echo "## 🚀 Lambda Function Updated" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "### API Endpoints:" >> $GITHUB_STEP_SUMMARY
         echo "- **Search Options:** https://brlsb82kdc.execute-api.eu-central-1.amazonaws.com/prod/search/options" >> $GITHUB_STEP_SUMMARY
