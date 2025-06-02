@@ -2,48 +2,65 @@
 // Props
 const { src, lowResSrc, alt } = Astro.props;
 ---
-<div class="blur-wrapper">
-  <img
-    class="preview"
-    src={lowResSrc}
-    alt=""
-    aria-hidden="true"
-  />
-  <img
-    class="full lazy"
-    data-src={src}
-    alt={alt}
-    loading="lazy"
-  />
+<!-- OUTER DIV: AOS Fade-In + Fly-In -->
+<div 
+  class="aos-wrapper"
+  data-aos="fade-up"
+  data-aos-duration="2000"
+  data-aos-delay="300"
+>
+  <!-- INNER DIV: Blur Effekt -->
+  <div class="blur-wrapper">
+    <img
+      class="main-image lazy"
+      src={lowResSrc}
+      data-src={src}
+      alt={alt}
+      loading="lazy"
+    />
+  </div>
 </div>
 
 <style>
+/* CONTROLLER: Outer wrapper für AOS */
+.aos-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+/* CONTROLLER: Inner wrapper für Blur */
 .blur-wrapper {
   position: relative;
   display: inline-block;
   overflow: hidden;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
 }
-.blur-wrapper img {
+
+.main-image {
   display: block;
   width: 100%;
-  height: auto;
-  transition: opacity 0.4s ease;
-}
-.preview {
-  position: absolute;
-  top: 0;
-  left: 0;
-  filter: blur(20px);
+  height: 100%;
+  object-fit: cover;
   transform: scale(1.05);
-  z-index: 1;
+  /* CONTROLLER: Startet mit Blur */
+  filter: blur(25px);
+  /* SUPER SMOOTH: Hardware-beschleunigt + langsamer ease */
+  transition: filter 1s cubic-bezier(0.4, 0.0, 0.2, 1), transform 0.6s ease;
+  will-change: filter, transform;
+  backface-visibility: hidden;
 }
-.full {
-  position: relative;
-  z-index: 2;
-  opacity: 0;
+
+/* CONTROLLER: Blur wird entfernt + Zoom zurückgesetzt */
+.main-image.sharp {
+  filter: blur(0px);
+  transform: scale(1);
 }
-.full.loaded {
-  opacity: 1;
+
+/* HOVER EFFECTS: Zoom bei Hover */
+.blur-wrapper:hover .main-image.sharp {
+  transform: scale(1.1);
 }
 </style>
 
@@ -55,17 +72,50 @@ const { src, lowResSrc, alt } = Astro.props;
       const src = img.getAttribute("data-src");
       if (!src) return;
       
-      const fullImg = new Image();
       const imgElement = img as HTMLImageElement;
-      fullImg.src = src;
-
-      fullImg.onload = () => {
+      
+      // CONTROLLER: High-Res Bild preloaden
+      const tempImg = new Image();
+      tempImg.onload = () => {
+        // High-Res ist geladen → austauschen UND de-blurren
         imgElement.src = src;
-        imgElement.classList.add("loaded");
-
-        const preview = imgElement.previousElementSibling as HTMLElement;
-        if (preview) preview.style.display = "none";
+        
+        // CONTROLLER: Gleichzeitig blur entfernen UND zoom zurücksetzen
+        setTimeout(() => {
+          imgElement.classList.add("sharp");
+        }, 50); // Kleiner Delay für smooth transition
       };
+      
+      tempImg.onerror = () => {
+        console.error("Failed to load image:", src);
+      };
+      
+      tempImg.src = src;
     });
   });
 </script>
+
+<!-- 
+
+🎛️ SINGLE-IMAGE SMOOTH CONTROLLER:
+
+📦 NUR EIN BILD:
+   - Startet mit lowResSrc + blur(25px) + scale(1.05)
+   - Lädt highRes im Hintergrund
+   - Wechselt zu highRes + blur(0px) + scale(1) gleichzeitig
+
+📦 SUPER SMOOTH:
+   transition: filter 1s cubic-bezier(0.4, 0.0, 0.2, 1)  ← Smooth ease-out
+   will-change: filter, transform                         ← Hardware acceleration
+   backface-visibility: hidden                            ← GPU optimization
+
+📅 SMOOTH TIMELINE:
+1. AOS: Outer div fliegt ein (2s)
+2. HIGH-RES GELADEN: Smooth 1s transition
+   - Bild wird scharf (1s)
+   - Zoom geht auf normal (1s)
+3. Nach 1s: Perfekt scharfes Bild
+
+SINGLE IMAGE = BUTTER SMOOTH! 🎯
+
+-->

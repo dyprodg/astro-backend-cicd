@@ -9,9 +9,18 @@ import BaseHead from "../components/BaseHead.astro";
 
   <body class="bg-primary">
     <slot />
+    
+    <!-- AOS Script -->
     <script type="text/javascript" src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script type="text/javascript">
-      AOS.init();
+      AOS.init({
+        duration: 1000,
+        once: false,
+        offset: 100,
+      });
     </script>
+
+    <!-- Lenis Smooth Scroll -->
+    <script type="module" src="/src/scripts/lenis.js"></script>
   </body>
 </html> 

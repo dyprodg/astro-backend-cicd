@@ -1,37 +1,50 @@
 ---
 // Intro component
+import BlurImage from '../lib/BlurImage.astro';
 ---
+
+<!-- Banner Image Section -->
+<section class="w-full h-64 md:h-80 lg:h-96 overflow-hidden">
+  <div class="w-full h-full">
+    <BlurImage 
+      src="/cars/bugatti.jpg"
+      alt="Autosalon Banner"
+    />
+  </div>
+</section>
 
 <section id="about" class="bg-secondary">
   <div class="px-8 2xl:max-w-7xl mx-auto py-24">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
       <div data-aos="fade-up" data-aos-duration="1000">
         <h2 class="text-primary text-4xl md:text-5xl font-bold mb-6">
-          Advanced Vehicle Search
+          Bei uns finden Sie Ihr neues Auto zum Tiefstpreis!
         </h2>
         <p class="text-primary/70 text-lg leading-relaxed">
-          Our platform revolutionizes the way you search for vehicles. 
-          With real-time data processing and intelligent filtering, 
-          finding your perfect match has never been easier.
+          Als Ihr vertrauensvoller Partner beim Autokauf bieten wir Ihnen 
+          erstklassige Fahrzeuge zu unschlagbaren Preisen. Entdecken Sie 
+          unser vielfältiges Angebot und profitieren Sie von unserem 
+          professionellen Service.
         </p>
       </div>
       <div class="space-y-6" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+        <h3 class="text-primary text-2xl font-bold mb-4">Wieso Autosalon?</h3>
         <div class="border-t-2 border-primary pt-4">
-          <h3 class="text-primary font-bold mb-2">Smart Filtering</h3>
+          <h3 class="text-primary font-bold mb-2">Unabhängiger Autohändler</h3>
           <p class="text-primary/60 text-sm">
-            Advanced algorithms to match your exact requirements
+            Als unabhängiger Autohändler in Volketswil Zürich können wir markenunabhängig auf dem Markt performen!
           </p>
         </div>
         <div class="border-t-2 border-primary pt-4">
-          <h3 class="text-primary font-bold mb-2">Real-time Results</h3>
+          <h3 class="text-primary font-bold mb-2">Kundenvertrauen</h3>
           <p class="text-primary/60 text-sm">
-            Instant updates as new vehicles become available
+            Unsere Kunden sind begeistert von unserer Beratung sowie dem Rundum-Service und vertrauen darauf.
           </p>
         </div>
         <div class="border-t-2 border-primary pt-4">
-          <h3 class="text-primary font-bold mb-2">Comprehensive Data</h3>
+          <h3 class="text-primary font-bold mb-2">100% Tiefstpreisgarantie</h3>
           <p class="text-primary/60 text-sm">
-            Detailed information on every vehicle in our database
+            Beim Auto Salon finden Sie die schweizweit tiefsten Preise für ihr neues Auto – garantiert!
           </p>
         </div>
       </div>
