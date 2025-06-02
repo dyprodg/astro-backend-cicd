@@ -14,6 +14,9 @@ provider "aws" {
   region = "eu-central-1"
 }
 
+# Data source for current region
+data "aws_region" "current" {}
+
 
 # Hole die aktuelle AWS Account ID dynamisch
 data "aws_caller_identity" "current" {}
@@ -74,7 +77,8 @@ resource "aws_iam_role_policy" "astro_backend_cicd_policy" {
           "lambda:ListFunctions"
         ]
         Resource = [
-          "arn:aws:lambda:eu-central-1:*:function:search-api"
+          "arn:aws:lambda:eu-central-1:*:function:search-api",
+          "arn:aws:lambda:eu-central-1:*:function:contact-form"
         ]
       },
       {

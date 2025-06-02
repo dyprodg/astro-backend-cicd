@@ -530,5 +530,3 @@ output "caching_info" {
   value       = "Search-Ergebnisse: 15min Cache, Options: 15min Cache"
 }
 
-# Data source for current region
-data "aws_region" "current" {}
