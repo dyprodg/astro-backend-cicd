@@ -5,6 +5,8 @@ import BaseHead from "../components/BaseHead.astro";
 <html lang="en" class="selection:bg-secondary selection:text-secondary">
   <head>
     <BaseHead />
+    <!-- Lenis CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.4/dist/lenis.css">
   </head>
 
   <body class="bg-primary">
@@ -21,6 +23,31 @@ import BaseHead from "../components/BaseHead.astro";
     </script>
 
     <!-- Lenis Smooth Scroll -->
-    <script type="module" src="/src/scripts/lenis.js"></script>
+    <script src="https://unpkg.com/lenis@1.3.4/dist/lenis.min.js"></script>
+    <script>
+      // Wait for Lenis to be loaded
+      window.addEventListener('load', function() {
+        
+        if (typeof (window as any).Lenis !== 'undefined') {
+          // Initialize Lenis with basic settings first
+          const lenis = new (window as any).Lenis({
+            autoRaf: true,
+          });
+
+          // Listen for the scroll event
+          lenis.on('scroll', (e: any) => {
+            // Refresh AOS animations on scroll
+            if (typeof (window as any).AOS !== 'undefined') {
+              (window as any).AOS.refresh();
+            }
+          });
+
+          // Make lenis available globally for debugging
+          (window as any).lenis = lenis;
+        } else {
+          console.error('Lenis not loaded!');
+        }
+      });
+    </script>
   </body>
 </html> 
