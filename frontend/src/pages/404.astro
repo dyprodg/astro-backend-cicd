@@ -1,0 +1,37 @@
+---
+export const prerender = true;
+---
+
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Seite nicht gefunden</title>
+    <script>
+      // Simple client-side routing fallback
+      const path = window.location.pathname;
+      
+      // Redirect specific known routes
+      if (path === '/kontakt') {
+        window.location.href = '/kontakt/';
+      } else if (path === '/datenschutz') {
+        window.location.href = '/datenschutz/';
+      } else if (path === '/impressum') {
+        window.location.href = '/impressum/';
+      }
+    </script>
+  </head>
+  <body>
+    <div class="min-h-screen flex items-center justify-center bg-gray-50">
+      <div class="text-center">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">404</h1>
+        <p class="text-gray-600 mb-6">Diese Seite konnte nicht gefunden werden.</p>
+        <a href="/" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Zur Startseite
+        </a>
+      </div>
+    </div>
+  </body>
+</html> 
