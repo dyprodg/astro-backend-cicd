@@ -1,97 +1,159 @@
 ---
-// Features component
+// Auto Salon Features component
+import BlurImage from '../lib/BlurImage.astro';
 ---
 
 <section id="features" class="bg-secondary">
   <div class="px-8 2xl:max-w-7xl mx-auto py-24">
+    <!-- Header Text -->
     <div data-aos="fade-up" data-aos-duration="1000">
-      <h2 class="text-primary text-4xl md:text-5xl font-bold mb-16 text-center">
+      <h2 class="text-primary text-4xl md:text-5xl font-bold mb-6 text-center">
         Platform Features
       </h2>
+      <p class="text-primary/80 text-xl md:text-2xl text-center mb-16 font-medium">
+        Die tiefsten Preise der Schweiz für erschwinglichen Fahrspass
+      </p>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Feature 1 -->
-        <div 
-          class="bg-primary p-8"
-          data-aos="fade-up" 
-          data-aos-duration="1000"
-          data-aos-delay="0">
-          <div class="h-12 w-12 bg-secondary mb-6"></div>
-          <h3 class="text-secondary text-xl font-bold mb-4">Lightning Fast</h3>
-          <p class="text-secondary/70">
-            Experience instant search results with our optimized infrastructure. 
-            No waiting, just results.
+    <!-- Features Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-24">
+      <!-- Feature 1: Auto verkaufen -->
+      <div 
+        class="relative overflow-hidden group"
+        data-aos="fade-up" 
+        data-aos-duration="1000"
+        data-aos-delay="0">
+        <!-- Background Image -->
+        <div class="absolute inset-0">
+          <BlurImage 
+            src="/cars/e190hoch.jpg"
+            lowResSrc="/cars/e190hochSmall.jpeg"
+            alt="Auto verkaufen"
+          />
+          <div class="absolute inset-0 bg-black/60"></div>
+        </div>
+        <!-- Content -->
+        <div class="relative z-10 p-10 h-[28rem] md:h-[36rem] flex flex-col justify-end">
+          <div class="h-14 w-14 bg-primary mb-8 flex items-center justify-center">
+            <svg class="w-7 h-7 text-secondary" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          </div>
+          <h3 class="text-white text-2xl md:text-3xl font-bold mb-6">Auto verkaufen</h3>
+          <p class="text-white/90 text-lg md:text-xl leading-relaxed">
+            Auto verkaufen in nur 3 Schritten!<br />
+            Lass dein Auto Bewerten
           </p>
         </div>
+      </div>
 
-        <!-- Feature 2 -->
-        <div 
-          class="bg-primary p-8"
-          data-aos="fade-up" 
-          data-aos-duration="1000"
-          data-aos-delay="100">
-          <div class="h-12 w-12 bg-secondary mb-6"></div>
-          <h3 class="text-secondary text-xl font-bold mb-4">Smart Filters</h3>
-          <p class="text-secondary/70">
-            Advanced filtering options help you find exactly what you're looking for. 
-            Precise and intuitive.
+      <!-- Feature 2: Auto vermitteln -->
+      <div 
+        class="relative overflow-hidden group"
+        data-aos="fade-up" 
+        data-aos-duration="1000"
+        data-aos-delay="200">
+        <!-- Background Image -->
+        <div class="absolute inset-0">
+          <BlurImage 
+            src="/cars/e190h.jpg"
+            lowResSrc="/cars/e190hSmall.jpeg"
+            alt="Auto vermitteln"
+          />
+          <div class="absolute inset-0 bg-black/60"></div>
+        </div>
+        <!-- Content -->
+        <div class="relative z-10 p-10 h-[28rem] md:h-[36rem] flex flex-col justify-end">
+          <div class="h-14 w-14 bg-primary mb-8 flex items-center justify-center">
+            <svg class="w-7 h-7 text-secondary" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <h3 class="text-white text-2xl md:text-3xl font-bold mb-6">Auto vermitteln</h3>
+          <p class="text-white/90 text-lg md:text-xl leading-relaxed">
+            Auto vermitteln - risikofrei & lukrativ!<br />
           </p>
         </div>
+      </div>
 
-        <!-- Feature 3 -->
-        <div 
-          class="bg-primary p-8"
-          data-aos="fade-up" 
-          data-aos-duration="1000"
-          data-aos-delay="200">
-          <div class="h-12 w-12 bg-secondary mb-6"></div>
-          <h3 class="text-secondary text-xl font-bold mb-4">Real-time Data</h3>
-          <p class="text-secondary/70">
-            Always up-to-date information. Our system continuously syncs to provide 
-            the latest available data.
+      <!-- Feature 3: Auto Salon Team -->
+      <div 
+        class="relative overflow-hidden group"
+        data-aos="fade-up" 
+        data-aos-duration="1000"
+        data-aos-delay="400">
+        <!-- Background Image -->
+        <div class="absolute inset-0">
+          <BlurImage 
+            src="/cars/e190quer.jpg"
+            lowResSrc="/cars/e190querSmall.jpeg"
+            alt="Auto Salon Team"
+          />
+          <div class="absolute inset-0 bg-black/60"></div>
+        </div>
+        <!-- Content -->
+        <div class="relative z-10 p-10 h-[28rem] md:h-[36rem] flex flex-col justify-end">
+          <div class="h-14 w-14 bg-primary mb-8 flex items-center justify-center">
+            <svg class="w-7 h-7 text-secondary" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 12.75c1.63 0 3.07.39 4.24.9a2.988 2.988 0 0 1 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58A2.01 2.01 0 0 0 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm2.78 1.58c-.85-.37-1.79-.58-2.78-.58-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57c0-.81-.48-1.53-1.22-1.85zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/>
+            </svg>
+          </div>
+          <h3 class="text-white text-2xl md:text-3xl font-bold mb-6">Auto Salon Team</h3>
+          <p class="text-white/90 text-lg md:text-xl leading-relaxed">
+            Unser Team ist bereit, all Ihre Fragen zu beantworten.
           </p>
         </div>
+      </div>
+    </div>
 
-        <!-- Feature 4 -->
-        <div 
-          class="bg-primary p-8"
-          data-aos="fade-up" 
-          data-aos-duration="1000"
-          data-aos-delay="300">
-          <div class="h-12 w-12 bg-secondary mb-6"></div>
-          <h3 class="text-secondary text-xl font-bold mb-4">Secure Platform</h3>
-          <p class="text-secondary/70">
-            Built with security in mind. Protected against common vulnerabilities 
-            and DDoS attacks.
-          </p>
+    <!-- Call to Action Section -->
+    <div 
+      class="bg-primary p-8 md:p-12"
+      data-aos="fade-up" 
+      data-aos-duration="1000"
+      data-aos-delay="600">
+      <div class="max-w-4xl mx-auto">
+        <h3 class="text-secondary text-3xl md:text-4xl font-bold mb-8 text-center">
+          Verkaufen mit Auto Salon
+        </h3>
+        <h4 class="text-secondary text-xl md:text-2xl font-semibold mb-8 text-center">
+          Ihre Vorteile
+        </h4>
+        
+        <!-- Advantages Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <div class="flex items-start space-x-4">
+            <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0"></div>
+            <p class="text-secondary/90 text-lg">Direkter Ankauf aller Marken und Modelle</p>
+          </div>
+          <div class="flex items-start space-x-4">
+            <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0"></div>
+            <p class="text-secondary/90 text-lg">Ihren Verkaufspreis erhalten Sie innert 24h</p>
+          </div>
+          <div class="flex items-start space-x-4">
+            <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0"></div>
+            <p class="text-secondary/90 text-lg">Umgehende Bezahlung des Verkaufspreises</p>
+          </div>
+          <div class="flex items-start space-x-4">
+            <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0"></div>
+            <p class="text-secondary/90 text-lg">Unkompliziert und risikofrei</p>
+          </div>
+          <div class="flex items-start space-x-4">
+            <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0"></div>
+            <p class="text-secondary/90 text-lg">Abholung bei Ihnen Zuhause - ganz bequem!</p>
+          </div>
+          <div class="flex items-start space-x-4">
+            <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0"></div>
+            <p class="text-secondary/90 text-lg">100% kostenloser Service</p>
+          </div>
         </div>
 
-        <!-- Feature 5 -->
-        <div 
-          class="bg-primary p-8"
-          data-aos="fade-up" 
-          data-aos-duration="1000"
-          data-aos-delay="400">
-          <div class="h-12 w-12 bg-secondary mb-6"></div>
-          <h3 class="text-secondary text-xl font-bold mb-4">Mobile Ready</h3>
-          <p class="text-secondary/70">
-            Fully responsive design ensures perfect experience on any device. 
-            Search on the go.
-          </p>
-        </div>
-
-        <!-- Feature 6 -->
-        <div 
-          class="bg-primary p-8"
-          data-aos="fade-up" 
-          data-aos-duration="1000"
-          data-aos-delay="500">
-          <div class="h-12 w-12 bg-secondary mb-6"></div>
-          <h3 class="text-secondary text-xl font-bold mb-4">API Access</h3>
-          <p class="text-secondary/70">
-            Developer-friendly API for seamless integration. Build your own 
-            applications with our data.
-          </p>
+        <!-- CTA Button -->
+        <div class="text-center">
+          <button 
+            class="bg-secondary text-primary px-12 py-4 text-xl font-bold hover:bg-secondary/90 transition-colors duration-300 transform hover:scale-105">
+            Verkauf Starten
+          </button>
         </div>
       </div>
     </div>

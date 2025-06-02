@@ -88,6 +88,19 @@ resource "aws_iam_role_policy" "astro_backend_cicd_policy" {
           "arn:aws:s3:::astro-backend-search-api-coverage",
           "arn:aws:s3:::astro-backend-search-api-coverage/*"
         ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::astro-backend-data-bucket",
+          "arn:aws:s3:::astro-backend-data-bucket/*"
+        ]
       }
     ]
   })

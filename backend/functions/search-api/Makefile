@@ -3,26 +3,54 @@
 # Default target
 help:
 	@echo "🚗 Search API - Available targets:"
-	@echo "  build         - Build Lambda binary for ARM64"
+	@echo ""
+	@echo "🏗️ Build & Deploy:"
+	@echo "  build         - Build Lambda binary for ARM64 (downloads CSV from S3)"
 	@echo "  build-local   - Build for local testing (x86_64)"
+	@echo "  zip           - Create deployment ZIP"
+	@echo "  update-lambda - Update Lambda function code"
+	@echo ""
+	@echo "🧪 Testing:"
 	@echo "  test          - Run all tests"
 	@echo "  test-cover    - Run tests with coverage"
+	@echo "  test-api      - Test deployed API endpoints"
+	@echo ""
+	@echo "🔧 Development:"
 	@echo "  deps          - Install/update dependencies"
 	@echo "  fmt           - Format Go code"
 	@echo "  lint          - Run linter"
 	@echo "  clean         - Clean build artifacts"
-	@echo "  zip           - Create deployment ZIP"
-	@echo "  update-lambda - Update Lambda function code"
-	@echo "  logs          - Show Lambda logs"
-	@echo "  test-api      - Test deployed API endpoints"
-	@echo "  upload-coverage - Upload coverage to S3"
+	@echo ""
+	@echo "📊 Data Management:"
+	@echo "  download-csv  - Download CSV from S3 data bucket"
+	@echo "  upload-csv    - Upload CSV to S3 data bucket"
+	@echo "  upload-image  - Upload image (usage: make upload-image FILE=path/to/image.jpg)"
 	@echo ""
 	@echo "🏗️ Local infrastructure (optional):"
 	@echo "  deploy        - Deploy with Terraform (local)"
 	@echo "  plan          - Show Terraform plan (local)"
+	@echo ""
+	@echo "🛠️ Utilities:"
+	@echo "  logs          - Show Lambda logs"
+	@echo "  upload-coverage - Upload coverage to S3"
+
+# Download CSV from S3 Data Bucket
+download-csv:
+	@echo "Downloading CSV from S3 Data Bucket..."
+	@if aws s3 ls s3://astro-backend-data-bucket/autos.csv > /dev/null 2>&1; then \
+		echo "Downloading autos.csv from S3..."; \
+		aws s3 cp s3://astro-backend-data-bucket/autos.csv ./autos.csv; \
+		echo "CSV downloaded successfully!"; \
+	else \
+		echo "⚠️  CSV not found in S3, using local version"; \
+		if [ ! -f ./autos.csv ]; then \
+			echo "❌ No local CSV found either! Please upload autos.csv to S3 first."; \
+			exit 1; \
+		fi; \
+	fi
 
 # Build the Lambda binary for ARM64 Linux
-build:
+build: download-csv
 	@echo "Building search API for Lambda (Linux ARM64)..."
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags="-s -w" -o bootstrap main.go
 
@@ -146,4 +174,30 @@ load-test:
 upload-coverage:
 	@echo "Uploading coverage to S3..."
 	aws s3 cp coverage.html s3://your-bucket-name/coverage.html
-	@echo "Coverage uploaded to S3!" 
+	@echo "Coverage uploaded to S3!"
+
+# Upload CSV to S3 Data Bucket
+upload-csv:
+	@echo "Uploading CSV to S3 Data Bucket..."
+	@if [ ! -f ./autos.csv ]; then \
+		echo "❌ autos.csv not found in current directory"; \
+		exit 1; \
+	fi
+	aws s3 cp ./autos.csv s3://astro-backend-data-bucket/autos.csv
+	@echo "✅ CSV uploaded to S3!"
+	@echo "Public URL: https://astro-backend-data-bucket.s3.eu-central-1.amazonaws.com/autos.csv"
+
+# Upload images to S3 Data Bucket
+upload-image:
+	@if [ -z "$(FILE)" ]; then \
+		echo "❌ Usage: make upload-image FILE=path/to/image.jpg"; \
+		exit 1; \
+	fi
+	@if [ ! -f "$(FILE)" ]; then \
+		echo "❌ File $(FILE) not found"; \
+		exit 1; \
+	fi
+	@FILENAME=$$(basename "$(FILE)"); \
+	aws s3 cp "$(FILE)" s3://astro-backend-data-bucket/images/$$FILENAME; \
+	echo "✅ Image uploaded to S3!"; \
+	echo "Public URL: https://astro-backend-data-bucket.s3.eu-central-1.amazonaws.com/images/$$FILENAME" 
