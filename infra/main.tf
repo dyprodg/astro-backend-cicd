@@ -20,7 +20,7 @@ data "aws_caller_identity" "current" {}
 
 # OIDC Provider (falls noch nicht vorhanden)
 data "aws_iam_openid_connect_provider" "github" {
-  arn = "arn:aws:iam::283919506801:oidc-provider/token.actions.githubusercontent.com"
+  arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
 }
 
 resource "aws_iam_role" "astro_backend_cicd" {
@@ -38,7 +38,7 @@ resource "aws_iam_role" "astro_backend_cicd" {
         Condition = {
           StringLike = {
             "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com",
-            "token.actions.githubusercontent.com:sub" : "repo:dyprodg/astro-backend-cicd:*"
+            "token.actions.githubusercontent.com:sub" : "repo:dennisdiepolder/astro-backend-cicd:*"
           }
         }
       }
