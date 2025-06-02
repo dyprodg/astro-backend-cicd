@@ -1,0 +1,309 @@
+---
+// Search Section component
+---
+
+<section id="search" class="bg-primary">
+  <div class="px-8 2xl:max-w-7xl mx-auto py-24">
+    <div data-aos="fade-up" data-aos-duration="1000">
+      <h2 class="text-secondary text-4xl md:text-5xl font-bold mb-12">
+        Find Your Vehicle
+      </h2>
+      
+      <!-- Search Container -->
+      <div id="search-container" class="bg-secondary p-8 rounded-none">
+        <!-- Search Form -->
+        <form id="searchForm" class="space-y-6">
+          <!-- Query Input -->
+          <div>
+            <label for="query" class="block text-primary text-sm font-bold mb-2">
+              Search Query
+            </label>
+            <input
+              type="text"
+              id="query"
+              name="query"
+              placeholder="Enter keywords..."
+              class="w-full px-4 py-3 bg-primary text-secondary placeholder-secondary/50 border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+            />
+          </div>
+
+          <!-- Filters Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Brand -->
+            <div>
+              <label for="brand" class="block text-primary text-sm font-bold mb-2">
+                Brand
+              </label>
+              <select
+                id="brand"
+                name="brand"
+                class="w-full px-4 py-3 bg-primary text-secondary border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20">
+                <option value="">All Brands</option>
+              </select>
+            </div>
+
+            <!-- Price Range -->
+            <div>
+              <label class="block text-primary text-sm font-bold mb-2">
+                Price Range
+              </label>
+              <div class="flex gap-2">
+                <input
+                  type="number"
+                  id="minPrice"
+                  name="minPrice"
+                  placeholder="Min"
+                  class="w-1/2 px-4 py-3 bg-primary text-secondary placeholder-secondary/50 border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                />
+                <input
+                  type="number"
+                  id="maxPrice"
+                  name="maxPrice"
+                  placeholder="Max"
+                  class="w-1/2 px-4 py-3 bg-primary text-secondary placeholder-secondary/50 border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                />
+              </div>
+            </div>
+
+            <!-- Year Range -->
+            <div>
+              <label class="block text-primary text-sm font-bold mb-2">
+                Year
+              </label>
+              <div class="flex gap-2">
+                <input
+                  type="number"
+                  id="minYear"
+                  name="minYear"
+                  placeholder="From"
+                  class="w-1/2 px-4 py-3 bg-primary text-secondary placeholder-secondary/50 border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                />
+                <input
+                  type="number"
+                  id="maxYear"
+                  name="maxYear"
+                  placeholder="To"
+                  class="w-1/2 px-4 py-3 bg-primary text-secondary placeholder-secondary/50 border-0 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Search Button -->
+          <button
+            type="submit"
+            class="w-full md:w-auto px-8 py-4 bg-primary text-secondary font-bold hover:bg-primary/90 transition-colors duration-200">
+            SEARCH VEHICLES
+          </button>
+        </form>
+
+        <!-- Results -->
+        <div id="results" class="mt-12 hidden">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-primary text-2xl font-bold">
+              <span id="resultCount">0</span> Results
+            </h3>
+            <button
+              id="clearResults"
+              class="text-primary/60 hover:text-primary text-sm font-medium">
+              Clear Results
+            </button>
+          </div>
+          
+          <!-- Results Grid -->
+          <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Results will be inserted here -->
+          </div>
+
+          <!-- Pagination -->
+          <div id="pagination" class="mt-8 flex justify-center gap-2">
+            <!-- Pagination will be inserted here -->
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="hidden mt-12 text-center">
+          <div class="inline-block animate-spin h-8 w-8 border-4 border-primary/20 border-t-primary rounded-full"></div>
+          <p class="text-primary mt-4">Searching vehicles...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="hidden mt-12 bg-red-50 border-2 border-red-200 p-6">
+          <p class="text-red-800 font-bold">Error</p>
+          <p id="errorMessage" class="text-red-600 mt-2"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // API Configuration
+  const API_URL = 'https://d20whpdmgfymfw.cloudfront.net';
+
+  // State
+  let currentPage = 1;
+  let searchOptions = { brands: [] };
+
+  // Elements
+  const searchForm = document.getElementById('searchForm') as HTMLFormElement;
+  const resultsDiv = document.getElementById('results');
+  const resultsGrid = document.getElementById('resultsGrid');
+  const resultCount = document.getElementById('resultCount');
+  const paginationDiv = document.getElementById('pagination');
+  const loadingDiv = document.getElementById('loading');
+  const errorDiv = document.getElementById('error');
+  const errorMessage = document.getElementById('errorMessage');
+  const brandSelect = document.getElementById('brand') as HTMLSelectElement;
+  const clearButton = document.getElementById('clearResults');
+
+  // Load search options
+  async function loadSearchOptions() {
+    try {
+      const response = await fetch(`${API_URL}/search/options`);
+      if (response.ok) {
+        searchOptions = await response.json();
+        populateBrandDropdown();
+      }
+    } catch (error) {
+      console.error('Failed to load search options:', error as Error);
+    }
+  }
+
+  // Populate brand dropdown
+  function populateBrandDropdown() {
+    brandSelect.innerHTML = '<option value="">All Brands</option>';
+    searchOptions.brands.forEach(brand => {
+      const option = document.createElement('option');
+      option.value = brand;
+      option.textContent = brand;
+      brandSelect.appendChild(option);
+    });
+  }
+
+  // Search function
+  async function searchVehicles(page = 1) {
+    const formData = new FormData(searchForm);
+    
+    const searchParams: any = {
+      query: formData.get('query') || '',
+      brand: formData.get('brand') || '',
+      minPrice: formData.get('minPrice') ? parseInt(formData.get('minPrice') as string) : undefined,
+      maxPrice: formData.get('maxPrice') ? parseInt(formData.get('maxPrice') as string) : undefined,
+      minYear: formData.get('minYear') ? parseInt(formData.get('minYear') as string) : undefined,
+      maxYear: formData.get('maxYear') ? parseInt(formData.get('maxYear') as string) : undefined,
+      page: page,
+      pageSize: 9
+    };
+
+    // Remove undefined values
+    Object.keys(searchParams).forEach(key => {
+      if (searchParams[key] === undefined || searchParams[key] === '') {
+        delete searchParams[key];
+      }
+    });
+
+    // Show loading
+    resultsDiv?.classList.add('hidden');
+    errorDiv?.classList.add('hidden');
+    loadingDiv?.classList.remove('hidden');
+
+    try {
+      const response = await fetch(`${API_URL}/search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(searchParams)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      displayResults(data);
+      currentPage = page;
+
+    } catch (error) {
+      displayError((error as Error).message);
+    } finally {
+      loadingDiv?.classList.add('hidden');
+    }
+  }
+
+  // Display results
+  function displayResults(data: any) {
+    if (!resultsGrid || !resultCount || !paginationDiv || !resultsDiv) return;
+
+    resultsDiv.classList.remove('hidden');
+    resultCount.textContent = data.total.toString();
+
+    // Clear previous results
+    resultsGrid.innerHTML = '';
+
+    // Display cars
+    data.cars.forEach((car: any) => {
+      const carCard = document.createElement('div');
+      carCard.className = 'bg-primary p-6 text-secondary';
+      carCard.innerHTML = `
+        <h4 class="font-bold text-lg mb-2 line-clamp-2">${car.title}</h4>
+        <div class="space-y-1 text-sm text-secondary/70">
+          <p>€${car.price.toLocaleString()}</p>
+          <p>${car.year} • ${car.mileage.toLocaleString()} km</p>
+          <p>${car.power} PS • ${car.fuelType}</p>
+        </div>
+      `;
+      resultsGrid.appendChild(carCard);
+    });
+
+    // Display pagination
+    displayPagination(data.page, data.totalPages);
+  }
+
+  // Display pagination
+  function displayPagination(currentPage: number, totalPages: number) {
+    if (!paginationDiv) return;
+
+    paginationDiv.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+        const button = document.createElement('button');
+        button.textContent = i.toString();
+        button.className = i === currentPage 
+          ? 'px-4 py-2 bg-secondary text-primary font-bold' 
+          : 'px-4 py-2 bg-primary text-secondary border border-secondary hover:bg-secondary hover:text-primary transition-colors';
+        button.onclick = () => searchVehicles(i);
+        paginationDiv.appendChild(button);
+      } else if (i === currentPage - 3 || i === currentPage + 3) {
+        const dots = document.createElement('span');
+        dots.textContent = '...';
+        dots.className = 'px-2 text-secondary';
+        paginationDiv.appendChild(dots);
+      }
+    }
+  }
+
+  // Display error
+  function displayError(message: string) {
+    if (!errorDiv || !errorMessage) return;
+
+    errorDiv.classList.remove('hidden');
+    errorMessage.textContent = message;
+  }
+
+  // Event listeners
+  searchForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    searchVehicles(1);
+  });
+
+  clearButton?.addEventListener('click', () => {
+    searchForm.reset();
+    resultsDiv?.classList.add('hidden');
+  });
+
+  // Initialize
+  loadSearchOptions();
+</script> 

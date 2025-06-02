@@ -1,101 +1,19 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/landing/Hero.astro";
+import Intro from "../components/landing/Intro.astro";
+import Features from "../components/landing/Features.astro";
+import SearchSection from "../components/landing/SearchSection.astro";
+import Footer from "../components/landing/Footer.astro";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
 // Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<main>
-		<Welcome />
-		
-		<div class="search-section">
-			<h2>Fahrzeugsuche</h2>
-			<p>Entdecken Sie unsere Fahrzeugauswahl mit modernster Suchtechnologie</p>
-			<a href="/search" class="search-link">
-				<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<circle cx="11" cy="11" r="8"></circle>
-					<path d="m21 21-4.35-4.35"></path>
-				</svg>
-				Zur Fahrzeugsuche
-			</a>
-		</div>
-	</main>
-</Layout>
-
-<style>
-	main {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 3rem;
-	}
-
-	.search-section {
-		text-align: center;
-		max-width: 600px;
-		padding: 3rem 2rem;
-		background: white;
-		border-radius: 16px;
-		box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-	}
-
-	.search-section h2 {
-		font-size: 2rem;
-		font-weight: 700;
-		color: #1f2937;
-		margin: 0 0 1rem 0;
-	}
-
-	.search-section p {
-		font-size: 1.125rem;
-		color: #6b7280;
-		margin: 0 0 2rem 0;
-		line-height: 1.6;
-	}
-
-	.search-link {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.75rem;
-		padding: 1rem 2rem;
-		background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-		color: white;
-		text-decoration: none;
-		border-radius: 12px;
-		font-size: 1.125rem;
-		font-weight: 600;
-		transition: all 0.3s ease;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-	}
-
-	.search-link:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
-		background: linear-gradient(135deg, #2563eb, #1e40af);
-	}
-
-	.search-link svg {
-		transition: transform 0.3s ease;
-	}
-
-	.search-link:hover svg {
-		transform: scale(1.1);
-	}
-
-	@media (max-width: 768px) {
-		.search-section {
-			padding: 2rem 1rem;
-		}
-
-		.search-section h2 {
-			font-size: 1.5rem;
-		}
-
-		.search-link {
-			padding: 0.875rem 1.5rem;
-			font-size: 1rem;
-		}
-	}
-</style>
+<BaseLayout>
+	<Hero />
+	<Intro />
+	<Features />
+	<SearchSection />
+	<Footer />
+</BaseLayout>
