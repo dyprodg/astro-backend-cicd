@@ -1,0 +1,80 @@
+---
+export interface Car {
+  title: string;
+  brand: string;
+  price_chf: number;
+  leasing_text?: string;
+  image_urls?: string[];
+  year?: number;
+  mileage?: number;
+  power?: number;
+  fuel?: string;
+}
+
+export interface Props {
+  car: Car;
+  index?: number;
+}
+
+const { car, index = 0 } = Astro.props;
+---
+
+<div 
+  class="bg-secondary p-6 group hover:bg-primary transition-colors duration-300"
+  data-aos="fade-up" 
+  data-aos-duration="500"
+  data-aos-delay={index * 100}>
+  
+  <!-- Car Image -->
+  <div class="aspect-video bg-primary mb-4 overflow-hidden group-hover:bg-secondary transition-colors duration-300">
+    {car.image_urls?.[0] ? (
+      <img 
+        src={car.image_urls[0]} 
+        alt={car.title}
+        class="w-full h-full object-cover"
+        loading="lazy"
+      />
+    ) : (
+      <div class="w-full h-full flex items-center justify-center">
+        <div class="w-16 h-16 bg-secondary group-hover:bg-primary transition-colors duration-300"></div>
+      </div>
+    )}
+  </div>
+
+  <!-- Car Info -->
+  <div class="space-y-2">
+    <!-- Brand -->
+    <div class="text-primary/60 group-hover:text-secondary/60 text-xs font-bold uppercase tracking-wider transition-colors duration-300">
+      {car.brand}
+    </div>
+
+    <!-- Title -->
+    <h3 class="text-primary group-hover:text-secondary font-bold text-lg leading-tight transition-colors duration-300">
+      {car.title}
+    </h3>
+
+    <!-- Price -->
+    <div class="text-primary group-hover:text-secondary font-bold text-xl transition-colors duration-300">
+      CHF {car.price_chf.toLocaleString()}
+    </div>
+
+    <!-- Leasing Text -->
+    {car.leasing_text && (
+      <div class="text-primary/60 group-hover:text-secondary/60 text-sm transition-colors duration-300">
+        {car.leasing_text}
+      </div>
+    )}
+
+    <!-- Additional Details -->
+    {(car.year || car.mileage || car.power || car.fuel) && (
+      <div class="pt-2 space-y-1 text-primary/50 group-hover:text-secondary/50 text-xs transition-colors duration-300">
+        {car.year && car.mileage && (
+          <div>{car.year} • {car.mileage.toLocaleString()} km</div>
+        )}
+        {car.power && car.fuel && (
+          <div>{car.power} PS • {car.fuel}</div>
+        )}
+      </div>
+    )}
+  </div>
+</div> 

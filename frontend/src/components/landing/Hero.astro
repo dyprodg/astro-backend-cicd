@@ -1,5 +1,7 @@
 ---
 // Hero component
+import AutosalonLogo from '/autosalon-only.svg?raw';
+import AutosalonText from '/autosalon-vol.svg?raw';
 ---
 
 <section class="bg-primary">
@@ -7,9 +9,9 @@
     class="px-8 2xl:max-w-7xl mx-auto pt-12"
     data-aos="fade-up"
     data-aos-duration="2000">
-    <h1 class="text-secondary text-8xl md:text-9xl font-bold tracking-tight">
-      SEARCH
-    </h1>
+    <div class="text-8xl md:text-9xl font-bold tracking-tight [&_svg]:w-full [&_svg]:h-auto [&_svg_path]:fill-secondary">
+      <Fragment set:html={AutosalonLogo} />
+    </div>
   </div>
   <div class="px-8 2xl:max-w-7xl mx-auto pb-12">
     <div class="mt-6 space-y-2">
@@ -24,16 +26,13 @@
         data-aos-duration="1500">
         <div class="flex gap-3 items-center">
           <h3 class="text-secondary text-xs font-medium">
-            <span>Modern Platform</span>
+            <span>Unabhängiger Autohändler</span>
             <span class="font-bold mx-1">·</span>
-            <span class="italic">Advanced Search</span>
+            <span class="italic">Verkauf und Ankauf</span>
             <span class="font-bold mx-1">·</span>
-            <span>Real-time Results</span>
+            <span>100% Tiefpreisgarantie</span>
           </h3>
           <span class="h-auto border-secondary border"></span>
-          <span class="text-secondary text-xs font-semibold"
-            >Live Now</span
-          >
         </div>
         <div>
           <ul class="lg:items-center flex justify-between w-full gap-3 relative text-xs">
@@ -41,28 +40,35 @@
               <a
                 href="#about"
                 class="hover:text-secondary/80 text-secondary"
-                >About</a
+                >Über uns</a
               >
             </li>
             <li>
               <a
                 href="#features"
                 class="hover:text-secondary/80 text-secondary"
-                >Features</a
+                >Leistungen</a
               >
             </li>
             <li>
               <a
                 href="#search"
                 class="hover:text-secondary/80 text-secondary"
-                >Search</a
+                >Angebot</a
+              >
+            </li>
+            <li>
+              <a
+                href="#search"
+                class="hover:text-secondary/80 text-secondary"
+                >Auto Verkaufen</a
               >
             </li>
             <li>
               <a
                 href="#contact"
                 class="hover:text-secondary/80 text-secondary"
-                >Contact</a
+                >Kontakt</a
               >
             </li>
           </ul>
@@ -83,11 +89,13 @@
         data-aos-duration="3000">
       </div>
       <div
-        class="h-24 bg-secondary flex items-end p-4"
+        class="h-24 bg-secondary flex items-end justify-end p-4"
         data-aos="fade-up"
         data-aos-duration="3000"
         data-aos-delay="150">
-        <span class="text-primary text-xl font-bold">Your Journey Starts Here</span>
+        <div class="text-8xl md:text-9xl font-bold tracking-tight [&_svg]:w-full [&_svg]:h-auto [&_svg_path]:fill-primary">
+          <Fragment set:html={AutosalonText} />
+        </div>
       </div>
     </div>
   </div>

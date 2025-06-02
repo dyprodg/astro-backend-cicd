@@ -1,0 +1,71 @@
+---
+// Props
+const { src, lowResSrc, alt } = Astro.props;
+---
+<div class="blur-wrapper">
+  <img
+    class="preview"
+    src={lowResSrc}
+    alt=""
+    aria-hidden="true"
+  />
+  <img
+    class="full lazy"
+    data-src={src}
+    alt={alt}
+    loading="lazy"
+  />
+</div>
+
+<style>
+.blur-wrapper {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+.blur-wrapper img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: opacity 0.4s ease;
+}
+.preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  filter: blur(20px);
+  transform: scale(1.05);
+  z-index: 1;
+}
+.full {
+  position: relative;
+  z-index: 2;
+  opacity: 0;
+}
+.full.loaded {
+  opacity: 1;
+}
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const lazyImages = document.querySelectorAll("img.lazy");
+
+    lazyImages.forEach((img) => {
+      const src = img.getAttribute("data-src");
+      if (!src) return;
+      
+      const fullImg = new Image();
+      const imgElement = img as HTMLImageElement;
+      fullImg.src = src;
+
+      fullImg.onload = () => {
+        imgElement.src = src;
+        imgElement.classList.add("loaded");
+
+        const preview = imgElement.previousElementSibling as HTMLElement;
+        if (preview) preview.style.display = "none";
+      };
+    });
+  });
+</script>
