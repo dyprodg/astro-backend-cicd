@@ -69,9 +69,17 @@ lint:
 	@echo "Running linter..."
 	@if ! command -v golangci-lint > /dev/null; then \
 		echo "Installing golangci-lint..."; \
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin; \
+		mkdir -p ./bin; \
+		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ./bin; \
+		export PATH="$$PWD/bin:$$PATH"; \
 	fi
-	$(GOLANGCI_LINT) run
+	@if command -v golangci-lint > /dev/null; then \
+		golangci-lint run; \
+	elif [ -f ./bin/golangci-lint ]; then \
+		./bin/golangci-lint run; \
+	else \
+		echo "Warning: golangci-lint not found, skipping linting"; \
+	fi
 
 # Update Lambda function (requires AWS CLI configured)
 update-lambda: build

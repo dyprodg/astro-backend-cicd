@@ -13,25 +13,6 @@ variable "recipient_email" {
   default     = "info@dennisdiepolder.com"
 }
 
-# ZIP the Lambda function code
-data "archive_file" "contact_form_zip" {
-  type        = "zip"
-  source_dir  = "${path.module}/../backend/functions/contact-form"
-  output_path = "${path.module}/../backend/functions/contact-form.zip"
-
-  excludes = [
-    "*.zip",
-    ".git*",
-    "README.md",
-    "Makefile",
-    "*_test.go",
-    "coverage.out",
-    "coverage.html",
-    "go.mod",
-    "go.sum"
-  ]
-}
-
 # IAM role for Contact Form Lambda
 resource "aws_iam_role" "contact_form_lambda_role" {
   name = "contact-form-lambda-role"
@@ -89,7 +70,7 @@ resource "aws_cloudwatch_log_group" "contact_form_logs" {
 
 # Contact Form Lambda function
 resource "aws_lambda_function" "contact_form" {
-  filename      = data.archive_file.contact_form_zip.output_path
+  filename      = "${path.module}/../backend/functions/contact-form.zip"
   function_name = "contact-form"
   role          = aws_iam_role.contact_form_lambda_role.arn
   handler       = "bootstrap"
@@ -101,7 +82,7 @@ resource "aws_lambda_function" "contact_form" {
   # Rate limiting
   reserved_concurrent_executions = 10
 
-  source_code_hash = data.archive_file.contact_form_zip.output_base64sha256
+  source_code_hash = filebase64sha256("${path.module}/../backend/functions/contact-form.zip")
 
   environment {
     variables = {

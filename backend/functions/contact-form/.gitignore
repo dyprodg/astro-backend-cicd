@@ -19,6 +19,9 @@ go.work
 bootstrap
 contact-form.zip
 
+# Local tools
+bin/
+
 # OS files
 .DS_Store
 Thumbs.db
