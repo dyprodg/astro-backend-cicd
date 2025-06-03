@@ -40,6 +40,32 @@ data "aws_iam_policy_document" "frontend_s3_policy" {
   }
 }
 
+# CloudFront Function for URL rewriting
+resource "aws_cloudfront_function" "url_rewrite" {
+  name    = "astro-url-rewrite"
+  runtime = "cloudfront-js-2.0"
+  comment = "Rewrite URLs for Astro directory-style routing"
+  publish = true
+
+  code = <<-EOT
+function handler(event) {
+    var request = event.request;
+    var uri = request.uri;
+    
+    // If the URI ends with a slash, append index.html
+    if (uri.endsWith('/')) {
+        request.uri = uri + 'index.html';
+    }
+    // If the URI doesn't have an extension and doesn't end with slash, add slash and index.html
+    else if (!uri.includes('.') && !uri.endsWith('/')) {
+        request.uri = uri + '/index.html';
+    }
+    
+    return request;
+}
+EOT
+}
+
 # CloudFront Origin Access Control
 resource "aws_cloudfront_origin_access_control" "frontend" {
   name                              = "astro-frontend-oac"
@@ -79,6 +105,12 @@ resource "aws_cloudfront_distribution" "frontend" {
     default_ttl            = 60  # Reduced from 3600 to 60 seconds (1 minute)
     max_ttl                = 300 # Reduced from 86400 to 300 seconds (5 minutes)
     compress               = true
+
+    # Add function association for URL rewriting
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.url_rewrite.arn
+    }
   }
 
   # Cache behavior for static assets (CSS, JS, images)
@@ -102,17 +134,17 @@ resource "aws_cloudfront_distribution" "frontend" {
     viewer_protocol_policy = "redirect-to-https"
   }
 
-  # Custom error response for SPA routing
+  # Custom error response for real 404s only
   custom_error_response {
     error_code         = 404
-    response_code      = 200
-    response_page_path = "/index.html"
+    response_code      = 404
+    response_page_path = "/404.html"
   }
 
   custom_error_response {
     error_code         = 403
-    response_code      = 200
-    response_page_path = "/index.html"
+    response_code      = 404
+    response_page_path = "/404.html"
   }
 
   restrictions {
