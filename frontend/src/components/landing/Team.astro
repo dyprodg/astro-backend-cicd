@@ -1,0 +1,420 @@
+---
+// Team component
+
+// Team data with inline typing
+const teamData = [
+  {
+    name: "Antonio Castellano",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Antonio-scaled.jpg",
+    position: "Automobilverkäufer"
+  },
+  {
+    name: "Kenan Midzan",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Kenan-scaled.jpg",
+    position: "Automobilverkäufer"
+  },
+  {
+    name: "Selina Doll",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Selina-scaled.jpg",
+    position: "Assistenz der Geschäftsleitung"
+  },
+  {
+    name: "Francesco Sigillo",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Francesco-scaled.jpg",
+    position: "Marketing"
+  },
+  {
+    name: "Mikael Da Costa Botelho",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Miki-scaled.jpg",
+    position: "Aufbereiter"
+  },
+  {
+    name: "Rodion Wagner",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Rodion-scaled.jpg",
+    position: "Aufbereiter"
+  },
+  {
+    name: "Fernando Pinheiro",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Fernando-scaled.jpg",
+    position: "Aufbereiter"
+  },
+  {
+    name: "Levin Paprotka",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Levin-scaled.jpg",
+    position: "Mechaniker"
+  },
+  {
+    name: "Nadim Ghani",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/DSC01352-scaled.jpg",
+    position: "Mitglied GL & Verkaufsleiter"
+  },
+  {
+    name: "Mario Betschart",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/DSC01454-2-scaled.jpg",
+    position: "Mitglied GL & Einkäufer"
+  },
+  {
+    name: "Sali Saliu",
+    image: "https://autosalonvolketswil.ch/wp-content/uploads/2024/01/DSC6181-scaled.jpg",
+    position: "Inhaber & Geschäftsführer"
+  }
+] as const;
+---
+
+<!-- Team Section -->
+<section id="team" class="team-gallery-container" style="height: 300vh;">
+  <!-- Sticky container that stays in view -->
+  <div class="sticky top-0 w-full h-screen bg-primary relative overflow-hidden">
+    
+    <!-- Progress bar -->
+    <div class="team-progress-track absolute top-20 left-0 w-full h-1 bg-black/20 z-30">
+      <div class="team-progress-line h-full bg-secondary transition-all duration-300 ease-out" style="width: 0%"></div>
+    </div>
+    
+    <!-- Title overlay -->
+    <div class="team-title absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+      <div class="text-center">
+        <h2 class="text-secondary text-6xl md:text-7xl lg:text-8xl font-bold mb-4">
+          Unser Team
+        </h2>
+        <div class="w-24 h-1 bg-secondary mx-auto"></div>
+      </div>
+    </div>
+
+    <!-- Team Grid Container - Full Screen -->
+    <div class="team-grid-wrapper absolute inset-0 w-full" style="height: 95vh; top: 2.5vh;">
+      <div class="team-grid h-full w-full">
+        {teamData.map((member, index) => (
+          <div 
+            class="team-member relative overflow-hidden group cursor-pointer"
+            data-team-index={index}>
+            <!-- Background Image -->
+            <img 
+              src={member.image}
+              alt={member.name}
+              class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              loading="lazy"
+            />
+            
+            <!-- Dark Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-black/90 transition-all duration-300"></div>
+            
+            <!-- Text Content -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white z-10">
+              <h3 class="text-lg font-bold mb-1 group-hover:text-secondary transition-colors duration-300">
+                {member.name}
+              </h3>
+              <p class="text-sm opacity-90 group-hover:opacity-100 transition-opacity duration-300">
+                {member.position}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  class TeamGallery {
+    private container: HTMLElement | null;
+    private teamTitle: HTMLElement | null;
+    private teamMembers: NodeListOf<Element>;
+    private progressLine: HTMLElement | null;
+    private totalMembers: number;
+    private isInGallery: boolean;
+
+    constructor() {
+      this.container = document.querySelector('.team-gallery-container');
+      this.teamTitle = document.querySelector('.team-title');
+      this.teamMembers = document.querySelectorAll('.team-member');
+      this.progressLine = document.querySelector('.team-progress-line');
+      
+      this.totalMembers = 11;
+      this.isInGallery = false;
+      
+      this.init();
+    }
+    
+    init(): void {
+      this.setupScrollListener();
+      this.resetToInitialState();
+    }
+    
+    setupScrollListener(): void {
+      let ticking = false;
+      
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.handleScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    }
+    
+    handleScroll(): void {
+      if (!this.container) return;
+      
+      const containerRect = this.container.getBoundingClientRect();
+      const containerHeight = this.container.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      
+      // Check if we're in the team section
+      if (containerRect.top <= 0 && containerRect.bottom >= viewportHeight) {
+        if (!this.isInGallery) {
+          this.initializeTitleState();
+        }
+        this.isInGallery = true;
+        
+        // Calculate scroll progress (0 to 1)
+        const scrollProgress = Math.abs(containerRect.top) / (containerHeight - viewportHeight);
+        const clampedProgress = Math.max(0, Math.min(1, scrollProgress));
+        
+        // Create phases: 
+        // 0 - 0.5: Team members fly in from right
+        // 0.5 - 1.0: Hold phase (everything stays visible, just scrolls up)
+        
+        let animationProgress = clampedProgress;
+        let isHoldPhase = false;
+        
+        if (clampedProgress <= 0.5) {
+          animationProgress = clampedProgress / 0.5;
+          isHoldPhase = false;
+        } else {
+          animationProgress = 1;
+          isHoldPhase = true;
+        }
+        
+        // Update animations
+        this.updateTitlePosition(animationProgress, isHoldPhase);
+        this.updateTeamMembers(animationProgress, isHoldPhase);
+        this.updateProgress(clampedProgress);
+        
+      } else {
+        // Only reset if we haven't been in the gallery yet
+        // Once animated in, cards stay visible permanently
+        if (!this.isInGallery) {
+          this.resetToInitialState();
+        } else {
+          // Keep cards visible, just hide title and progress
+          if (this.teamTitle) {
+            this.teamTitle.style.opacity = '0';
+          }
+          if (this.progressLine) {
+            this.progressLine.style.width = '100%';
+          }
+        }
+      }
+    }
+    
+    initializeTitleState(): void {
+      if (this.teamTitle) {
+        this.teamTitle.style.opacity = '1';
+      }
+    }
+    
+    resetToInitialState(): void {
+      // Reset title
+      if (this.teamTitle) {
+        this.teamTitle.style.opacity = '1';
+      }
+      
+      // Reset all team members
+      this.teamMembers.forEach((member: Element) => {
+        const htmlMember = member as HTMLElement;
+        htmlMember.style.transform = 'translateX(100%)';
+        htmlMember.style.opacity = '0';
+      });
+      
+      // Reset progress line
+      if (this.progressLine) {
+        this.progressLine.style.width = '0%';
+      }
+    }
+    
+    updateTitlePosition(progress: number, isHoldPhase: boolean): void {
+      if (!this.teamTitle) return;
+      
+      // Title fades much faster - starts fading immediately
+      let opacity = 1;
+      
+      if (progress > 0.1) {
+        const fadeProgress = (progress - 0.1) / 0.3; // Fade over 30% instead of 70%
+        opacity = Math.max(0, 1 - fadeProgress);
+      }
+      
+      // During hold phase, title is completely gone
+      if (isHoldPhase) {
+        opacity = 0;
+      }
+      
+      this.teamTitle.style.opacity = opacity.toString();
+    }
+    
+    updateTeamMembers(animationProgress: number, isHoldPhase: boolean): void {
+      // Each member appears sequentially from right
+      const memberInterval = 1 / this.totalMembers;
+      
+      this.teamMembers.forEach((member: Element, index: number) => {
+        const htmlMember = member as HTMLElement;
+        const memberStart = index * memberInterval;
+        
+        if (animationProgress >= memberStart) {
+          // Calculate this member's progress (0 to 1)
+          let memberProgress = Math.min(1, (animationProgress - memberStart) / (memberInterval * 1.5));
+          
+          // During hold phase, keep at full visibility - NO FADE OUT
+          if (isHoldPhase) {
+            memberProgress = 1;
+          }
+          
+          // Smooth easing for fly-in effect
+          const easedProgress = this.easeOutCubic(memberProgress);
+          
+          // Slide in from right
+          const translateX = (1 - easedProgress) * 100;
+          const opacity = easedProgress;
+          
+          htmlMember.style.transform = `translateX(${translateX}%)`;
+          htmlMember.style.opacity = opacity.toString();
+          
+        } else {
+          // Hide members that haven't started yet
+          htmlMember.style.transform = 'translateX(100%)';
+          htmlMember.style.opacity = '0';
+        }
+      });
+    }
+    
+    updateProgress(progress: number): void {
+      if (this.progressLine) {
+        this.progressLine.style.width = `${progress * 100}%`;
+      }
+    }
+    
+    // Easing function for smooth animations
+    easeOutCubic(t: number): number {
+      return 1 - Math.pow(1 - t, 3);
+    }
+  }
+  
+  // Initialize team gallery when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new TeamGallery();
+  });
+</script>
+
+<style>
+  /* Dynamic Grid System */
+  .team-grid {
+    display: grid;
+    gap: 0; /* No gaps between images */
+  }
+  
+  /* Grid breakpoints based on screen width */
+  /* Mobile Portrait: 1 column */
+  @media (max-width: 639px) {
+    .team-grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(11, 1fr);
+    }
+  }
+  
+  /* Mobile Landscape: 2 columns */
+  @media (min-width: 640px) and (max-width: 767px) {
+    .team-grid {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+    }
+  }
+  
+  /* Tablet: 3 columns */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .team-grid {
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+    }
+  }
+  
+  /* Desktop: 4 columns */
+  @media (min-width: 1024px) and (max-width: 1399px) {
+    .team-grid {
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+    }
+  }
+  
+  /* Large Desktop: 5 columns */
+  @media (min-width: 1400px) and (max-width: 1799px) {
+    .team-grid {
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+    }
+  }
+  
+  /* Extra Large Desktop: 6 columns */
+  @media (min-width: 1800px) {
+    .team-grid {
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+  }
+  
+  /* Team members - INITIALLY HIDDEN */
+  .team-member {
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    will-change: transform, opacity;
+  }
+  
+  /* Title content */
+  .team-title {
+    transition: opacity 0.6s ease;
+    opacity: 1;
+  }
+  
+  /* Performance optimizations */
+  .team-title,
+  .team-member {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  
+  /* Progress bar */
+  .team-progress-track {
+    backdrop-filter: blur(8px);
+  }
+  
+  /* Ensure images maintain aspect ratio and fill container */
+  .team-member img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Text content positioning */
+  .team-member h3,
+  .team-member p {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  }
+  
+  /* Handle 11 items in different grid layouts */
+  .team-grid > .team-member:nth-child(11) {
+    /* Last item styling if needed */
+  }
+  
+  /* Mobile specific adjustments */
+  @media (max-width: 767px) {
+    .team-title h2 {
+      font-size: 3rem;
+    }
+    
+    .team-member {
+      min-height: calc(95vh / 11);
+    }
+  }
+</style> 

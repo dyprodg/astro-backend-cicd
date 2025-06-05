@@ -214,6 +214,15 @@ export interface Car {
   let modalImages: string[] = [];
   let currentCar: any = null;
 
+  // Touch/Swipe variables
+  let touchStartX = 0;
+  let touchEndX = 0;
+  let touchStartY = 0;
+  let touchEndY = 0;
+  let isDragging = false;
+  let swipeThreshold = 50; // Minimum distance for a swipe
+  let swipeVerticalThreshold = 100; // Maximum vertical movement for horizontal swipe
+
   // Get modal elements
   const modal = document.getElementById('carDetailModal') as HTMLElement;
   const modalContent = modal?.querySelector('.bg-secondary') as HTMLElement;
@@ -335,7 +344,7 @@ export interface Car {
     if (modalImages.length === 0) {
       imageContainer.innerHTML = `
         <div class="w-full h-full bg-primary/20 flex items-center justify-center">
-          <div class="w-16 h-16 bg-secondary/20 rounded"></div>
+          <div class="w-16 h-16 bg-secondary/20"></div>
         </div>
       `;
       imageIndicators.innerHTML = '';
@@ -349,8 +358,9 @@ export interface Car {
       <img 
         src="${url}" 
         alt="Car image ${index + 1}"
-        class="modal-image w-full h-full object-cover absolute top-0 left-0 transition-opacity duration-300 ${index === 0 ? 'opacity-100' : 'opacity-0'}"
+        class="modal-image w-full h-full object-cover absolute top-0 left-0 transition-opacity duration-300 ${index === 0 ? 'opacity-100' : 'opacity-0'} select-none"
         data-index="${index}"
+        draggable="false"
       />
     `).join('');
     
@@ -360,7 +370,7 @@ export interface Car {
     if (modalImages.length > 1) {
       const indicatorsHTML = modalImages.map((_, index) => `
         <button 
-          class="modal-indicator w-3 h-3 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/50'} transition-colors duration-200"
+          class="modal-indicator w-3 h-3 bg-white ${index === 0 ? 'opacity-100' : 'opacity-50'} transition-all duration-200"
           data-index="${index}">
         </button>
       `).join('');
@@ -370,26 +380,109 @@ export interface Car {
       prevBtn.style.display = 'block';
       nextBtn.style.display = 'block';
       
-      // Add hover effect to show navigation
+      // Add hover effect to show navigation (desktop only)
       imageContainer.addEventListener('mouseenter', () => {
-        prevBtn.classList.remove('opacity-0');
-        nextBtn.classList.remove('opacity-0');
+        if (window.innerWidth >= 768) { // Only on desktop
+          prevBtn.classList.remove('opacity-0');
+          nextBtn.classList.remove('opacity-0');
+        }
       });
       
       imageContainer.addEventListener('mouseleave', () => {
-        prevBtn.classList.add('opacity-0');
-        nextBtn.classList.add('opacity-0');
+        if (window.innerWidth >= 768) { // Only on desktop
+          prevBtn.classList.add('opacity-0');
+          nextBtn.classList.add('opacity-0');
+        }
       });
+
+      // Mobile: Show navigation buttons always
+      if (window.innerWidth < 768) {
+        prevBtn.classList.remove('opacity-0');
+        nextBtn.classList.remove('opacity-0');
+      }
 
       // Setup indicator click events
       const indicators = imageIndicators.querySelectorAll('.modal-indicator');
       indicators.forEach((indicator, index) => {
         indicator.addEventListener('click', () => showModalImage(index));
       });
+
+      // Setup touch events for swipe
+      setupTouchEvents();
     } else {
       imageIndicators.innerHTML = '';
       prevBtn.style.display = 'none';
       nextBtn.style.display = 'none';
+    }
+  }
+
+  // Setup touch events for swipe functionality
+  function setupTouchEvents() {
+    const imageContainerInner = imageContainer.querySelector('.relative') as HTMLElement;
+    if (!imageContainerInner) return;
+
+    // Touch start
+    imageContainerInner.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      isDragging = true;
+      
+      // Prevent default to avoid scrolling issues
+      e.preventDefault();
+    }, { passive: false });
+
+    // Touch move
+    imageContainerInner.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      
+      // Prevent default scrolling during horizontal swipe
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+      const deltaX = Math.abs(currentX - touchStartX);
+      const deltaY = Math.abs(currentY - touchStartY);
+      
+      // If horizontal movement is greater than vertical, prevent scrolling
+      if (deltaX > deltaY) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Touch end
+    imageContainerInner.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      
+      touchEndX = e.changedTouches[0].clientX;
+      touchEndY = e.changedTouches[0].clientY;
+      isDragging = false;
+      
+      handleSwipe();
+      
+      e.preventDefault();
+    }, { passive: false });
+
+    // Touch cancel
+    imageContainerInner.addEventListener('touchcancel', () => {
+      isDragging = false;
+    });
+  }
+
+  // Handle swipe gesture
+  function handleSwipe() {
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = Math.abs(touchEndY - touchStartY);
+    
+    // Check if it's a horizontal swipe (not too much vertical movement)
+    if (deltaY > swipeVerticalThreshold) return;
+    
+    // Check if swipe distance is sufficient
+    if (Math.abs(deltaX) > swipeThreshold) {
+      if (deltaX > 0) {
+        // Swipe right - previous image
+        prevModalImage();
+      } else {
+        // Swipe left - next image
+        nextModalImage();
+      }
     }
   }
 
@@ -406,8 +499,8 @@ export interface Car {
     });
 
     indicators.forEach((indicator, i) => {
-      (indicator as HTMLElement).classList.toggle('bg-white', i === index);
-      (indicator as HTMLElement).classList.toggle('bg-white/50', i !== index);
+      (indicator as HTMLElement).classList.toggle('opacity-100', i === index);
+      (indicator as HTMLElement).classList.toggle('opacity-50', i !== index);
     });
 
     currentModalImageIndex = index;
@@ -462,6 +555,21 @@ export interface Car {
         prevModalImage();
       } else if (e.key === 'ArrowRight' && modalImages.length > 1) {
         nextModalImage();
+      }
+    }
+  });
+
+  // Handle window resize to adjust navigation visibility
+  window.addEventListener('resize', () => {
+    if (modalImages.length > 1 && !modal.classList.contains('hidden')) {
+      if (window.innerWidth < 768) {
+        // Mobile: Always show navigation
+        prevBtn.classList.remove('opacity-0');
+        nextBtn.classList.remove('opacity-0');
+      } else {
+        // Desktop: Hide by default, show on hover
+        prevBtn.classList.add('opacity-0');
+        nextBtn.classList.add('opacity-0');
       }
     }
   });

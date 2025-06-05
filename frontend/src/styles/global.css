@@ -25,3 +25,28 @@
     }
   }
 } 
+
+/* Hero SVG Text Animation */
+.hero-svg path {
+  fill: transparent;
+  stroke: #f4f5ef;
+  stroke-width: 0.5;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: heroTextAnimation 2s ease-in-out 1 forwards;
+}
+
+@keyframes heroTextAnimation {
+  0% {
+    stroke-dashoffset: 100;
+    fill: transparent;
+  }
+  70% {
+    stroke-dashoffset: 0;
+    fill: transparent;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    fill: #f4f5ef;
+  }
+}

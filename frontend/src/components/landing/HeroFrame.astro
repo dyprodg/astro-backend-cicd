@@ -1,0 +1,27 @@
+---
+// HeroFrame component - 90vh frame container with background
+import HeroBackground from "./HeroBackground.astro";
+import Hero from "./Hero.astro";
+import CallToAction from "./CallToAction.astro";
+---
+
+<section class="w-full h-[80vh] md:h-[100vh] relative overflow-hidden mt-[80px]">
+
+  <!-- Background for entire frame -->
+  <HeroBackground />
+  
+  <!-- Frame Content -->
+  <div class="relative z-10 h-full flex flex-col">
+
+    <!-- Hero Section (Top) -->
+    <div class="mb-12">
+      <Hero />
+    </div>
+
+    <!-- Call to Action Section (Bottom) -->
+    <div>
+        <CallToAction />
+    </div>
+    
+  </div>
+</section>

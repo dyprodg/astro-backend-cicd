@@ -3,169 +3,170 @@
 import BlurImage from '../lib/BlurImage.astro';
 ---
 
-<section id="features" class="bg-primary">
-  <div class="px-8 2xl:max-w-7xl mx-auto py-24">
-    <!-- Header Text -->
-    <div data-aos="fade-up" data-aos-duration="1000">
-      <h2 class="text-secondary text-4xl md:text-5xl font-bold mb-6 text-center">
-        Unsere Leistungen
-      </h2>
-      <p class="text-secondary/80 text-xl md:text-2xl text-center mb-16 font-medium">
-        Die tiefsten Preise der Schweiz für erschwinglichen Fahrspass
-      </p>
+<section id="features" class="features-gallery-container" style="height: 600vh;">
+  <!-- Sticky container that stays in view -->
+  <div class="sticky top-0 w-full h-screen overflow-hidden bg-primary relative">
+    
+    <!-- Progress bar below navbar -->
+    <div class="features-progress-track absolute top-20 left-0 w-full h-1 bg-black/20 z-30">
+      <div class="features-progress-line h-full bg-white transition-all duration-300 ease-out" style="width: 0%"></div>
+    </div>
+    
+    <!-- Title that slides up -->
+    <div class="features-title absolute inset-0 flex items-center justify-center z-10 will-change-transform">
+      <div class="text-center">
+        <h2 class="text-secondary text-5xl md:text-7xl lg:text-8xl font-bold mb-8">
+          Unsere Leistungen
+        </h2>
+        <div class="w-40 h-1 bg-secondary mx-auto"></div>
+        <p class="text-secondary/70 text-xl md:text-2xl mt-8 max-w-4xl px-4">
+          Die tiefsten Preise der Schweiz für erschwinglichen Fahrspass
+        </p>
+      </div>
     </div>
 
-    <!-- Features Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-24">
+    <!-- Feature bars that slide in from bottom -->
+    <div class="features-bars-container absolute inset-0">
       <!-- Feature 1: Auto verkaufen -->
       <div 
-        class="relative overflow-hidden group border-2 border-secondary/20 hover:border-secondary/40 transition-all duration-300"
-        data-aos="fade-up" 
-        data-aos-duration="1000"
-        data-aos-delay="0">
-        <!-- Background Image -->
-        <div class="absolute inset-0">
-          <BlurImage 
-            src="/cars/e190hoch.jpg"
-            lowResSrc="/cars/e190hochSmall.jpeg"
+        class="feature-bar absolute w-full h-1/3 will-change-transform"
+        data-index="0"
+        style="top: 0%; z-index: 20;">
+        <div class="w-full h-full relative overflow-hidden">
+          <img 
+            src="https://autosalonvolketswil.ch/wp-content/uploads/2025/06/DSC00479-1-scaled.jpg"
             alt="Auto verkaufen"
+            class="w-full h-full object-cover"
+            loading="lazy"
+            draggable="false"
           />
-          <div class="absolute inset-0 bg-black/70 group-hover:bg-black/60 transition-colors duration-300"></div>
-        </div>
-        <!-- Content -->
-        <div class="relative z-10 p-10 h-[28rem] md:h-[36rem] flex flex-col justify-end">
-          <div class="h-14 w-14 bg-secondary border-2 border-secondary mb-8 flex items-center justify-center">
-            <svg class="w-7 h-7 text-primary" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
+          <!-- Dark overlay for text readability -->
+          <div class="absolute inset-0 bg-black/60"></div>
+          
+          <!-- Feature content -->
+          <div class="feature-content absolute inset-0 flex items-center">
+            <div class="w-full max-w-7xl mx-auto px-8 flex items-center justify-between">
+              <!-- Left side - Icon and content -->
+              <div class="flex items-center gap-8">
+                <!-- Icon -->
+                <div class="feature-icon w-16 h-16 md:w-20 md:h-20 bg-secondary border-2 border-secondary flex items-center justify-center opacity-0 transform scale-0">
+                  <svg class="w-8 h-8 md:w-10 md:h-10 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                
+                <!-- Text content -->
+                <div class="max-w-2xl">
+                  <h3 class="feature-title text-white text-3xl md:text-4xl lg:text-5xl font-bold mb-4 opacity-0 transform translate-x-8">
+                    Auto verkaufen
+                  </h3>
+                  <p class="feature-description text-white/90 text-lg md:text-xl lg:text-2xl leading-relaxed opacity-0 transform translate-x-8">
+                    Auto verkaufen in nur 3 Schritten! Lass dein Auto bewerten und erhalte den besten Preis.
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Right side - Feature number -->
+              <div class="feature-number hidden md:block text-white/30 text-8xl lg:text-9xl font-bold opacity-0 transform translate-x-8">
+                01
+              </div>
+            </div>
           </div>
-          <h3 class="text-white text-2xl md:text-3xl font-bold mb-6">Auto verkaufen</h3>
-          <p class="text-white/90 text-lg md:text-xl leading-relaxed">
-            Auto verkaufen in nur 3 Schritten!<br />
-            Lass dein Auto Bewerten
-          </p>
         </div>
       </div>
 
       <!-- Feature 2: Auto Kaufen-->
       <div 
-        class="relative overflow-hidden group border-2 border-secondary/20 hover:border-secondary/40 transition-all duration-300"
-        data-aos="fade-up" 
-        data-aos-duration="1000"
-        data-aos-delay="200">
-        <!-- Background Image -->
-        <div class="absolute inset-0">
-          <BlurImage 
-            src="/cars/e190h.jpg"
-            lowResSrc="/cars/e190hSmall.jpeg"
-            alt="Auto vermitteln"
+        class="feature-bar absolute w-full h-1/3 will-change-transform"
+        data-index="1"
+        style="top: 33.33%; z-index: 20;">
+        <div class="w-full h-full relative overflow-hidden">
+          <img 
+            src="https://autosalonvolketswil.ch/wp-content/uploads/2025/06/DSC00478-scaled.jpg"
+            alt="Auto Kaufen"
+            class="w-full h-full object-cover"
+            loading="lazy"
+            draggable="false"
           />
-          <div class="absolute inset-0 bg-black/70 group-hover:bg-black/60 transition-colors duration-300"></div>
-        </div>
-        <!-- Content -->
-        <div class="relative z-10 p-10 h-[28rem] md:h-[36rem] flex flex-col justify-end">
-          <div class="h-14 w-14 bg-secondary border-2 border-secondary mb-8 flex items-center justify-center">
-            <svg class="w-7 h-7 text-primary" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
+          <!-- Dark overlay for text readability -->
+          <div class="absolute inset-0 bg-black/60"></div>
+          
+          <!-- Feature content -->
+          <div class="feature-content absolute inset-0 flex items-center">
+            <div class="w-full max-w-7xl mx-auto px-8 flex items-center justify-between">
+              <!-- Left side - Icon and content -->
+              <div class="flex items-center gap-8">
+                <!-- Icon -->
+                <div class="feature-icon w-16 h-16 md:w-20 md:h-20 bg-secondary border-2 border-secondary flex items-center justify-center opacity-0 transform scale-0">
+                  <svg class="w-8 h-8 md:w-10 md:h-10 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                </div>
+                
+                <!-- Text content -->
+                <div class="max-w-2xl">
+                  <h3 class="feature-title text-white text-3xl md:text-4xl lg:text-5xl font-bold mb-4 opacity-0 transform translate-x-8">
+                    Auto Kaufen
+                  </h3>
+                  <p class="feature-description text-white/90 text-lg md:text-xl lg:text-2xl leading-relaxed opacity-0 transform translate-x-8">
+                    Auto Kaufen - risikofrei & schnell zur besten Qualität! Finden Sie Ihr Traumauto bei uns.
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Right side - Feature number -->
+              <div class="feature-number hidden md:block text-white/30 text-8xl lg:text-9xl font-bold opacity-0 transform translate-x-8">
+                02
+              </div>
+            </div>
           </div>
-          <h3 class="text-white text-2xl md:text-3xl font-bold mb-6">Auto Kaufen</h3>
-          <p class="text-white/90 text-lg md:text-xl leading-relaxed">
-            Auto Kaufen - risikofrei & schnell zur besten Qualität!<br />
-          </p>
         </div>
       </div>
 
       <!-- Feature 3: Auto Salon Team -->
       <div 
-        class="relative overflow-hidden group border-2 border-secondary/20 hover:border-secondary/40 transition-all duration-300"
-        data-aos="fade-up" 
-        data-aos-duration="1000"
-        data-aos-delay="400">
-        <!-- Background Image -->
-        <div class="absolute inset-0">
-          <BlurImage 
-            src="/cars/e190quer.jpg"
-            lowResSrc="/cars/e190querSmall.jpeg"
-            alt="Auto Salon Team"
+        class="feature-bar absolute w-full h-1/3 will-change-transform"
+        data-index="2"
+        style="top: 66.66%; z-index: 20;">
+        <div class="w-full h-full relative overflow-hidden">
+          <img 
+            src="https://autosalonvolketswil.ch/wp-content/uploads/2025/06/DSC00476-scaled.jpg"
+            alt="Auto Salon Service"
+            class="w-full h-full object-cover"
+            loading="lazy"
+            draggable="false"
           />
-          <div class="absolute inset-0 bg-black/70 group-hover:bg-black/60 transition-colors duration-300"></div>
-        </div>
-        <!-- Content -->
-        <div class="relative z-10 p-10 h-[28rem] md:h-[36rem] flex flex-col justify-end">
-          <div class="h-14 w-14 bg-secondary border-2 border-secondary mb-8 flex items-center justify-center">
-            <svg class="w-7 h-7 text-primary" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 12.75c1.63 0 3.07.39 4.24.9a2.988 2.988 0 0 1 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58A2.01 2.01 0 0 0 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm2.78 1.58c-.85-.37-1.79-.58-2.78-.58-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57c0-.81-.48-1.53-1.22-1.85zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/>
-            </svg>
-          </div>
-          <h3 class="text-white text-2xl md:text-3xl font-bold mb-6">Auto Salon Service</h3>
-          <p class="text-white/90 text-lg md:text-xl leading-relaxed">
-            Autoservice, Reparatur und Aufbereitung von Autos.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Call to Action Section -->
-    <div 
-      class="relative overflow-hidden group border-2 border-secondary/20 hover:border-secondary/40 transition-all duration-300"
-      data-aos="fade-up" 
-      data-aos-duration="1000"
-      data-aos-delay="600">
-      <!-- Background Image -->
-      <div class="absolute inset-0">
-        <BlurImage 
-          src="/cars/lambo.jpg"
-          lowResSrc="/cars/lamboSmall.jpeg"
-          alt="Verkaufen mit Auto Salon"
-        />
-        <div class="absolute inset-0 bg-black/70 group-hover:bg-black/60 transition-colors duration-300"></div>
-      </div>
-      <!-- Content -->
-      <div class="relative z-10 p-8 md:p-12">
-        <div class="max-w-4xl mx-auto">
-          <h3 class="text-white text-3xl md:text-4xl font-bold mb-8 text-center">
-            Verkaufen mit Auto Salon
-          </h3>
-          <h4 class="text-white/90 text-xl md:text-2xl font-semibold mb-8 text-center">
-            Ihre Vorteile
-          </h4>
+          <!-- Dark overlay for text readability -->
+          <div class="absolute inset-0 bg-black/60"></div>
           
-          <!-- Advantages Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            <div class="flex items-start space-x-4">
-              <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0 border border-secondary"></div>
-              <p class="text-white/90 text-lg">Direkter Ankauf aller Marken und Modelle</p>
+          <!-- Feature content -->
+          <div class="feature-content absolute inset-0 flex items-center">
+            <div class="w-full max-w-7xl mx-auto px-8 flex items-center justify-between">
+              <!-- Left side - Icon and content -->
+              <div class="flex items-center gap-8">
+                <!-- Icon -->
+                <div class="feature-icon w-16 h-16 md:w-20 md:h-20 bg-secondary border-2 border-secondary flex items-center justify-center opacity-0 transform scale-0">
+                  <svg class="w-8 h-8 md:w-10 md:h-10 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 12.75c1.63 0 3.07.39 4.24.9a2.988 2.988 0 0 1 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58A2.01 2.01 0 0 0 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm2.78 1.58c-.85-.37-1.79-.58-2.78-.58-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57c0-.81-.48-1.53-1.22-1.85zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/>
+                  </svg>
+                </div>
+                
+                <!-- Text content -->
+                <div class="max-w-2xl">
+                  <h3 class="feature-title text-white text-3xl md:text-4xl lg:text-5xl font-bold mb-4 opacity-0 transform translate-x-8">
+                    Auto Salon Service
+                  </h3>
+                  <p class="feature-description text-white/90 text-lg md:text-xl lg:text-2xl leading-relaxed opacity-0 transform translate-x-8">
+                    Autoservice, Reparatur und Aufbereitung von Autos. Professioneller Service für alle Marken.
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Right side - Feature number -->
+              <div class="feature-number hidden md:block text-white/30 text-8xl lg:text-9xl font-bold opacity-0 transform translate-x-8">
+                03
+              </div>
             </div>
-            <div class="flex items-start space-x-4">
-              <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0 border border-secondary"></div>
-              <p class="text-white/90 text-lg">Ihren Verkaufspreis erhalten Sie innert 24h</p>
-            </div>
-            <div class="flex items-start space-x-4">
-              <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0 border border-secondary"></div>
-              <p class="text-white/90 text-lg">Umgehende Bezahlung des Verkaufspreises</p>
-            </div>
-            <div class="flex items-start space-x-4">
-              <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0 border border-secondary"></div>
-              <p class="text-white/90 text-lg">Unkompliziert und risikofrei</p>
-            </div>
-            <div class="flex items-start space-x-4">
-              <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0 border border-secondary"></div>
-              <p class="text-white/90 text-lg">Abholung bei Ihnen Zuhause - ganz bequem!</p>
-            </div>
-            <div class="flex items-start space-x-4">
-              <div class="h-6 w-6 bg-secondary mt-1 flex-shrink-0 border border-secondary"></div>
-              <p class="text-white/90 text-lg">100% kostenloser Service</p>
-            </div>
-          </div>
-
-          <!-- CTA Button -->
-          <div class="text-center">
-            <button 
-              id="open-sell-modal"
-              class="bg-secondary text-primary px-12 py-4 text-xl font-bold border-2 border-secondary hover:bg-primary hover:text-secondary hover:border-secondary transition-all duration-300 transform hover:scale-105">
-              Verkauf Starten
-            </button>
           </div>
         </div>
       </div>
@@ -173,219 +174,378 @@ import BlurImage from '../lib/BlurImage.astro';
   </div>
 </section>
 
-<!-- Sell Car Modal -->
-<div 
-  id="sell-modal" 
-  class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300">
-  <div class="bg-primary border-2 border-secondary/30 max-w-2xl w-full max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300">
-    <!-- Modal Header -->
-    <div class="border-b border-secondary/20 p-6">
-      <div class="flex items-center justify-between">
-        <h3 class="text-secondary text-2xl md:text-3xl font-bold">Auto verkaufen</h3>
-        <button 
-          id="close-sell-modal"
-          class="text-secondary/60 hover:text-secondary text-3xl font-bold transition-colors">
-          ×
-        </button>
-      </div>
-      <p class="text-secondary/70 mt-2">Füllen Sie das Formular aus und wir melden uns innerhalb von 24 Stunden bei Ihnen.</p>
-    </div>
-
-    <!-- Modal Body -->
-    <div class="p-6">
-      <form id="sell-car-form" class="space-y-6">
-        <!-- Vehicle Information -->
-        <div>
-          <h4 class="text-secondary text-xl font-semibold mb-4">Fahrzeugdaten</h4>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Marke -->
-            <div>
-              <label for="marke" class="block text-secondary font-medium mb-2">Marke *</label>
-              <input 
-                type="text" 
-                id="marke" 
-                name="marke" 
-                required
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
-                placeholder="z.B. BMW, Mercedes, Audi">
-            </div>
-
-            <!-- Modell -->
-            <div>
-              <label for="modell" class="block text-secondary font-medium mb-2">Modell *</label>
-              <input 
-                type="text" 
-                id="modell" 
-                name="modell" 
-                required
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
-                placeholder="z.B. 3er, C-Klasse, A4">
-            </div>
-
-            <!-- Baujahr -->
-            <div>
-              <label for="baujahr" class="block text-secondary font-medium mb-2">Baujahr *</label>
-              <input 
-                type="number" 
-                id="baujahr" 
-                name="baujahr" 
-                required
-                min="1980"
-                max="2025"
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
-                placeholder="z.B. 2020">
-            </div>
-
-            <!-- Kilometerstand -->
-            <div>
-              <label for="kilometerstand" class="block text-secondary font-medium mb-2">Kilometerstand *</label>
-              <input 
-                type="number" 
-                id="kilometerstand" 
-                name="kilometerstand" 
-                required
-                min="0"
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
-                placeholder="z.B. 50000">
-            </div>
-
-            <!-- Gewünschter Preis -->
-            <div>
-              <label for="preis" class="block text-secondary font-medium mb-2">Gewünschter Preis (CHF)</label>
-              <input 
-                type="number" 
-                id="preis" 
-                name="preis" 
-                min="0"
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
-                placeholder="z.B. 25000">
-            </div>
-
-            <!-- Zustand -->
-            <div>
-              <label for="zustand" class="block text-secondary font-medium mb-2">Zustand *</label>
-              <div class="relative">
-                <select 
-                  id="zustand" 
-                  name="zustand" 
-                  required
-                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors appearance-none cursor-pointer">
-                  <option value="">Bitte wählen</option>
-                  <option value="sehr-gut">Sehr gut</option>
-                  <option value="gut">Gut</option>
-                  <option value="befriedigend">Befriedigend</option>
-                  <option value="reparaturbedürftig">Reparaturbedürftig</option>
-                </select>
-                <!-- Custom Arrow -->
-                <div class="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Contact Information -->
-        <div>
-          <h4 class="text-secondary text-xl font-semibold mb-4">Kontaktdaten</h4>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Name -->
-            <div class="md:col-span-2">
-              <label for="name" class="block text-secondary font-medium mb-2">Vollständiger Name *</label>
-              <input 
-                type="text" 
-                id="name" 
-                name="name" 
-                required
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
-                placeholder="Vor- und Nachname">
-            </div>
-
-            <!-- Email -->
-            <div class="md:col-span-2">
-              <label for="email" class="block text-secondary font-medium mb-2">E-Mail Adresse *</label>
-              <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                required
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
-                placeholder="ihre.email@beispiel.ch">
-            </div>
-          </div>
-        </div>
-
-        <!-- Submit Button -->
-        <div class="pt-4">
-          <button 
-            type="submit"
-            class="w-full bg-secondary text-primary px-8 py-4 text-lg font-bold border-2 border-secondary hover:bg-primary hover:text-secondary hover:border-secondary transition-all duration-300">
-            Anfrage senden
-          </button>
-          <p class="text-secondary/60 text-sm mt-2 text-center">
-            * Pflichtfelder - Wir melden uns innerhalb von 24 Stunden bei Ihnen
-          </p>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const openModalBtn = document.getElementById('open-sell-modal');
-    const closeModalBtn = document.getElementById('close-sell-modal');
-    const modal = document.getElementById('sell-modal');
-    const form = document.getElementById('sell-car-form');
+  class FeaturesGallery {
+    private container: HTMLElement | null;
+    private featuresTitle: HTMLElement | null;
+    private featureBars: NodeListOf<Element>;
+    private progressLine: HTMLElement | null;
+    private totalFeatures: number;
+    private isInGallery: boolean;
+
+    constructor() {
+      this.container = document.querySelector('.features-gallery-container');
+      this.featuresTitle = document.querySelector('.features-title');
+      this.featureBars = document.querySelectorAll('.feature-bar');
+      this.progressLine = document.querySelector('.features-progress-line');
+      
+      this.totalFeatures = 3;
+      this.isInGallery = false;
+      
+      this.init();
+    }
     
-    if (!openModalBtn || !closeModalBtn || !modal || !form) return;
-
-    // Open Modal
-    openModalBtn.addEventListener('click', () => {
-      modal.classList.remove('opacity-0', 'invisible');
-      const modalContent = modal.querySelector('div');
-      if (modalContent) {
-        modalContent.classList.remove('scale-95');
-        modalContent.classList.add('scale-100');
-      }
-      document.body.style.overflow = 'hidden';
-    });
-
-    // Close Modal Function
-    const closeModal = () => {
-      modal.classList.add('opacity-0', 'invisible');
-      const modalContent = modal.querySelector('div');
-      if (modalContent) {
-        modalContent.classList.add('scale-95');
-        modalContent.classList.remove('scale-100');
-      }
-      document.body.style.overflow = 'auto';
-    };
-
-    // Close Modal Events
-    closeModalBtn.addEventListener('click', closeModal);
+    init(): void {
+      this.setupScrollListener();
+    }
     
-    // Close on overlay click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
-    });
-
-    // Close on ESC key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !modal.classList.contains('invisible')) {
-        closeModal();
+    setupScrollListener(): void {
+      let ticking = false;
+      
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.handleScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    }
+    
+    handleScroll(): void {
+      if (!this.container) return;
+      
+      const containerRect = this.container.getBoundingClientRect();
+      const containerHeight = this.container.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      
+      // Check if we're in the features section
+      if (containerRect.top <= 0 && containerRect.bottom >= viewportHeight) {
+        if (!this.isInGallery) {
+          // First time entering the section - initialize title
+          this.initializeTitleState();
+        }
+        this.isInGallery = true;
+        
+        // Calculate scroll progress (0 to 1)
+        const scrollProgress = Math.abs(containerRect.top) / (containerHeight - viewportHeight);
+        const clampedProgress = Math.max(0, Math.min(1, scrollProgress));
+        
+        // Create phases: 
+        // 0 - 0.15: Initial grace period (nothing happens)
+        // 0.15 - 0.7: Animation in (bars slide in)
+        // 0.7 - 1.0: Hold phase (everything stays at full visibility)
+        
+        let animationProgress = clampedProgress;
+        let isHoldPhase = false;
+        
+        if (clampedProgress <= 0.15) {
+          // Grace period - nothing happens yet
+          animationProgress = 0;
+          isHoldPhase = false;
+        } else if (clampedProgress <= 0.7) {
+          // Animation in phase (starts after 15% scroll)
+          animationProgress = (clampedProgress - 0.15) / (0.7 - 0.15); // Scale to 0-1
+          isHoldPhase = false;
+        } else {
+          // Hold phase - everything stays at 100% opacity
+          animationProgress = 1;
+          isHoldPhase = true;
+        }
+        
+        // Update animations (no fade progress needed)
+        this.updateTitlePositionWithPhases(animationProgress, isHoldPhase);
+        this.updateFeatureBarsWithPhases(animationProgress, isHoldPhase);
+        this.updateProgress(clampedProgress);
+        
+      } else {
+        // Only reset if we haven't been in the gallery yet
+        // Once animated in, bars stay visible permanently
+        if (!this.isInGallery) {
+          // Reset all elements to initial hidden state
+          this.resetToInitialState();
+        } else {
+          // Keep bars visible, just hide title and progress
+          if (this.featuresTitle) {
+            this.featuresTitle.style.transform = 'translateY(0%)';
+            this.featuresTitle.style.opacity = '1';
+          }
+          if (this.progressLine) {
+            this.progressLine.style.width = '100%';
+          }
+        }
       }
-    });
-
-    // Form Submit (placeholder - no actual functionality yet)
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      console.log('Form submitted - functionality to be implemented');
-      // TODO: Add form submission logic later
-      alert('Formular wurde gesendet! (Funktionalität wird später implementiert)');
-      closeModal();
-    });
+    }
+    
+    initializeTitleState(): void {
+      // Ensure title is visible and centered when first entering the section
+      if (this.featuresTitle) {
+        this.featuresTitle.style.transform = 'translateY(0%)';
+        this.featuresTitle.style.opacity = '1';
+      }
+    }
+    
+    resetToInitialState(): void {
+      // Reset title to fixed visible state (not hidden like before)
+      if (this.featuresTitle) {
+        this.featuresTitle.style.transform = 'translateY(0%)';
+        this.featuresTitle.style.opacity = '1';
+      }
+      
+      // Reset all feature bars to initial hidden state with slower transition
+      this.featureBars.forEach((bar: Element) => {
+        const htmlBar = bar as HTMLElement;
+        // Add slower transition for fade out
+        htmlBar.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        htmlBar.style.transform = 'translateY(100%)';
+        htmlBar.style.opacity = '0';
+        
+        // Reset bar content
+        const icon = htmlBar.querySelector('.feature-icon') as HTMLElement;
+        const title = htmlBar.querySelector('.feature-title') as HTMLElement;
+        const description = htmlBar.querySelector('.feature-description') as HTMLElement;
+        const number = htmlBar.querySelector('.feature-number') as HTMLElement;
+        
+        if (icon) {
+          icon.style.opacity = '0';
+          icon.style.transform = 'scale(0)';
+        }
+        if (title) {
+          title.style.opacity = '0';
+          title.style.transform = 'translateX(32px)';
+        }
+        if (description) {
+          description.style.opacity = '0';
+          description.style.transform = 'translateX(32px)';
+        }
+        if (number) {
+          number.style.opacity = '0';
+          number.style.transform = 'translateX(32px)';
+        }
+        
+        // Reset transition back to normal after a delay
+        setTimeout(() => {
+          htmlBar.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        }, 800);
+      });
+      
+      // Reset progress line
+      if (this.progressLine) {
+        this.progressLine.style.width = '0%';
+      }
+    }
+    
+    updateTitlePositionWithPhases(progress: number, isHoldPhase: boolean): void {
+      if (!this.featuresTitle) return;
+      
+      // Title stays completely visible until bars start appearing (progress > 0.3)
+      // Then slowly fades as bars animate in
+      let opacity = 1; // Start fully visible
+      let slideY = 0; // No movement initially
+      
+      // Only start fading when bars are well into their animation (after 30% progress)
+      if (progress > 0.3) {
+        // Gradual fade as bars animate in
+        const fadeStartProgress = (progress - 0.3) / 0.7; // Scale from 0.3-1.0 to 0-1
+        opacity = Math.max(0, 1 - fadeStartProgress * 1.5); // Gentle fade
+        slideY = fadeStartProgress * -50; // Subtle upward movement
+      }
+      
+      // During hold phase, keep some opacity if not completely faded
+      if (isHoldPhase && opacity > 0) {
+        opacity = Math.max(0.3, opacity); // Minimum visibility during hold
+      }
+      
+      this.featuresTitle.style.transform = `translateY(${slideY}%)`;
+      this.featuresTitle.style.opacity = opacity.toString();
+    }
+    
+    updateFeatureBarsWithPhases(animationProgress: number, isHoldPhase: boolean): void {
+      // Each feature bar appears in sequence from bottom
+      const featureInterval = 1 / this.totalFeatures;
+      
+      this.featureBars.forEach((bar: Element, index: number) => {
+        const htmlBar = bar as HTMLElement;
+        const featureStart = index * featureInterval;
+        
+        if (animationProgress >= featureStart) {
+          // Calculate this feature's progress (0 to 1)
+          let featureProgress = Math.min(1, (animationProgress - featureStart) / featureInterval);
+          
+          // During hold phase, keep at full visibility
+          if (isHoldPhase) {
+            featureProgress = 1;
+          }
+          
+          // NO FADE OUT - bars stay at full opacity once animated
+          const opacity = featureProgress;
+          
+          // Slide in from bottom
+          const translateY = (1 - featureProgress) * 100;
+          
+          htmlBar.style.transform = `translateY(${translateY}%)`;
+          htmlBar.style.opacity = opacity.toString();
+          
+          // Animate content within this bar
+          this.animateBarContentWithPhases(htmlBar, featureProgress, isHoldPhase);
+          
+        } else {
+          // Hide bars that haven't started yet
+          htmlBar.style.transform = 'translateY(100%)';
+          htmlBar.style.opacity = '0';
+        }
+      });
+    }
+    
+    animateBarContentWithPhases(bar: HTMLElement, progress: number, isHoldPhase: boolean): void {
+      const icon = bar.querySelector('.feature-icon') as HTMLElement;
+      const title = bar.querySelector('.feature-title') as HTMLElement;
+      const description = bar.querySelector('.feature-description') as HTMLElement;
+      const number = bar.querySelector('.feature-number') as HTMLElement;
+      
+      if (!icon || !title || !description) return;
+      
+      // Icon animates first (starts at 20% progress)
+      if (progress > 0.2) {
+        const iconProgress = Math.min(1, (progress - 0.2) / 0.3);
+        let iconOpacity = iconProgress;
+        
+        // During hold phase, keep at full visibility
+        if (isHoldPhase) {
+          iconOpacity = 1;
+        }
+        
+        // NO FADE OUT - icons stay at full opacity
+        
+        icon.style.opacity = iconOpacity.toString();
+        icon.style.transform = `scale(${Math.min(1, iconProgress)})`;
+      }
+      
+      // Title animates second (starts at 40% progress)
+      if (progress > 0.4) {
+        const titleProgress = Math.min(1, (progress - 0.4) / 0.3);
+        let titleOpacity = titleProgress;
+        
+        // During hold phase, keep at full visibility
+        if (isHoldPhase) {
+          titleOpacity = 1;
+        }
+        
+        // NO FADE OUT - titles stay at full opacity
+        
+        title.style.opacity = titleOpacity.toString();
+        title.style.transform = `translateX(${(1 - Math.min(1, titleProgress)) * 32}px)`;
+      }
+      
+      // Description animates third (starts at 60% progress)
+      if (progress > 0.6) {
+        const descProgress = Math.min(1, (progress - 0.6) / 0.3);
+        let descOpacity = descProgress;
+        
+        // During hold phase, keep at full visibility
+        if (isHoldPhase) {
+          descOpacity = 1;
+        }
+        
+        // NO FADE OUT - descriptions stay at full opacity
+        
+        description.style.opacity = descOpacity.toString();
+        description.style.transform = `translateX(${(1 - Math.min(1, descProgress)) * 32}px)`;
+      }
+      
+      // Number animates last (starts at 70% progress)
+      if (number && progress > 0.7) {
+        const numberProgress = Math.min(1, (progress - 0.7) / 0.3);
+        let numberOpacity = numberProgress;
+        
+        // During hold phase, keep at full visibility
+        if (isHoldPhase) {
+          numberOpacity = 1;
+        }
+        
+        // NO FADE OUT - numbers stay at full opacity
+        
+        number.style.opacity = numberOpacity.toString();
+        number.style.transform = `translateX(${(1 - Math.min(1, numberProgress)) * 32}px)`;
+      }
+    }
+    
+    updateProgress(progress: number): void {
+      // Update the top progress line
+      if (this.progressLine) {
+        this.progressLine.style.width = `${progress * 100}%`;
+      }
+    }
+  }
+  
+  // Initialize features gallery when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new FeaturesGallery();
   });
-</script> 
+</script>
+
+<style>
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Feature bars - INITIALLY HIDDEN */
+  .feature-bar {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    /* Initial state: hidden and positioned off-screen */
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  
+  /* Title content */
+  .features-title {
+    transition: transform 0.2s ease-out, opacity 0.3s ease-out;
+    /* Initial state: visible */
+    opacity: 1;
+    transform: translateY(0%);
+  }
+  
+  /* Feature content animations - INITIALLY HIDDEN */
+  .feature-icon {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    /* Initial state: hidden */
+    opacity: 0;
+    transform: scale(0);
+  }
+  
+  .feature-title,
+  .feature-description,
+  .feature-number {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    /* Initial state: hidden */
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  
+  /* Performance optimizations */
+  .features-title,
+  .feature-bar,
+  .feature-content {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  
+  /* Progress bar */
+  .features-progress-track {
+    backdrop-filter: blur(8px);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .feature-bar {
+      height: calc(100vh / 3);
+    }
+    
+    .feature-content {
+      padding: 1rem;
+    }
+  }
+</style> 

@@ -1,0 +1,396 @@
+---
+// Scroll-based Card Stack Gallery with individual reasons per image
+const images = [
+  {
+    url: 'https://autosalonvolketswil.ch/wp-content/uploads/2025/06/ASV-SHOWROOM-OPENING5-scaled.jpg',
+    alt: 'Auto Salon Volketswil Showroom - Bild 1',
+    title: 'Unabhängiger Autohändler',
+    description: 'Als unabhängiger Autohändler in Volketswil Zürich können wir markenunabhängig auf dem Markt performen!'
+  },
+  {
+    url: 'https://autosalonvolketswil.ch/wp-content/uploads/2025/06/ASV-SHOWROOM-OPENING4-scaled.jpg',
+    alt: 'Auto Salon Volketswil Showroom - Bild 2',
+    title: 'Kundenvertrauen',
+    description: 'Unsere Kunden sind begeistert von unserer Beratung sowie dem Rundum-Service und vertrauen darauf.'
+  },
+  {
+    url: 'https://autosalonvolketswil.ch/wp-content/uploads/2025/06/ASV-SHOWROOM-OPENING8-scaled.jpg',
+    alt: 'Auto Salon Volketswil Showroom - Bild 3',
+    title: '100% Tiefstpreisgarantie',
+    description: 'Beim Auto Salon finden Sie die schweizweit tiefsten Preise für ihr neues Auto – garantiert!'
+  },
+  {
+    url: 'https://autosalonvolketswil.ch/wp-content/uploads/2025/06/ASV-SHOWROOM-OPENING1-scaled.jpg',
+    alt: 'Auto Salon Volketswil Showroom - Bild 4',
+    title: 'Modernster Showroom',
+    description: 'Unsere brandneuen Räumlichkeiten bieten das perfekte Ambiente für Ihre Autosuche.'
+  },
+  {
+    url: 'https://autosalonvolketswil.ch/wp-content/uploads/2025/06/ASV-SHOWROOM-OPENING13-scaled.jpg',
+    alt: 'Auto Salon Volketswil Showroom - Bild 5',
+    title: 'Persönliche Beratung',
+    description: 'Unser erfahrenes Team berät Sie individuell und findet das perfekte Auto für Ihre Bedürfnisse.'
+  }
+];
+---
+
+<!-- Extended scroll container for stack effect with pause at end -->
+<section id="about" class="stack-gallery-container" style="height: 700vh;">
+  <div class="absolute inset-0 opacity-5">
+    <div class="absolute top-20 left-10 w-32 h-32 border-2 border-secondary rotate-45"></div>
+    <div class="absolute bottom-20 right-10 w-24 h-24 border-2 border-secondary rotate-12"></div>
+    <div class="absolute top-1/2 left-1/4 w-16 h-16 border border-secondary rounded-full"></div>
+  </div>
+  <!-- Sticky container that stays in view -->
+  <div class="sticky top-0 w-full h-screen overflow-hidden bg-primary ">
+    
+    <!-- Full-width progress bar below navbar -->
+    <div class="progress-track absolute top-20 left-0 w-full h-1 bg-black/20 z-30">
+      <div class="progress-line h-full bg-white transition-all duration-300 ease-out" style="width: 0%"></div>
+    </div>
+    
+    <!-- Initial title that slides left -->
+    <div class="intro-title absolute inset-0 flex items-center justify-center z-10 will-change-transform">
+      <div class="text-center">
+        <div class="flex items-center justify-center gap-6 mb-8">
+          <h2 class="text-secondary text-5xl md:text-7xl lg:text-8xl font-bold">
+            Warum
+          </h2>
+          <img 
+            src="/autosalon.svg" 
+            alt="Auto Salon Logo" 
+            class="h-12 md:h-20 lg:h-24 w-auto"
+          />
+        </div>
+        <div class="w-40 h-1 bg-secondary mx-auto"></div>
+        <p class="text-secondary/70 text-xl md:text-2xl mt-8 max-w-3xl px-4">
+          Scrollen Sie und entdecken Sie unsere Vorteile
+        </p>
+      </div>
+    </div>
+
+    <!-- Image stack that builds from the right -->
+    <div class="image-stack absolute inset-0">
+      {images.map((image, index) => (
+        <div 
+          class={`stack-card absolute inset-0 will-change-transform`}
+          data-index={index}
+          style={`z-index: ${index + 20};`}
+        >
+          <div class="w-full h-full flex items-center justify-center p-4">
+            <div class="relative w-full max-w-6xl h-[85vh] rounded-3xl overflow-hidden shadow-2xl">
+              <img 
+                src={image.url} 
+                alt={image.alt}
+                class="w-full h-full object-cover"
+                loading="lazy"
+                draggable="false"
+              />
+              <!-- Dark overlay for better text readability -->
+              <div class="absolute inset-0 bg-black/50"></div>
+              
+              <!-- Text reveal content on image -->
+              <div class="text-reveal absolute inset-0 flex items-center justify-center p-8">
+                <div class="text-center text-white max-w-4xl">
+                  <!-- Title with stagger animation -->
+                  <h3 class="reveal-title text-5xl md:text-6xl lg:text-7xl font-bold mb-8 opacity-0 transform translate-y-8">
+                    {image.title}
+                  </h3>
+                  
+                  <!-- Description with delay -->
+                  <p class="reveal-description text-xl md:text-2xl lg:text-3xl leading-relaxed opacity-0 transform translate-y-8 px-4">
+                    {image.description}
+                  </p>
+                  
+                  <!-- Decorative line -->
+                  <div class="reveal-line w-32 h-1 bg-secondary mx-auto mt-10 opacity-0 transform scale-x-0"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  class StackGallery {
+    private container: HTMLElement | null;
+    private introTitle: HTMLElement | null;
+    private stackCards: NodeListOf<Element>;
+    private progressLine: HTMLElement | null;
+    private totalImages: number;
+    private isInGallery: boolean;
+
+    constructor() {
+      this.container = document.querySelector('.stack-gallery-container');
+      this.introTitle = document.querySelector('.intro-title');
+      this.stackCards = document.querySelectorAll('.stack-card');
+      this.progressLine = document.querySelector('.progress-line');
+      
+      this.totalImages = 5;
+      this.isInGallery = false;
+      
+      this.init();
+    }
+    
+    init(): void {
+      this.setupScrollListener();
+    }
+    
+    setupScrollListener(): void {
+      let ticking = false;
+      
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            this.handleScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    }
+    
+    handleScroll(): void {
+      if (!this.container) return;
+      
+      const containerRect = this.container.getBoundingClientRect();
+      const containerHeight = this.container.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      
+      // Check if we're in the gallery section
+      if (containerRect.top <= 0 && containerRect.bottom >= viewportHeight) {
+        this.isInGallery = true;
+        
+        // Calculate scroll progress (0 to 1) with pause at end
+        const totalScrollDistance = containerHeight - viewportHeight;
+        const currentScroll = Math.abs(containerRect.top);
+        
+        // Animation completes at 80% of total scroll, then holds
+        const animationCompleteAt = totalScrollDistance * 0.8;
+        let scrollProgress;
+        
+        if (currentScroll <= animationCompleteAt) {
+          // Normal animation phase (0 to 1)
+          scrollProgress = currentScroll / animationCompleteAt;
+        } else {
+          // Hold phase - keep at 100%
+          scrollProgress = 1;
+        }
+        
+        const clampedProgress = Math.max(0, Math.min(1, scrollProgress));
+        
+        // Update animations
+        this.updateTitlePosition(clampedProgress);
+        this.updateImageStack(clampedProgress);
+        this.updateProgress(clampedProgress);
+        
+      } else {
+        this.isInGallery = false;
+        // Reset all elements to initial hidden state
+        this.resetToInitialState();
+      }
+    }
+    
+    resetToInitialState(): void {
+      // Reset title to initial visible state
+      if (this.introTitle) {
+        this.introTitle.style.transform = 'translateX(0%)';
+        this.introTitle.style.opacity = '1';
+      }
+      
+      // Reset all cards to initial hidden state
+      this.stackCards.forEach((card: Element) => {
+        const htmlCard = card as HTMLElement;
+        htmlCard.style.transform = 'translateX(120%) scale(0.7)';
+        htmlCard.style.opacity = '0';
+        
+        // Reset text content
+        const title = htmlCard.querySelector('.reveal-title') as HTMLElement;
+        const description = htmlCard.querySelector('.reveal-description') as HTMLElement;
+        const line = htmlCard.querySelector('.reveal-line') as HTMLElement;
+        
+        if (title) {
+          title.style.opacity = '0';
+          title.style.transform = 'translateY(32px)';
+        }
+        if (description) {
+          description.style.opacity = '0';
+          description.style.transform = 'translateY(32px)';
+        }
+        if (line) {
+          line.style.opacity = '0';
+          line.style.transform = 'scaleX(0)';
+        }
+      });
+      
+      // Reset progress line
+      if (this.progressLine) {
+        this.progressLine.style.width = '0%';
+      }
+    }
+    
+    updateTitlePosition(progress: number): void {
+      if (!this.introTitle) return;
+      
+      // Slide title to the left faster
+      const slideX = progress * -120; // Move further left
+      const opacity = Math.max(0, 1 - progress * 1.5); // Fade out quicker
+      
+      this.introTitle.style.transform = `translateX(${slideX}%)`;
+      this.introTitle.style.opacity = opacity.toString();
+    }
+    
+    updateImageStack(progress: number): void {
+      // Each image appears in sequence and stacks
+      const imageInterval = 1 / this.totalImages;
+      
+      this.stackCards.forEach((card: Element, index: number) => {
+        const htmlCard = card as HTMLElement;
+        const imageStart = index * imageInterval;
+        
+        if (progress >= imageStart) {
+          // Calculate this image's progress (0 to 1)
+          const imageProgress = Math.min(1, (progress - imageStart) / imageInterval);
+          
+          // Slide in from right - larger movement
+          const translateX = (1 - imageProgress) * 120; // Start further right
+          
+          // Stack effect with more dramatic scaling
+          const rotation = (1 - imageProgress) * 8; // More rotation
+          const scale = 0.7 + (imageProgress * 0.3); // Smaller start, bigger finish
+          const stackOffset = index * 3; // More offset for depth
+          
+          htmlCard.style.transform = `
+            translateX(${translateX}%) 
+            translateY(${stackOffset}px) 
+            rotate(${rotation}deg) 
+            scale(${scale})
+          `;
+          htmlCard.style.opacity = imageProgress.toString();
+          
+          // Animate text reveal on this card
+          this.animateTextReveal(htmlCard, imageProgress);
+          
+        } else {
+          // Hide images that haven't started yet
+          htmlCard.style.transform = 'translateX(120%) scale(0.7)';
+          htmlCard.style.opacity = '0';
+        }
+      });
+    }
+    
+    animateTextReveal(card: HTMLElement, progress: number): void {
+      const title = card.querySelector('.reveal-title') as HTMLElement;
+      const description = card.querySelector('.reveal-description') as HTMLElement;
+      const line = card.querySelector('.reveal-line') as HTMLElement;
+      
+      if (!title || !description || !line) return;
+      
+      // Title animates first (starts at 30% progress)
+      if (progress > 0.3) {
+        const titleProgress = Math.min(1, (progress - 0.3) / 0.3);
+        title.style.opacity = titleProgress.toString();
+        title.style.transform = `translateY(${(1 - titleProgress) * 32}px)`;
+      }
+      
+      // Description animates second (starts at 50% progress)
+      if (progress > 0.5) {
+        const descProgress = Math.min(1, (progress - 0.5) / 0.3);
+        description.style.opacity = descProgress.toString();
+        description.style.transform = `translateY(${(1 - descProgress) * 32}px)`;
+      }
+      
+      // Line animates last (starts at 70% progress)
+      if (progress > 0.7) {
+        const lineProgress = Math.min(1, (progress - 0.7) / 0.3);
+        line.style.opacity = lineProgress.toString();
+        line.style.transform = `scaleX(${lineProgress})`;
+      }
+    }
+    
+    updateProgress(progress: number): void {
+      // Update the top progress line
+      if (this.progressLine) {
+        this.progressLine.style.width = `${progress * 100}%`;
+      }
+    }
+  }
+  
+  // Initialize gallery when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new StackGallery();
+  });
+</script>
+
+<style>
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Stack cards - INITIALLY HIDDEN */
+  .stack-card {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform-origin: center center;
+    /* Initial state: hidden and positioned off-screen */
+    opacity: 0;
+    transform: translateX(120%) scale(0.7);
+  }
+  
+  /* Title content */
+  .intro-title {
+    transition: transform 0.2s ease-out, opacity 0.3s ease-out;
+    /* Initial state: visible */
+    opacity: 1;
+    transform: translateX(0%);
+  }
+  
+  /* Text reveal elements - INITIALLY HIDDEN */
+  .reveal-title,
+  .reveal-description {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    /* Initial state: hidden */
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  
+  .reveal-line {
+    transition: opacity 0.4s ease, transform 0.6s ease;
+    transform-origin: center;
+    /* Initial state: hidden */
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  
+  /* Performance optimizations */
+  .intro-title,
+  .stack-card,
+  .text-reveal {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  
+  /* Progress indicator */
+  .stack-progress {
+    backdrop-filter: blur(8px);
+  }
+  
+  /* Larger images on different screen sizes */
+  @media (min-width: 768px) {
+    .stack-card .relative {
+      max-width: 90vw;
+      height: 90vh;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .stack-card .relative {
+      max-width: 85vw;
+      height: 85vh;
+    }
+  }
+</style> 
