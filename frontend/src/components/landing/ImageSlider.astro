@@ -51,19 +51,19 @@ const images = [
     
     <!-- Initial title that slides left -->
     <div class="intro-title absolute inset-0 flex items-center justify-center z-10 will-change-transform">
-      <div class="text-center">
-        <div class="flex items-center justify-center gap-6 mb-8">
-          <h2 class="text-secondary text-5xl md:text-7xl lg:text-8xl font-bold">
+      <div class="text-center px-4">
+        <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 mb-8">
+          <h2 class="text-secondary text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold">
             Warum
           </h2>
           <img 
             src="/autosalon.svg" 
             alt="Auto Salon Logo" 
-            class="h-12 md:h-20 lg:h-24 w-auto"
+            class="h-10 sm:h-12 md:h-20 lg:h-24 w-auto"
           />
         </div>
-        <div class="w-40 h-1 bg-secondary mx-auto"></div>
-        <p class="text-secondary/70 text-xl md:text-2xl mt-8 max-w-3xl px-4">
+        <div class="w-32 sm:w-40 h-1 bg-secondary mx-auto"></div>
+        <p class="text-secondary/70 text-lg sm:text-xl md:text-2xl mt-6 md:mt-8 max-w-3xl">
           Scrollen Sie und entdecken Sie unsere Vorteile
         </p>
       </div>
@@ -78,7 +78,7 @@ const images = [
           style={`z-index: ${index + 20};`}
         >
           <div class="w-full h-full flex items-center justify-center p-4">
-            <div class="relative w-full max-w-6xl h-[85vh] rounded-3xl overflow-hidden shadow-2xl">
+            <div class="relative w-full max-w-6xl h-[70vh] md:h-[85vh] rounded-3xl overflow-hidden shadow-2xl">
               <img 
                 src={image.url} 
                 alt={image.alt}
@@ -93,7 +93,7 @@ const images = [
               <div class="text-reveal absolute inset-0 flex items-center justify-center p-8">
                 <div class="text-center text-white max-w-4xl">
                   <!-- Title with stagger animation -->
-                  <h3 class="reveal-title text-5xl md:text-6xl lg:text-7xl font-bold mb-8 opacity-0 transform translate-y-8">
+                  <h3 class="reveal-title text-4xl md:text-6xl lg:text-7xl font-bold mb-8 opacity-0 transform translate-y-8">
                     {image.title}
                   </h3>
                   

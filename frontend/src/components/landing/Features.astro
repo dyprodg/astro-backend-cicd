@@ -540,12 +540,112 @@ import BlurImage from '../lib/BlurImage.astro';
   
   /* Responsive adjustments */
   @media (max-width: 768px) {
-    .feature-bar {
-      height: calc(100vh / 3);
+    /* Reduce overall section height for mobile */
+    .features-gallery-container {
+      height: 450vh !important; /* Reduced from 600vh */
     }
     
+    /* Make feature bars higher on mobile without gaps */
+    .feature-bar {
+      height: 30vh !important; /* Increased from 25vh since no gaps */
+    }
+    
+    /* Adjust positioning with no gaps between bars */
+    .feature-bar[data-index="0"] {
+      top: 15vh !important; /* Start lower to account for navbar */
+    }
+    
+    .feature-bar[data-index="1"] {
+      top: 45vh !important; /* 15 + 30, no gap */
+    }
+    
+    .feature-bar[data-index="2"] {
+      top: 75vh !important; /* 15 + 30 + 30, no gap */
+    }
+    
+    /* Adjust content sizing for mobile */
     .feature-content {
       padding: 1rem;
+    }
+    
+    /* Make icons smaller on mobile */
+    .feature-icon {
+      width: 3rem !important; /* 48px */
+      height: 3rem !important;
+    }
+    
+    .feature-icon svg {
+      width: 1.5rem !important; /* 24px */
+      height: 1.5rem !important;
+    }
+    
+    /* Adjust text sizes for smaller bars */
+    .feature-title {
+      font-size: 1.875rem !important; /* text-3xl equivalent */
+      margin-bottom: 0.5rem !important;
+      line-height: 1.2 !important;
+    }
+    
+    .feature-description {
+      font-size: 1rem !important; /* text-base equivalent */
+      line-height: 1.4 !important;
+    }
+    
+    /* Hide feature numbers on mobile to save space */
+    .feature-number {
+      display: none !important;
+    }
+    
+    /* Adjust gap between icon and text */
+    .feature-content .flex.items-center {
+      gap: 1rem !important;
+    }
+    
+    /* Ensure content fits within smaller bars */
+    .feature-content .max-w-2xl {
+      max-width: 100% !important;
+    }
+  }
+  
+  /* Extra small screens */
+  @media (max-width: 480px) {
+    .features-gallery-container {
+      height: 400vh !important; /* Even smaller for very small screens */
+    }
+    
+    .feature-bar {
+      height: 28vh !important; /* Increased from 22vh since no gaps */
+    }
+    
+    .feature-bar[data-index="0"] {
+      top: 12vh !important;
+    }
+    
+    .feature-bar[data-index="1"] {
+      top: 40vh !important; /* 12 + 28, no gap */
+    }
+    
+    .feature-bar[data-index="2"] {
+      top: 68vh !important; /* 12 + 28 + 28, no gap */
+    }
+    
+    .feature-title {
+      font-size: 1.5rem !important; /* text-2xl equivalent */
+    }
+    
+    .feature-description {
+      font-size: 0.875rem !important; /* text-sm equivalent */
+    }
+    
+    /* Stack icon and text vertically on very small screens */
+    .feature-content .flex.items-center {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 0.75rem !important;
+    }
+    
+    .feature-content .w-full.max-w-7xl {
+      justify-content: flex-start !important;
     }
   }
 </style> 

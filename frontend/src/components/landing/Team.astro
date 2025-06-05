@@ -6,57 +6,79 @@ const teamData = [
   {
     name: "Antonio Castellano",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Antonio-scaled.jpg",
-    position: "Automobilverkäufer"
+    position: "Automobilverkäufer",
+    email: "antonio@autosalonvolketswil.ch",
+    phone: "+41 44 123 45 67"
   },
   {
     name: "Kenan Midzan",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Kenan-scaled.jpg",
-    position: "Automobilverkäufer"
+    position: "Automobilverkäufer",
+    email: "kenan@autosalonvolketswil.ch",
+    phone: "+41 44 123 45 68"
   },
   {
     name: "Selina Doll",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Selina-scaled.jpg",
-    position: "Assistenz der Geschäftsleitung"
+    position: "Assistenz der Geschäftsleitung",
+    email: "selina@autosalonvolketswil.ch",
+    phone: "+41 44 123 45 69"
   },
   {
     name: "Francesco Sigillo",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Francesco-scaled.jpg",
-    position: "Marketing"
+    position: "Marketing",
+    email: "francesco@autosalonvolketswil.ch",
+    phone: "+41 44 123 45 70"
   },
   {
     name: "Mikael Da Costa Botelho",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Miki-scaled.jpg",
-    position: "Aufbereiter"
+    position: "Aufbereiter",
+    email: "",
+    phone: ""
   },
   {
     name: "Rodion Wagner",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Rodion-scaled.jpg",
-    position: "Aufbereiter"
+    position: "Aufbereiter",
+    email: "",
+    phone: ""
   },
   {
     name: "Fernando Pinheiro",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Fernando-scaled.jpg",
-    position: "Aufbereiter"
+    position: "Aufbereiter",
+    email: "",
+    phone: ""
   },
   {
     name: "Levin Paprotka",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Levin-scaled.jpg",
-    position: "Mechaniker"
+    position: "Mechaniker",
+    email: "",
+    phone: ""
   },
   {
     name: "Nadim Ghani",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/DSC01352-scaled.jpg",
-    position: "Mitglied GL & Verkaufsleiter"
+    position: "Mitglied GL & Verkaufsleiter",
+    email: "nadim@autosalonvolketswil.ch",
+    phone: "+41 44 123 45 75"
   },
   {
     name: "Mario Betschart",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/DSC01454-2-scaled.jpg",
-    position: "Mitglied GL & Einkäufer"
+    position: "Mitglied GL & Einkäufer",
+    email: "mario@autosalonvolketswil.ch",
+    phone: "+41 44 123 45 76"
   },
   {
     name: "Sali Saliu",
     image: "https://autosalonvolketswil.ch/wp-content/uploads/2024/01/DSC6181-scaled.jpg",
-    position: "Inhaber & Geschäftsführer"
+    position: "Inhaber & Geschäftsführer",
+    email: "sali@autosalonvolketswil.ch",
+    phone: "+41 44 123 45 77"
   }
 ] as const;
 ---
@@ -82,7 +104,7 @@ const teamData = [
     </div>
 
     <!-- Team Grid Container - Full Screen -->
-    <div class="team-grid-wrapper absolute inset-0 w-full" style="height: 95vh; top: 2.5vh;">
+    <div class="team-grid-wrapper absolute inset-0 w-full top-20" style="height: 85vh;">
       <div class="team-grid h-full w-full">
         {teamData.map((member, index) => (
           <div 
@@ -115,6 +137,81 @@ const teamData = [
   </div>
 </section>
 
+<!-- Team Member Modal -->
+<div 
+  id="teamModal"
+  class="fixed inset-0 bg-black/70 backdrop-blur-sm z-60 opacity-0 invisible transition-all duration-300 ease-out">
+  
+  <!-- Modal Content -->
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div 
+      id="modalContent"
+      class="bg-primary border-2 border-secondary/30 max-w-md w-full transform scale-90 transition-all duration-300 ease-out">
+      
+      <!-- Modal Header -->
+      <div class="relative">
+        <!-- Member Image -->
+        <div class="h-64 overflow-hidden">
+          <img 
+            id="modalImage"
+            src=""
+            alt=""
+            class="w-full h-full object-cover"
+          />
+        </div>
+        
+        <!-- Close Button -->
+        <button 
+          id="modalClose"
+          class="absolute top-4 right-4 w-10 h-10 bg-black/50 backdrop-blur-sm border-2 border-secondary/30 hover:border-secondary flex items-center justify-center transition-colors"
+          aria-label="Modal schließen">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-secondary">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="p-6">
+        <!-- Name and Position -->
+        <div class="mb-6">
+          <h3 id="modalName" class="text-2xl font-bold text-secondary mb-2"></h3>
+          <p id="modalPosition" class="text-secondary/80"></p>
+        </div>
+        
+        <!-- Contact Information -->
+        <div class="space-y-4">
+          <!-- Phone -->
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-secondary/10 border border-secondary/30 flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-secondary">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="text-secondary/60 text-sm">Telefon</p>
+              <a id="modalPhone" href="" class="text-secondary hover:text-secondary/80 transition-colors font-medium"></a>
+            </div>
+          </div>
+          
+          <!-- Email Button -->
+          <a 
+            id="modalEmail"
+            href=""
+            class="w-full bg-secondary text-primary py-3 px-4 flex items-center justify-center space-x-3 hover:bg-secondary/90 transition-colors font-bold">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <span>E-Mail senden</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   class TeamGallery {
     private container: HTMLElement | null;
@@ -123,15 +220,23 @@ const teamData = [
     private progressLine: HTMLElement | null;
     private totalMembers: number;
     private isInGallery: boolean;
+    private modal: HTMLElement | null;
+    private modalContent: HTMLElement | null;
+    private teamData: readonly any[];
 
     constructor() {
       this.container = document.querySelector('.team-gallery-container');
       this.teamTitle = document.querySelector('.team-title');
       this.teamMembers = document.querySelectorAll('.team-member');
       this.progressLine = document.querySelector('.team-progress-line');
+      this.modal = document.getElementById('teamModal');
+      this.modalContent = document.getElementById('modalContent');
       
       this.totalMembers = 11;
       this.isInGallery = false;
+      
+      // Get team data from window object (will be set by Astro)
+      this.teamData = (window as any).teamData || [];
       
       this.init();
     }
@@ -139,6 +244,8 @@ const teamData = [
     init(): void {
       this.setupScrollListener();
       this.resetToInitialState();
+      this.setupModalHandlers();
+      this.setupTeamMemberClicks();
     }
     
     setupScrollListener(): void {
@@ -295,6 +402,105 @@ const teamData = [
       }
     }
     
+    // Modal functionality
+    setupModalHandlers(): void {
+      const modalClose = document.getElementById('modalClose');
+      
+      // Close modal handlers
+      modalClose?.addEventListener('click', () => this.closeModal());
+      this.modal?.addEventListener('click', (e) => {
+        if (e.target === this.modal) {
+          this.closeModal();
+        }
+      });
+      
+      // Close modal on escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.modal && !this.modal.classList.contains('invisible')) {
+          this.closeModal();
+        }
+      });
+    }
+    
+    setupTeamMemberClicks(): void {
+      this.teamMembers.forEach((member, index) => {
+        member.addEventListener('click', () => {
+          this.openModal(index);
+        });
+      });
+    }
+    
+    openModal(memberIndex: number): void {
+      if (!this.modal || !this.teamData[memberIndex]) return;
+      
+      const member = this.teamData[memberIndex];
+      
+      // Populate modal content
+      const modalImage = document.getElementById('modalImage') as HTMLImageElement;
+      const modalName = document.getElementById('modalName');
+      const modalPosition = document.getElementById('modalPosition');
+      const modalPhone = document.getElementById('modalPhone') as HTMLAnchorElement;
+      const modalEmail = document.getElementById('modalEmail') as HTMLAnchorElement;
+      
+      // Get container elements for conditional display
+      const phoneContainer = modalPhone?.parentElement?.parentElement;
+      const emailContainer = modalEmail;
+      
+      if (modalImage) {
+        modalImage.src = member.image;
+        modalImage.alt = member.name;
+      }
+      
+      if (modalName) modalName.textContent = member.name;
+      if (modalPosition) modalPosition.textContent = member.position;
+      
+      // Show/hide phone section based on data availability
+      if (member.phone && modalPhone && phoneContainer) {
+        modalPhone.textContent = member.phone;
+        modalPhone.href = `tel:${member.phone}`;
+        phoneContainer.style.display = 'flex';
+      } else if (phoneContainer) {
+        phoneContainer.style.display = 'none';
+      }
+      
+      // Show/hide email section based on data availability
+      if (member.email && modalEmail) {
+        modalEmail.href = `mailto:${member.email}?subject=Kontaktanfrage von der Website&body=Hallo ${member.name},%0D%0A%0D%0AIch würde gerne Kontakt mit Ihnen aufnehmen.%0D%0A%0D%0AMit freundlichen Grüßen`;
+        modalEmail.style.display = 'flex';
+      } else if (modalEmail) {
+        modalEmail.style.display = 'none';
+      }
+      
+      // Show modal
+      this.modal.classList.remove('opacity-0', 'invisible');
+      if (this.modalContent) {
+        setTimeout(() => {
+          this.modalContent?.classList.remove('scale-90');
+          this.modalContent?.classList.add('scale-100');
+        }, 50);
+      }
+      
+      // Prevent body scroll
+      document.body.classList.add('overflow-hidden');
+    }
+    
+    closeModal(): void {
+      if (!this.modal) return;
+      
+      // Hide modal
+      if (this.modalContent) {
+        this.modalContent.classList.remove('scale-100');
+        this.modalContent.classList.add('scale-90');
+      }
+      
+      setTimeout(() => {
+        this.modal?.classList.add('opacity-0', 'invisible');
+      }, 200);
+      
+      // Restore body scroll
+      document.body.classList.remove('overflow-hidden');
+    }
+    
     // Easing function for smooth animations
     easeOutCubic(t: number): number {
       return 1 - Math.pow(1 - t, 3);
@@ -303,6 +509,87 @@ const teamData = [
   
   // Initialize team gallery when DOM is loaded
   document.addEventListener('DOMContentLoaded', () => {
+    // Make team data available to JavaScript
+    (window as any).teamData = [
+      {
+        name: "Antonio Castellano",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Antonio-scaled.jpg",
+        position: "Automobilverkäufer",
+        email: "antonio@autosalonvolketswil.ch",
+        phone: "+41 44 123 45 67"
+      },
+      {
+        name: "Kenan Midzan",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Kenan-scaled.jpg",
+        position: "Automobilverkäufer",
+        email: "kenan@autosalonvolketswil.ch",
+        phone: "+41 44 123 45 68"
+      },
+      {
+        name: "Selina Doll",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Selina-scaled.jpg",
+        position: "Assistenz der Geschäftsleitung",
+        email: "selina@autosalonvolketswil.ch",
+        phone: "+41 44 123 45 69"
+      },
+      {
+        name: "Francesco Sigillo",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Francesco-scaled.jpg",
+        position: "Marketing",
+        email: "francesco@autosalonvolketswil.ch",
+        phone: "+41 44 123 45 70"
+      },
+      {
+        name: "Mikael Da Costa Botelho",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Miki-scaled.jpg",
+        position: "Aufbereiter",
+        email: "",
+        phone: ""
+      },
+      {
+        name: "Rodion Wagner",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Rodion-scaled.jpg",
+        position: "Aufbereiter",
+        email: "",
+        phone: ""
+      },
+      {
+        name: "Fernando Pinheiro",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Fernando-scaled.jpg",
+        position: "Aufbereiter",
+        email: "",
+        phone: ""
+      },
+      {
+        name: "Levin Paprotka",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/Levin-scaled.jpg",
+        position: "Mechaniker",
+        email: "",
+        phone: ""
+      },
+      {
+        name: "Nadim Ghani",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/DSC01352-scaled.jpg",
+        position: "Mitglied GL & Verkaufsleiter",
+        email: "nadim@autosalonvolketswil.ch",
+        phone: "+41 44 123 45 75"
+      },
+      {
+        name: "Mario Betschart",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2025/05/DSC01454-2-scaled.jpg",
+        position: "Mitglied GL & Einkäufer",
+        email: "mario@autosalonvolketswil.ch",
+        phone: "+41 44 123 45 76"
+      },
+      {
+        name: "Sali Saliu",
+        image: "https://autosalonvolketswil.ch/wp-content/uploads/2024/01/DSC6181-scaled.jpg",
+        position: "Inhaber & Geschäftsführer",
+        email: "sali@autosalonvolketswil.ch",
+        phone: "+41 44 123 45 77"
+      }
+    ];
+    
     new TeamGallery();
   });
 </script>
@@ -315,19 +602,19 @@ const teamData = [
   }
   
   /* Grid breakpoints based on screen width */
-  /* Mobile Portrait: 1 column */
+  /* Mobile Portrait: 3 columns */
   @media (max-width: 639px) {
     .team-grid {
-      grid-template-columns: 1fr;
-      grid-template-rows: repeat(11, 1fr);
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(4, 1fr);
     }
   }
   
-  /* Mobile Landscape: 2 columns */
+  /* Mobile Landscape: 3 columns */
   @media (min-width: 640px) and (max-width: 767px) {
     .team-grid {
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(6, 1fr);
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(4, 1fr);
     }
   }
   
@@ -414,7 +701,25 @@ const teamData = [
     }
     
     .team-member {
-      min-height: calc(95vh / 11);
+      min-height: calc(85vh / 4);
+    }
+  }
+  
+  /* Modal styles */
+  #teamModal.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  #modalContent.show {
+    transform: scale(1) !important;
+  }
+  
+  /* Modal responsive */
+  @media (max-width: 640px) {
+    #modalContent {
+      margin: 1rem;
+      max-width: calc(100vw - 2rem);
     }
   }
 </style> 
