@@ -77,208 +77,266 @@
   class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 opacity-0 invisible transition-all duration-500 ease-out">
 </div>
 
-<!-- Sell Car Modal Sidebar -->
+<!-- Sell Car Modal - Mobile-First Multi-Step Flow -->
 <div 
   id="sell-modal" 
   class="fixed top-0 left-0 h-full w-full bg-primary z-50 transform -translate-x-full transition-transform duration-500 ease-out overflow-y-auto">
   
-  <!-- Modal Header with Design Elements -->
-  <div class="px-4 md:px-8 2xl:max-w-7xl mx-auto">
-    <!-- Close Button -->
-    <div class="flex justify-end pt-6 pb-4">
-      <button 
-        id="close-sell-modal"
-        class="w-10 h-10 flex items-center justify-center border-2 border-secondary/30 hover:border-secondary hover:bg-secondary/10 transition-all duration-300 group"
-        aria-label="Modal schließen">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-secondary group-hover:text-secondary transition-colors">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-
-    <!-- Hero-inspired Design Header -->
-    <div class="mb-8">
-      <h3 class="text-secondary text-4xl md:text-5xl font-bold tracking-tight mb-4">
-        VERKAUF
-      </h3>
-      
-      <!-- Design Bars inspired by Hero -->
-      <div class="space-y-1.5 mb-6">
-        <div class="h-0.5 bg-secondary"></div>
-        <div class="flex justify-between items-center">
-          <h4 class="text-secondary text-sm md:text-base font-medium">
-            <span>Fahrzeug verkaufen</span>
-            <span class="font-bold mx-1.5">·</span>
-            <span class="italic">Schnell & unkompliziert</span>
-            <span class="font-bold mx-1.5">·</span>
-            <span>24h Rückmeldung</span>
-          </h4>
-        </div>
-        <div class="h-1 bg-secondary"></div>
-        <div class="h-2 bg-secondary"></div>
-        <div class="h-4 bg-secondary"></div>
+  <div class="min-h-full flex flex-col">
+    <!-- Modal Header -->
+    <div class="px-4 md:px-8 py-4 border-b border-secondary/20">
+      <div class="flex items-center justify-between">
+        <h3 class="text-secondary text-2xl md:text-3xl font-bold">
+          Fahrzeug verkaufen
+        </h3>
+        <button 
+          id="close-sell-modal"
+          class="w-10 h-10 flex items-center justify-center border-2 border-secondary/30 hover:border-secondary hover:bg-secondary/10 transition-all duration-300 group"
+          aria-label="Modal schließen">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-secondary group-hover:text-secondary transition-colors">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
-
-      <p class="text-secondary/70 text-sm md:text-base max-w-2xl">
-        Füllen Sie das Formular aus und wir melden uns innerhalb von 24 Stunden bei Ihnen. 
-        Unser Service ist 100% kostenlos und unverbindlich.
-      </p>
     </div>
 
-    <!-- Modal Form -->
-    <div class="max-w-4xl pb-8">
-      <form id="sell-car-form" class="space-y-6">
-        <!-- Vehicle Information -->
-        <div>
-          <h4 class="text-secondary text-lg md:text-xl font-bold mb-4 flex items-center">
-            <div class="h-4 w-4 bg-secondary mr-3"></div>
-            Fahrzeugdaten
-          </h4>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Marke -->
-            <div>
-              <label for="marke" class="block text-secondary font-semibold mb-2 text-sm md:text-base">Marke *</label>
-              <input 
-                type="text" 
-                id="marke" 
-                name="marke" 
-                required
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors text-sm md:text-base"
-                placeholder="z.B. BMW, Mercedes, Audi">
-            </div>
+    <!-- Progress Indicator -->
+    <div class="px-4 md:px-8 py-6 border-b border-secondary/10">
+      <div class="flex items-center justify-between max-w-md mx-auto">
+        <!-- Step 1 -->
+        <div class="flex flex-col items-center">
+          <div id="step-indicator-1" class="w-8 h-8 rounded-full border-2 border-secondary bg-secondary flex items-center justify-center mb-2 transition-all duration-300">
+            <span class="text-primary text-sm font-bold">1</span>
+          </div>
+          <span class="text-xs text-secondary/70 text-center">Fahrzeug</span>
+        </div>
+        
+        <!-- Progress Line 1 -->
+        <div id="progress-line-1" class="flex-1 h-0.5 bg-secondary/20 mx-2"></div>
+        
+        <!-- Step 2 -->
+        <div class="flex flex-col items-center">
+          <div id="step-indicator-2" class="w-8 h-8 rounded-full border-2 border-secondary/30 bg-primary flex items-center justify-center mb-2 transition-all duration-300">
+            <span class="text-secondary/50 text-sm font-bold">2</span>
+          </div>
+          <span class="text-xs text-secondary/70 text-center">Details</span>
+        </div>
 
-            <!-- Modell -->
-            <div>
-              <label for="modell" class="block text-secondary font-semibold mb-2 text-sm md:text-base">Modell *</label>
-              <input 
-                type="text" 
-                id="modell" 
-                name="modell" 
-                required
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors text-sm md:text-base"
-                placeholder="z.B. 3er, C-Klasse, A4">
-            </div>
+        <!-- Progress Line 2 -->
+        <div id="progress-line-2" class="flex-1 h-0.5 bg-secondary/20 mx-2"></div>
 
-            <!-- Baujahr -->
-            <div>
-              <label for="baujahr" class="block text-secondary font-semibold mb-2 text-sm md:text-base">Baujahr *</label>
-              <input 
-                type="number" 
-                id="baujahr" 
-                name="baujahr" 
-                required
-                min="1980"
-                max="2025"
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors text-sm md:text-base"
-                placeholder="z.B. 2020">
-            </div>
+        <!-- Step 3 -->
+        <div class="flex flex-col items-center">
+          <div id="step-indicator-3" class="w-8 h-8 rounded-full border-2 border-secondary/30 bg-primary flex items-center justify-center mb-2 transition-all duration-300">
+            <span class="text-secondary/50 text-sm font-bold">3</span>
+          </div>
+          <span class="text-xs text-secondary/70 text-center">Preis</span>
+        </div>
 
-            <!-- Kilometerstand -->
-            <div>
-              <label for="kilometerstand" class="block text-secondary font-semibold mb-2 text-sm md:text-base">Kilometerstand *</label>
-              <input 
-                type="number" 
-                id="kilometerstand" 
-                name="kilometerstand" 
-                required
-                min="0"
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors text-sm md:text-base"
-                placeholder="z.B. 50000">
-            </div>
+        <!-- Progress Line 3 -->
+        <div id="progress-line-3" class="flex-1 h-0.5 bg-secondary/20 mx-2"></div>
 
-            <!-- Gewünschter Preis -->
-            <div>
-              <label for="preis" class="block text-secondary font-semibold mb-2 text-sm md:text-base">Gewünschter Preis (CHF)</label>
-              <input 
-                type="number" 
-                id="preis" 
-                name="preis" 
-                min="0"
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors text-sm md:text-base"
-                placeholder="z.B. 25000">
-            </div>
+        <!-- Step 4 -->
+        <div class="flex flex-col items-center">
+          <div id="step-indicator-4" class="w-8 h-8 rounded-full border-2 border-secondary/30 bg-primary flex items-center justify-center mb-2 transition-all duration-300">
+            <span class="text-secondary/50 text-sm font-bold">4</span>
+          </div>
+          <span class="text-xs text-secondary/70 text-center">Kontakt</span>
+        </div>
+      </div>
+    </div>
 
-            <!-- Zustand -->
-            <div>
-              <label for="zustand" class="block text-secondary font-semibold mb-2 text-sm md:text-base">Zustand *</label>
-              <div class="relative">
-                <select 
-                  id="zustand" 
-                  name="zustand" 
+    <!-- Modal Content - Flexible Area -->
+    <div class="flex-1 px-4 md:px-8 py-6">
+      <div class="max-w-md mx-auto">
+        <form id="sell-car-form" class="h-full">
+          
+          <!-- Step 1: Marke & Modell -->
+          <div id="step-1" class="step-content">
+            <div class="mb-6">
+              <h4 class="text-secondary text-xl font-bold mb-2">Fahrzeugdaten</h4>
+              <p class="text-secondary/70 text-sm">Erzählen Sie uns von Ihrem Fahrzeug</p>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <label for="marke" class="block text-secondary font-semibold mb-2">Marke *</label>
+                <input 
+                  type="text" 
+                  id="marke" 
+                  name="marke" 
                   required
-                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors appearance-none cursor-pointer text-sm md:text-base">
-                  <option value="">Bitte wählen</option>
-                  <option value="sehr-gut">Sehr gut</option>
-                  <option value="gut">Gut</option>
-                  <option value="befriedigend">Befriedigend</option>
-                  <option value="reparaturbedürftig">Reparaturbedürftig</option>
-                </select>
-                <!-- Custom Arrow -->
-                <div class="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
+                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                  placeholder="z.B. BMW, Mercedes, Audi">
+              </div>
+
+              <div>
+                <label for="modell" class="block text-secondary font-semibold mb-2">Modell *</label>
+                <input 
+                  type="text" 
+                  id="modell" 
+                  name="modell" 
+                  required
+                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                  placeholder="z.B. 3er, C-Klasse, A4">
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Baujahr, Kilometerstand, Zustand -->
+          <div id="step-2" class="step-content hidden">
+            <div class="mb-6">
+              <h4 class="text-secondary text-xl font-bold mb-2">Fahrzeugdetails</h4>
+              <p class="text-secondary/70 text-sm">Weitere Informationen zu Ihrem Fahrzeug</p>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <label for="baujahr" class="block text-secondary font-semibold mb-2">Baujahr *</label>
+                <input 
+                  type="number" 
+                  id="baujahr" 
+                  name="baujahr" 
+                  required
+                  min="1980"
+                  max="2025"
+                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                  placeholder="z.B. 2020">
+              </div>
+
+              <div>
+                <label for="kilometerstand" class="block text-secondary font-semibold mb-2">Kilometerstand *</label>
+                <input 
+                  type="number" 
+                  id="kilometerstand" 
+                  name="kilometerstand" 
+                  required
+                  min="0"
+                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                  placeholder="z.B. 50000">
+              </div>
+
+              <div>
+                <label for="zustand" class="block text-secondary font-semibold mb-2">Zustand *</label>
+                <div class="relative">
+                  <select 
+                    id="zustand" 
+                    name="zustand" 
+                    required
+                    class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors appearance-none cursor-pointer">
+                    <option value="">Bitte wählen</option>
+                    <option value="sehr-gut">Sehr gut</option>
+                    <option value="gut">Gut</option>
+                    <option value="befriedigend">Befriedigend</option>
+                    <option value="reparaturbedürftig">Reparaturbedürftig</option>
+                  </select>
+                  <div class="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Contact Information -->
-        <div>
-          <h4 class="text-secondary text-lg md:text-xl font-bold mb-4 flex items-center">
-            <div class="h-4 w-4 bg-secondary mr-3"></div>
-            Kontaktdaten
-          </h4>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Name -->
-            <div class="md:col-span-2">
-              <label for="name" class="block text-secondary font-semibold mb-2 text-sm md:text-base">Vollständiger Name *</label>
-              <input 
-                type="text" 
-                id="name" 
-                name="name" 
-                required
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors text-sm md:text-base"
-                placeholder="Vor- und Nachname">
+          <!-- Step 3: Wunschpreis -->
+          <div id="step-3" class="step-content hidden">
+            <div class="mb-6">
+              <h4 class="text-secondary text-xl font-bold mb-2">Preisvorstellung</h4>
+              <p class="text-secondary/70 text-sm">Haben Sie bereits eine Preisvorstellung? (Optional)</p>
             </div>
-
-            <!-- Email -->
-            <div class="md:col-span-2">
-              <label for="email" class="block text-secondary font-semibold mb-2 text-sm md:text-base">E-Mail Adresse *</label>
-              <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                required
-                class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors text-sm md:text-base"
-                placeholder="ihre.email@beispiel.ch">
-            </div>
-          </div>
-        </div>
-
-        <!-- Submit Button with Hero-inspired Design -->
-        <div class="pt-4">
-          <div class="space-y-3">
-            <button 
-              type="submit"
-              class="w-full bg-secondary text-primary px-6 py-4 text-lg font-bold border-2 border-secondary hover:bg-primary hover:text-secondary hover:border-secondary transition-all duration-300 transform hover:scale-[1.02]">
-              Anfrage senden
-            </button>
-            <p class="text-secondary/60 text-sm md:text-base text-center">
-              * Pflichtfelder - Wir melden uns innerhalb von 24 Stunden bei Ihnen
-            </p>
             
-            <!-- Bottom Design Bars -->
-            <div class="space-y-1 mt-4">
-              <div class="h-0.5 bg-secondary/30"></div>
-              <div class="h-1 bg-secondary/40"></div>
-              <div class="h-1.5 bg-secondary/50"></div>
+            <div class="space-y-4">
+              <div>
+                <label for="preis" class="block text-secondary font-semibold mb-2">Gewünschter Preis (CHF)</label>
+                <input 
+                  type="number" 
+                  id="preis" 
+                  name="preis" 
+                  min="0"
+                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                  placeholder="z.B. 25000">
+                <p class="text-secondary/60 text-xs mt-2">
+                  Falls Sie unsicher sind, können Sie dieses Feld leer lassen. Wir erstellen Ihnen gerne eine kostenlose Bewertung.
+                </p>
+              </div>
             </div>
           </div>
+
+          <!-- Step 4: Kontaktdaten -->
+          <div id="step-4" class="step-content hidden">
+            <div class="mb-6">
+              <h4 class="text-secondary text-xl font-bold mb-2">Kontaktdaten</h4>
+              <p class="text-secondary/70 text-sm">Wie können wir Sie erreichen?</p>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <label for="name" class="block text-secondary font-semibold mb-2">Vollständiger Name *</label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  name="name" 
+                  required
+                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                  placeholder="Vor- und Nachname">
+              </div>
+
+              <div>
+                <label for="email" class="block text-secondary font-semibold mb-2">E-Mail Adresse *</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  required
+                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                  placeholder="ihre.email@beispiel.ch">
+              </div>
+
+              <div>
+                <label for="telefon" class="block text-secondary font-semibold mb-2">Telefonnummer</label>
+                <input 
+                  type="tel" 
+                  id="telefon" 
+                  name="telefon"
+                  class="w-full px-4 py-3 border-2 border-secondary/20 bg-primary text-secondary focus:border-secondary/50 focus:outline-none transition-colors"
+                  placeholder="+41 XX XXX XX XX">
+                <p class="text-secondary/60 text-xs mt-2">Optional - für schnellere Rückmeldung</p>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Footer with Navigation -->
+    <div class="px-4 md:px-8 py-4 border-t border-secondary/20">
+      <div class="max-w-md mx-auto">
+        <div class="flex items-center justify-between gap-4">
+          <!-- Back Button -->
+          <button 
+            id="prev-step-btn"
+            class="px-6 py-3 border-2 border-secondary/30 text-secondary hover:border-secondary hover:bg-secondary/10 transition-all duration-300 hidden">
+            Zurück
+          </button>
+          
+          <!-- Next/Submit Button -->
+          <button 
+            id="next-step-btn"
+            type="button"
+            class="flex-1 bg-secondary text-primary px-6 py-3 font-bold border-2 border-secondary hover:bg-primary hover:text-secondary hover:border-secondary transition-all duration-300">
+            Weiter
+          </button>
         </div>
-      </form>
+        
+        <!-- Info Text -->
+        <p class="text-secondary/60 text-xs text-center mt-3">
+          <span id="step-info">Schritt 1 von 4</span> • Kostenlos & unverbindlich
+        </p>
+      </div>
     </div>
   </div>
 </div>
@@ -292,32 +350,255 @@
     const form = document.getElementById('sell-car-form');
     const body = document.body;
     
-    if (!openModalBtn || !closeModalBtn || !modal || !overlay || !form) return;
+    // Step navigation elements
+    const prevBtn = document.getElementById('prev-step-btn');
+    const nextBtn = document.getElementById('next-step-btn');
+    const stepInfo = document.getElementById('step-info');
+    
+    let currentStep = 1;
+    const totalSteps = 4;
+    
+    if (!openModalBtn || !closeModalBtn || !modal || !overlay || !form || !nextBtn) return;
 
-    // Open Modal - slide in from left
+    // Open Modal
     function openModal() {
-      if (!modal || !overlay) return;
       modal.classList.remove('-translate-x-full');
       modal.classList.add('translate-x-0');
       overlay.classList.remove('opacity-0', 'invisible');
       body.classList.add('overflow-hidden');
+      resetToStep1();
     }
 
-    // Close Modal - slide out to left
+    // Close Modal
     function closeModal() {
-      if (!modal || !overlay) return;
       modal.classList.add('-translate-x-full');
       modal.classList.remove('translate-x-0');
       overlay.classList.add('opacity-0', 'invisible');
       body.classList.remove('overflow-hidden');
     }
 
+    // Reset to step 1
+    function resetToStep1() {
+      currentStep = 1;
+      updateStepDisplay();
+      (form as HTMLFormElement).reset();
+    }
+
+    // Update step display
+    function updateStepDisplay() {
+      // Hide all steps
+      for (let i = 1; i <= totalSteps; i++) {
+        const stepElement = document.getElementById(`step-${i}`);
+        
+        if (stepElement) {
+          stepElement.classList.add('hidden');
+        }
+      }
+      
+      // Show current step
+      const currentStepElement = document.getElementById(`step-${currentStep}`);
+      if (currentStepElement) {
+        currentStepElement.classList.remove('hidden');
+      }
+      
+      // Update progress indicators
+      for (let i = 1; i <= totalSteps; i++) {
+        const indicator = document.getElementById(`step-indicator-${i}`);
+        const progressLine = document.getElementById(`progress-line-${i}`);
+        
+        if (indicator) {
+          const indicatorSpan = indicator.querySelector('span');
+          if (i <= currentStep) {
+            // Active/completed step
+            indicator.classList.remove('border-secondary/30', 'bg-primary');
+            indicator.classList.add('border-secondary', 'bg-secondary');
+            if (indicatorSpan) {
+              indicatorSpan.classList.remove('text-secondary/50');
+              indicatorSpan.classList.add('text-primary');
+            }
+          } else {
+            // Inactive step
+            indicator.classList.add('border-secondary/30', 'bg-primary');
+            indicator.classList.remove('border-secondary', 'bg-secondary');
+            if (indicatorSpan) {
+              indicatorSpan.classList.add('text-secondary/50');
+              indicatorSpan.classList.remove('text-primary');
+            }
+          }
+        }
+        
+        if (progressLine) {
+          if (i < currentStep) {
+            progressLine.classList.remove('bg-secondary/20');
+            progressLine.classList.add('bg-secondary');
+          } else {
+            progressLine.classList.add('bg-secondary/20');
+            progressLine.classList.remove('bg-secondary');
+          }
+        }
+      }
+      
+      // Update navigation buttons
+      if (prevBtn) {
+        if (currentStep === 1) {
+          prevBtn.classList.add('hidden');
+        } else {
+          prevBtn.classList.remove('hidden');
+        }
+      }
+      
+      const btnElement = nextBtn as HTMLButtonElement;
+      if (currentStep === totalSteps) {
+        btnElement.textContent = 'Anfrage senden';
+        btnElement.type = 'submit';
+      } else {
+        btnElement.textContent = 'Weiter';
+        btnElement.type = 'button';
+      }
+      
+      // Update step info
+      if (stepInfo) {
+        stepInfo.textContent = `Schritt ${currentStep} von ${totalSteps}`;
+      }
+    }
+
+    // Validate current step
+    function validateCurrentStep() {
+      const currentStepElement = document.getElementById(`step-${currentStep}`);
+      if (!currentStepElement) return false;
+      
+      const requiredInputs = currentStepElement.querySelectorAll('input[required], select[required]');
+      
+      for (let input of requiredInputs) {
+        const inputElement = input as HTMLInputElement | HTMLSelectElement;
+        if (!inputElement.value.trim()) {
+          inputElement.focus();
+          inputElement.classList.add('border-red-500');
+          setTimeout(() => inputElement.classList.remove('border-red-500'), 3000);
+          return false;
+        }
+      }
+      
+      return true;
+    }
+
+    // Next step
+    function nextStep() {
+      if (currentStep < totalSteps) {
+        if (validateCurrentStep()) {
+          currentStep++;
+          updateStepDisplay();
+        }
+      }
+    }
+
+    // Previous step
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        updateStepDisplay();
+      }
+    }
+
+    // Submit form
+    async function submitForm() {
+      if (!validateCurrentStep()) return;
+      
+      const formData = new FormData(form as HTMLFormElement);
+      const formDataEntries = Object.fromEntries(formData.entries());
+      
+      // Prepare data in the format expected by the backend API
+      const apiData = {
+        formType: "sell-car",
+        data: {
+          // Fahrzeugdaten
+          marke: formDataEntries.marke as string,
+          modell: formDataEntries.modell as string,
+          baujahr: parseInt(formDataEntries.baujahr as string) || 0,
+          kilometerstand: parseInt(formDataEntries.kilometerstand as string) || 0,
+          zustand: formDataEntries.zustand as string,
+          // Kontaktdaten
+          name: formDataEntries.name as string,
+          email: formDataEntries.email as string
+        }
+      };
+      
+      // Add optional price if provided
+      if (formDataEntries.preis && formDataEntries.preis !== '') {
+        apiData.data.preis = parseInt(formDataEntries.preis as string);
+      }
+      
+      // Show loading state
+      const btnElement = nextBtn as HTMLButtonElement;
+      btnElement.textContent = 'Wird gesendet...';
+      btnElement.disabled = true;
+      
+      try {
+        // TODO: Replace with your actual API Gateway URL
+        const API_URL = 'https://YOUR_API_ID.execute-api.eu-central-1.amazonaws.com/prod/contact';
+        
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(apiData)
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Success feedback
+          alert('Ihre Anfrage wurde erfolgreich gesendet! Wir melden uns innerhalb von 24 Stunden bei Ihnen.');
+          closeModal();
+        } else {
+          throw new Error(result.error || 'Unknown error occurred');
+        }
+        
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        
+        // User-friendly error message
+        let errorMessage = 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.';
+        
+        if (error instanceof Error) {
+          if (error.message.includes('fetch')) {
+            errorMessage = 'Verbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.';
+          } else if (error.message.includes('400')) {
+            errorMessage = 'Ungültige Daten. Bitte überprüfen Sie Ihre Eingaben.';
+          } else if (error.message.includes('500')) {
+            errorMessage = 'Serverfehler. Bitte versuchen Sie es später erneut oder kontaktieren Sie uns direkt.';
+          }
+        }
+        
+        alert(errorMessage);
+      } finally {
+        btnElement.textContent = 'Anfrage senden';
+        btnElement.disabled = false;
+      }
+    }
+
     // Event Listeners
     openModalBtn.addEventListener('click', openModal);
     closeModalBtn.addEventListener('click', closeModal);
-    
-    // Close on overlay click
     overlay.addEventListener('click', closeModal);
+    
+    if (prevBtn) {
+      prevBtn.addEventListener('click', prevStep);
+    }
+    
+    nextBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (currentStep === totalSteps) {
+        submitForm();
+      } else {
+        nextStep();
+      }
+    });
 
     // Close on ESC key
     document.addEventListener('keydown', (e) => {
@@ -326,20 +607,7 @@
       }
     });
 
-    // Prevent body scroll when modal is open
-    document.addEventListener('touchmove', (e) => {
-      if (body.classList.contains('overflow-hidden')) {
-        e.preventDefault();
-      }
-    }, { passive: false });
-
-    // Form Submit
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      console.log('Form submitted - functionality to be implemented');
-      // TODO: Add form submission logic later
-      alert('Formular wurde gesendet! (Funktionalität wird später implementiert)');
-      closeModal();
-    });
+    // Initialize
+    updateStepDisplay();
   });
 </script> 

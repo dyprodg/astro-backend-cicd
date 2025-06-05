@@ -225,11 +225,28 @@ import Footer from "../components/landing/Footer.astro";
   const formMessage = document.getElementById('formMessage') as HTMLElement;
 
   if (contactForm && formMessage) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      // Simulate form submission
       const formData = new FormData(contactForm);
+      const formDataEntries = Object.fromEntries(formData.entries());
+      
+      // Prepare data in the format expected by the backend API
+      const apiData = {
+        formType: "contact",
+        data: {
+          name: formDataEntries.name as string,
+          email: formDataEntries.email as string,
+          phone: formDataEntries.phone as string || undefined,
+          subject: formDataEntries.subject as string,
+          message: formDataEntries.message as string
+        }
+      };
+      
+      // Remove undefined phone if empty
+      if (!apiData.data.phone) {
+        delete apiData.data.phone;
+      }
       
       // Show loading state
       const submitBtn = contactForm.querySelector('button[type="submit"]') as HTMLButtonElement;
@@ -237,29 +254,78 @@ import Footer from "../components/landing/Footer.astro";
       submitBtn.innerHTML = 'WIRD GESENDET...';
       submitBtn.disabled = true;
       
-      // Simulate API call
-      setTimeout(() => {
-        // Show success message
-        formMessage.className = 'mt-6 p-4 border-2 border-green-500/50 bg-green-900/20';
+      try {
+        // TODO: Replace with your actual API Gateway URL
+        const API_URL = 'https://YOUR_API_ID.execute-api.eu-central-1.amazonaws.com/prod/contact';
+        
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(apiData)
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Show success message
+          formMessage.className = 'mt-6 p-4 border-2 border-green-500/50 bg-green-900/20';
+          formMessage.innerHTML = `
+            <p class="text-green-300 font-bold">Nachricht erfolgreich gesendet!</p>
+            <p class="text-green-400 text-sm mt-1">Wir werden uns schnellstmöglich bei Ihnen melden.</p>
+          `;
+          formMessage.classList.remove('hidden');
+          
+          // Reset form
+          contactForm.reset();
+          
+          // Hide message after 5 seconds
+          setTimeout(() => {
+            formMessage.classList.add('hidden');
+          }, 5000);
+        } else {
+          throw new Error(result.error || 'Unknown error occurred');
+        }
+        
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        
+        // User-friendly error message
+        let errorMessage = 'Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.';
+        
+        if (error instanceof Error) {
+          if (error.message.includes('fetch')) {
+            errorMessage = 'Verbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.';
+          } else if (error.message.includes('400')) {
+            errorMessage = 'Ungültige Daten. Bitte überprüfen Sie Ihre Eingaben.';
+          } else if (error.message.includes('500')) {
+            errorMessage = 'Serverfehler. Bitte versuchen Sie es später erneut oder kontaktieren Sie uns direkt.';
+          }
+        }
+        
+        // Show error message
+        formMessage.className = 'mt-6 p-4 border-2 border-red-500/50 bg-red-900/20';
         formMessage.innerHTML = `
-          <p class="text-green-300 font-bold">Nachricht erfolgreich gesendet!</p>
-          <p class="text-green-400 text-sm mt-1">Wir werden uns schnellstmöglich bei Ihnen melden.</p>
+          <p class="text-red-300 font-bold">Fehler beim Senden!</p>
+          <p class="text-red-400 text-sm mt-1">${errorMessage}</p>
         `;
         formMessage.classList.remove('hidden');
         
-        // Reset form
-        contactForm.reset();
+        // Hide message after 8 seconds
+        setTimeout(() => {
+          formMessage.classList.add('hidden');
+        }, 8000);
         
+      } finally {
         // Reset button
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
-        
-        // Hide message after 5 seconds
-        setTimeout(() => {
-          formMessage.classList.add('hidden');
-        }, 5000);
-        
-      }, 2000);
+      }
     });
   }
 </script> 
