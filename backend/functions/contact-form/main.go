@@ -216,7 +216,7 @@ func formatContactEmail(name, email, phone, subject, message string) string {
     <div class="container">
         <div class="header">
             <h1>Neue Kontaktanfrage</h1>
-            <p>Autosalon Volketswil</p>
+            <p>DYPROD Autohaus Zürich</p>
         </div>
         
         <div class="content">
@@ -249,7 +249,7 @@ func formatContactEmail(name, email, phone, subject, message string) string {
         </div>
         
         <div class="footer">
-            <p>Diese E-Mail wurde automatisch vom Kontaktformular auf autosalonvolketswil.ch generiert.</p>
+            <p>Diese E-Mail wurde automatisch vom Kontaktformular auf dyprod-autohaus.ch generiert.</p>
             <p>Bitte antworten Sie direkt an die angegebene E-Mail-Adresse des Kunden.</p>
         </div>
     </div>
@@ -297,7 +297,7 @@ func formatSellCarEmail(marke, modell string, baujahr, kilometerstand, preis int
     <div class="container">
         <div class="header">
             <h1>Auto-Verkaufsanfrage</h1>
-            <p>Autosalon Volketswil</p>
+            <p>DYPROD Autohaus Zürich</p>
         </div>
         
         <div class="content">
@@ -348,7 +348,7 @@ func formatSellCarEmail(marke, modell string, baujahr, kilometerstand, preis int
         </div>
         
         <div class="footer">
-            <p>Diese Anfrage wurde über das Auto-Verkaufsformular auf autosalonvolketswil.ch gesendet.</p>
+            <p>Diese Anfrage wurde über das Auto-Verkaufsformular auf dyprod-autohaus.ch gesendet.</p>
             <p>Bitte kontaktieren Sie den Kunden innerhalb von 24 Stunden.</p>
         </div>
     </div>

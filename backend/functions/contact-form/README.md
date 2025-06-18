@@ -1,7 +1,6 @@
 # Contact Form Lambda Function
 
-Diese Lambda-Funktion verarbeitet Kontaktformular-Anfragen von der Autosalon Volketswil Website und sendet sie als formatierte E-Mails via AWS SES.
-
+Diese Lambda-Funktion verarbeitet Kontaktformular-Anfragen von der Dyprod Auto Website und sendet sie als formatierte E-Mails via AWS SES.
 ## Features
 
 - 📧 Verarbeitet zwei Formulartypen: Kontaktformular und Auto-Verkaufen-Formular
@@ -103,8 +102,8 @@ Die Lambda wird automatisch via GitHub Actions deployed wenn Code in den `main` 
 
 ## Environment Variables
 
-- `SENDER_EMAIL` - SES verifizierte Sender E-Mail (default: noreply@autosalonvolketswil.ch)
-- `RECIPIENT_EMAIL` - E-Mail-Adresse des Empfängers (default: Verkauf@autosalonvolketswil.ch)
+- `SENDER_EMAIL` - SES verifizierte Sender E-Mail (default: noreply@dyprod-autohaus.ch)
+- `RECIPIENT_EMAIL` - E-Mail-Adresse des Empfängers (default: Verkauf@dyprod-autohaus.ch)
 - `AWS_REGION` - AWS Region für SES
 
 ## AWS SES Setup
